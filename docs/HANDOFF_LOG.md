@@ -201,3 +201,24 @@ This document maintains a chronological record of handoffs between **OpenAI Code
   - Pitch estimates are experimental and may be inaccurate with noise, weak voicing, or device audio processing.
 - **Next Recommended Action for Incoming Agent**:
   - Push this branch and open a pull request for review; do not merge until the collaborator approves it.
+
+### Handoff Entry: 2026-11-05 21:28 UTC
+- **Outgoing Agent**: OpenAI Codex
+- **Incoming Agent**: Any
+- **Current Development Phase**: Account Dashboard
+- **Work Completed in this Session**:
+  - Added email one-time-link sign-in, Supabase account records with row-level ownership rules, local-only fallback, and records for tremor, tapping, and voice.
+  - Added a personal dashboard preview and full assessment comparison page with date/time, measurement table, trend chart, and previous-to-latest delta.
+  - Preserved legacy browser history where measurements exist and labeled missing times instead of inventing them.
+  - Documented that FastAPI remains an analysis service not called by the current browser capture UI.
+- **Files Modified / Created**:
+  - Frontend auth, dashboard, records, comparison and Vite config files; Supabase SQL migration; README and architecture/task/decision/handoff documentation.
+- **Verification Performed**:
+  - `npm run build` passed for GitHub Pages.
+  - `VERCEL=1 npm run build` passed for Vercel.
+  - `git diff --check` passed.
+- **Current Operational State**: Builds pass; Supabase cloud history is not active until the project owner applies the migration and configures Auth redirect and frontend build variables.
+- **Known Quirks / Blockers**:
+  - Existing local rows are not transferred to cloud automatically; previous data is incomplete and some records only contain date-level summaries.
+  - Vite reports the existing large JavaScript bundle advisory.
+- **Next Recommended Action for Incoming Agent**: Configure Supabase project URL/key, apply the migration, and deploy after the project owner sets hosting environment variables.

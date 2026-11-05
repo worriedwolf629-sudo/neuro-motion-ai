@@ -136,3 +136,12 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 - **Implementation**: Reuses the existing deterministic analyzers for a 2 Hz live readout. Tremor frequency is withheld until 3 seconds and 24 FPS are present. White UI colors are preserved.
 - **Verification**: `npm run build`; `git diff --check`.
 - **Limit**: Readouts describe captured movement and sampling only; they are not disease chances or a safety assessment.
+
+### Entry 005: Account Login and Assessment History
+- **Date**: 2026-11-06
+- **Agent**: OpenAI Codex
+- **Task**: Add per-user login, dated assessment records, and an all-history comparison dashboard.
+- **Implementation**: Added Supabase email OTP auth and an RLS-protected Postgres migration. Each new tremor, tapping, or voice assessment saves derived measurements, quality, FPS, and completion time; audio/video/landmark streams are excluded. Added a recent-records dashboard table and a history page with assessment/metric selection, trend chart, latest-vs-previous comparison values, and a full records table. Browser-only demo mode remains available, with a best-effort conversion of old local summary rows and honest legacy-time labels. Vite uses the correct root base on Vercel while retaining the GitHub Pages path.
+- **Files**: `.env.example`, `frontend/.env.example`, `frontend/package.json`, `frontend/package-lock.json`, `frontend/src/App.jsx`, `frontend/src/components/Sidebar.jsx`, `frontend/src/lib/assessmentRecords.js`, `frontend/src/lib/supabaseClient.js`, `frontend/src/pages/Dashboard.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/MyHistory.jsx`, `frontend/src/pages/VoiceAssessment.jsx`, `frontend/vite.config.js`, `supabase/migrations/202611060001_assessment_records.sql`, `README.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROJECT.md`, `docs/TASKS.md`, `PROMPT.md`, `docs/HANDOFF_LOG.md`.
+- **Verification**: `npm run build`, `VERCEL=1 npm run build`, and `git diff --check` passed. Vite emitted its existing chunk-size advisory. Supabase was not connected because project URL/key and database access were not available in this workspace.
+- **Remaining setup**: Apply the SQL migration in the user's Supabase project; configure email OTP, allowed callback URL, and `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` in the hosting build environment; redeploy. Existing local rows are not auto-transferred into cloud accounts.

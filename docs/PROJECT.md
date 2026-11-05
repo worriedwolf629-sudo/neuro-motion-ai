@@ -28,6 +28,7 @@ NeuroMotion AI solves this by operating as an **objective, explainable kinematic
    - **Resting Tremor Module**: Quantifies oscillation frequency (Hz) and power spectral density.
    - **Finger-Tapping Module**: Quantifies movement speed (taps/second), rhythm variability, and progressive amplitude decrement (fatigue).
 4. **Physician & Patient-Friendly Visualization**: Live kinematic waveforms, dominant frequency spectrums, and downloadable structured assessment reports.
+5. **Personal Session Tracking**: Optional account login with per-user assessment history and within-person descriptive comparisons.
 
 ---
 
@@ -46,7 +47,7 @@ NeuroMotion AI solves this by operating as an **objective, explainable kinematic
 - **NO Parkinson's Disease Prediction / Classification**: The system will not output phrases like "Parkinson's detected" or "85% probability of tremor disorder".
 - **NO Machine Learning Disease Classifiers**: No SVMs, random forests, or neural nets trained to distinguish healthy vs. pathological states in the MVP.
 - **NO Clinical Diagnostic Certification**: This is an experimental engineering prototype, not an FDA/CE-cleared medical device.
-- **NO Heavy Multi-Tenant EHR/EMR Integration**: For the 24-hour hackathon, data is maintained locally in the active session.
+- **NO EHR/EMR Integration**: The prototype may store derived measurements in a user's own account for history, but does not integrate with clinical records or provider systems.
 - **NO Invasive Sensor Requisites**: Zero external hardware beyond a standard RGB webcam.
 
 ---

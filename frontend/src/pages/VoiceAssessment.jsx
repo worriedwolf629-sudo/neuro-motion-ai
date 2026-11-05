@@ -6,7 +6,7 @@ import { analyzeVoiceSamples, toVoiceCsv } from '../features/voice/voiceFeatures
 const CAPTURE_SECONDS = 5;
 const format = (value, digits = 2) => Number.isFinite(value) ? value.toFixed(digits) : '—';
 
-export default function VoiceAssessment() {
+export default function VoiceAssessment({ onAssessmentCompleted }) {
   const [status, setStatus] = useState('ready');
   const [remaining, setRemaining] = useState(CAPTURE_SECONDS);
   const [metrics, setMetrics] = useState(null);
@@ -58,6 +58,7 @@ export default function VoiceAssessment() {
           const decoded = await audioContext.decodeAudioData(encodedAudio);
           const result = analyzeVoiceSamples(decoded.getChannelData(0), decoded.sampleRate);
           setMetrics(result);
+          onAssessmentCompleted?.('voice', result);
           setStatus('complete');
         } catch (captureError) {
           setStatus('ready');

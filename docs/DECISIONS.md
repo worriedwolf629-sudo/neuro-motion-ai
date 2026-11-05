@@ -131,7 +131,7 @@ This document tracks foundational architectural and technical decisions for Neur
 ## ADR-009: Browser-Local Exploratory Voice Measurements
 
 - **Date**: 2026-11-05
-- **Status**: Accepted
+- **Status**: Superseded for derived result persistence by ADR-010; raw audio remains browser-local.
 - **Context**:
   The project requested the microphone feature explored separately. The app's product rules exclude Parkinson's classification, and raw voice recordings are sensitive data.
 - **Decision**:
@@ -142,4 +142,15 @@ This document tracks foundational architectural and technical decisions for Neur
 - **Consequences**:
   - Requires browser microphone permission and a secure context (HTTPS or localhost).
   - Pitch outputs are estimates and can be wrong under noise, weak voicing, or microphone processing; the UI labels them accordingly.
-  - Only a user-downloaded CSV persists derived measurements outside the page.
+  - At the time, only a user-downloaded CSV persisted derived measurements. ADR-010 now allows saving derived voice metrics to the signed-in user's protected history; captured audio remains local and is discarded.
+
+## ADR-010: Supabase Accounts and Per-User Assessment History
+
+- **Date**: 2026-11-06
+- **Status**: Accepted
+- **Context**: The app needs login, a dated assessment history, and within-person comparisons across repeated measurements. The existing FastAPI service performs numerical analysis and does not provide accounts or persistent user records. The current React assessment capture computes measurements in the browser and does not call FastAPI.
+- **Decision**: Use Supabase Auth with email one-time links and Supabase Postgres for account records. Store a separate row per completed tremor, tapping, or voice assessment, containing the timestamp, recording-quality metadata, and derived result JSON. Apply Row Level Security so each signed-in user can select and insert only rows with their own `auth.uid()`.
+- **Privacy boundary**: Do not store raw camera frames, audio, or landmark streams. A frontend publishable key is used with RLS; never put a service-role key in frontend code or Vite environment variables. Without Supabase configuration, provide an explicitly labeled browser-only mode.
+- **Comparison behavior**: Let users choose assessment type and measurement, graph all matching historical records, and compare latest to previous value. Labels and descriptions remain non-diagnostic.
+- **Alternatives considered**: Extending FastAPI with account and database features was deferred because that service currently has no auth/database layer; Vercel is a host and is not itself the database.
+- **Consequences**: Cloud account history requires a Supabase project, the SQL migration, email OTP configuration, allowed redirect URLs, and frontend build environment variables. Old local records lack exact timestamps and some per-test details; display available values as legacy data and do not infer missing fields.

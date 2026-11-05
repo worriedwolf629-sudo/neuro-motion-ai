@@ -16,9 +16,12 @@ export default function Dashboard({
   tremorData,
   tappingData,
   sessionHistory,
+  records = [],
+  accountEmail,
   setActivePage
 }) {
   const hasAnyData = !!(tremorData || tappingData);
+  const recentRecords = [...records].sort((a, b) => new Date(b.completed_at || b.created_at) - new Date(a.completed_at || a.created_at)).slice(0, 5);
 
   return (
     <div className="p-8 space-y-8 max-w-6xl mx-auto">
@@ -27,7 +30,7 @@ export default function Dashboard({
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] text-[11px] font-mono font-semibold text-[#817D70] mb-2">
             <Sparkles className="w-3 h-3 text-[#E9BD4B]" />
-            Active Session #NM-2026-LIVE
+            {accountEmail ? `Personal dashboard · ${accountEmail}` : 'Browser-only demo · records stay on this device'}
           </div>
           <h2 className="text-2xl font-bold font-heading text-[#292820]">
             Motor Assessment Workspace
@@ -190,6 +193,30 @@ export default function Dashboard({
           </div>
         </div>
       )}
+
+      <section className="overflow-hidden rounded-2xl border border-[#EAE6D9] bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE6D9] p-5">
+          <div>
+            <h3 className="text-sm font-bold text-[#292820]">Recent assessment records</h3>
+            <p className="mt-1 text-[11px] text-[#817D70]">Each completed assessment is saved with its date, time, quality, and measured values.</p>
+          </div>
+          <button onClick={() => setActivePage('history')} className="rounded-lg border border-[#EAE6D9] bg-[#FAF9F4] px-3 py-2 text-xs font-bold text-[#292820] hover:bg-[#F5F1E6]">Compare all records</button>
+        </div>
+        {recentRecords.length ? <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left text-xs">
+          <thead className="bg-[#FAF9F4] text-[10px] uppercase tracking-wide text-[#817D70]"><tr><th className="px-5 py-3">Date & time</th><th className="px-5 py-3">Assessment</th><th className="px-5 py-3">Quality</th><th className="px-5 py-3">Key measurement</th></tr></thead>
+          <tbody className="divide-y divide-[#F0EDE4]">{recentRecords.map((record) => {
+            const values = record.results || {};
+            const summary = record.assessment_type === 'tremor'
+              ? `${values.dominant_frequency_hz ?? values.phase1?.dominant_frequency_hz ?? '—'} Hz peak frequency · RMS ${values.rms_amplitude ?? values.phase1?.rms_amplitude ?? '—'}`
+              : record.assessment_type === 'tapping'
+                ? `${values.total_taps ?? '—'} cycles · ${values.taps_per_second ?? '—'} taps/s`
+                : `${values.estimated_pitch_mean_hz ?? '—'} Hz mean pitch · ${values.voiced_analysis_windows ?? 0} voiced windows`;
+            const label = { tremor: 'Resting tremor', tapping: 'Finger tapping', voice: 'Voice signal' }[record.assessment_type] || record.assessment_type;
+            const when = record.completed_at ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(record.completed_at)) : 'Time unavailable';
+            return <tr key={record.id}><td className="whitespace-nowrap px-5 py-4 text-[#292820]">{when}</td><td className="px-5 py-4 font-semibold text-[#292820]">{label}</td><td className="px-5 py-4 text-[#817D70]">{record.quality || 'Not reported'}</td><td className="px-5 py-4 text-[#817D70]">{summary}</td></tr>;
+          })}</tbody>
+        </table></div> : <div className="p-7 text-center text-xs text-[#817D70]">No assessments saved yet. Complete an assessment while signed in to begin your comparison history.</div>}
+      </section>
     </div>
   );
 }

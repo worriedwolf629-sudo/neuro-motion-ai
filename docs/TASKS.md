@@ -23,7 +23,7 @@
 
 ### Differentiator Features (Post-Core Backlog)
 - [ ] **Smart Camera Quality Checker**: Hand bounding check, boundary warnings, FPS jitter monitor.
-- [ ] **Session-to-Session Comparison**: LocalStorage history and metric trend charts.
+- [x] **Account History & Session Comparison**: Supabase Auth, account-scoped Postgres records, recent dashboard table, and metric comparison chart/table. Cloud setup and deployment variables remain operator configuration.
 
 ---
 
@@ -98,6 +98,7 @@
 
 ### ⏳ In Progress
 - [~] **Exploratory Browser Voice Signal Task**: Implementation is integrated locally and the production build passes; browser microphone validation and website deployment remain pending.
+- [~] **Cloud Account Setup**: Frontend and migration are implemented; Supabase project migration, Auth redirect configuration, and deployment environment variables still need project-owner setup.
 
 ---
 
@@ -112,6 +113,11 @@
   - **Completed On**: 2026-11-05
   - **Summary**: Added a live, 2 Hz readout of tremor amplitude, 4–6 Hz signal-power share, guarded frequency estimate, recording quality, and tapping cadence/amplitude. Values come from the same analysis functions as the report; no disease probability or safety classification is displayed.
   - **Verification**: `npm run build` and `git diff --check`.
+- [x] **TASK-012**: Account login and assessment history comparison
+  - **Owner**: OpenAI Codex
+  - **Completed On**: 2026-11-06
+  - **Summary**: Added email one-time-link login, Supabase per-user assessment records protected by RLS, browser-only fallback, recent dashboard records, and historical metric chart/table for tremor, tapping, and voice. Legacy local records are labeled when timestamps or measurements are unavailable.
+  - **Verification**: `npm run build` passed for GitHub Pages; `VERCEL=1 npm run build` passed for Vercel; `git diff --check` passed. Vite reports the existing large JavaScript chunk advisory.
 - [x] **TASK-000**: Repository Foundation & AI Collaboration Protocol
   - **Owner**: Google Antigravity
   - **Completed On**: 2026-11-05

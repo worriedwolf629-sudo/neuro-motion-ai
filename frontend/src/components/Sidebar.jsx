@@ -160,7 +160,7 @@ export default function Sidebar({ activePage, setActivePage }) {
               }`}
             >
               <Clock className="w-3.5 h-3.5 text-[#E9BD4B]" />
-              Session History
+              History & Comparison
             </button>
           </div>
         </div>

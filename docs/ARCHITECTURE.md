@@ -57,7 +57,7 @@
   - Draw real-time hand skeleton overlay on an HTML5 canvas layer.
   - Buffer landmark streams with high-resolution timestamps (`performance.now()`).
 - During an active assessment, refresh a descriptive movement profile at 2 Hz using the same in-browser kinematics functions used for the final report. Tremor frequency is shown only after at least 3 seconds and an effective sample rate of at least 24 FPS.
-  - Dispatch batches of coordinate time series to the backend analysis service.
+  - Keep the active assessment pipeline in the browser. The FastAPI analysis endpoints remain available for direct API use; the current React assessment flow does not call them.
   - Render interactive charts:
     - Tremor displacement waveform ($y(t)$).
     - Power spectral density graph (Frequency in Hz vs. Power).
@@ -173,9 +173,18 @@ The report plots each phase's raw, filtered, and envelope displacement; compares
 
 ---
 
-## 6. Undecided Architecture Elements
+## 6. Account History and Persistence
+
+- **Authentication and database**: Supabase Auth (email one-time link) and Supabase Postgres store account-owned assessment records. The browser sends only derived measurements and quality metadata; camera frames, audio, and raw hand-landmark streams are not stored.
+- **Record shape**: `assessment_records` contains an account `user_id`, assessment type (`tremor`, `tapping`, or `voice`), completion timestamp, recording quality, effective FPS, and the typed result object as JSONB. Every completed assessment becomes a separate dated record.
+- **Isolation**: Postgres Row Level Security is enabled. Select and insert policies require `auth.uid() = user_id`; a browser-side publishable key is safe only with these policies in place. Never expose a Supabase service-role key in the frontend.
+- **History view**: The account dashboard lists recent sessions. The comparison page filters by assessment and measurement, plots all available records in time order, and shows the previous/latest values and difference. Comparisons describe measured changes; they are not diagnostic scores.
+- **Local demo**: If Supabase environment variables are absent, the user can explicitly enter browser-only mode. New records then remain in that browser's LocalStorage and do not sync or back up. Legacy local history can be shown with date-only or unknown-time labels because the previous format did not retain exact completion times or full per-test measurements.
+- **Setup**: Apply `supabase/migrations/202611060001_assessment_records.sql`, then set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` for the frontend build. Add the deployed website URL to Supabase Auth's allowed redirect URLs. GitHub Pages builds use `/neuro-motion-ai/`; Vercel builds use `/`.
+
+## 7. Undecided Architecture Elements
 
 The following items are deliberately left open pending prototype experimentation:
 1. **Full Client-Side vs. Hybrid Backend FFT**: If WebGL/JS FFT (e.g. `fft.js` or DSP.js) proves fast and sufficiently accurate in Vite, can tremor FFT be computed entirely in the browser for zero-latency demos? (To be evaluated in TASK-001/TASK-005).
-2. **Local Session Persistence**: Web browser `IndexedDB` vs. lightweight SQLite on the FastAPI backend. Local-first IndexedDB is currently favored to keep backend stateless.
+2. **FastAPI deployment**: The FastAPI service is implemented but is not connected to the current React capture pipeline. Deploy and integrate it only if the product later needs server-side analysis or a shared analysis API.
 
