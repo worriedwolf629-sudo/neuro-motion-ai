@@ -155,3 +155,4 @@ export function calculatePowerRatio(freqs, powers, lowHz = 4.0, highHz = 6.0) {
   }
   return Number((bandPower / totalPower).toFixed(4));
 }
+

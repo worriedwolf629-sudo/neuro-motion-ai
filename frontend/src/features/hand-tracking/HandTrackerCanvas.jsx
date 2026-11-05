@@ -1,21 +1,21 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
-import { Camera, AlertCircle, RefreshCw, CheckCircle2, VideoOff } from 'lucide-react';
+import { AlertCircle, RefreshCw, CheckCircle2, VideoOff, Camera } from 'lucide-react';
 
 const HAND_CONNECTIONS = [
-  [0, 1], [1, 2], [2, 3], [3, 4],       // Thumb
-  [0, 5], [5, 6], [6, 7], [7, 8],       // Index
-  [5, 9], [9, 10], [10, 11], [11, 12],  // Middle
-  [9, 13], [13, 14], [14, 15], [15, 16],// Ring
-  [13, 17], [17, 18], [18, 19], [19, 20],// Pinky
-  [0, 17]                               // Palm base
+  [0, 1], [1, 2], [2, 3], [3, 4],
+  [0, 5], [5, 6], [6, 7], [7, 8],
+  [5, 9], [9, 10], [10, 11], [11, 12],
+  [9, 13], [13, 14], [14, 15], [15, 16],
+  [13, 17], [17, 18], [18, 19], [19, 20],
+  [0, 17]
 ];
 
 export default function HandTrackerCanvas({
   onLandmarksUpdate,
   isRecording,
   assessmentMode, // 'tremor' | 'tapping' | 'idle'
-  sharedStream,   // Optional parent shared MediaStream
+  sharedStream,
   onStreamReady
 }) {
   const videoRef = useRef(null);
@@ -33,7 +33,7 @@ export default function HandTrackerCanvas({
   const fpsCounterRef = useRef({ count: 0, lastTime: performance.now() });
   const lastVideoTimeRef = useRef(-1);
 
-  // Initialize HandLandmarker from @mediapipe/tasks-vision
+  // Initialize MediaPipe Tasks-Vision HandLandmarker
   useEffect(() => {
     let isCancelled = false;
 
@@ -47,10 +47,9 @@ export default function HandTrackerCanvas({
 
         if (isCancelled) return;
 
-        // Try local model first, fallback to Google CDN
         const landmarker = await HandLandmarker.createFromOptions(wasmFileset, {
           baseOptions: {
-            modelAssetPath: "/models/hand_landmarker.task",
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task",
             delegate: "GPU"
           },
           runningMode: "VIDEO",
@@ -58,19 +57,6 @@ export default function HandTrackerCanvas({
           minHandDetectionConfidence: 0.6,
           minHandPresenceConfidence: 0.6,
           minTrackingConfidence: 0.6
-        }).catch(async (e) => {
-          console.warn("Local model load failed, falling back to Google Cloud CDN:", e);
-          return await HandLandmarker.createFromOptions(wasmFileset, {
-            baseOptions: {
-              modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task",
-              delegate: "GPU"
-            },
-            runningMode: "VIDEO",
-            numHands: 1,
-            minHandDetectionConfidence: 0.6,
-            minHandPresenceConfidence: 0.6,
-            minTrackingConfidence: 0.6
-          });
         });
 
         if (isCancelled) return;
@@ -79,7 +65,7 @@ export default function HandTrackerCanvas({
       } catch (err) {
         console.error("Failed to initialize MediaPipe Tasks-Vision:", err);
         if (!isCancelled) {
-          setCameraError("Failed to load computer vision model. Please check network/GPU support.");
+          setCameraError("Failed to initialize hand tracking model. Please ensure WebGL is enabled.");
           setModelLoading(false);
         }
       }
@@ -95,7 +81,7 @@ export default function HandTrackerCanvas({
     };
   }, []);
 
-  // Initialize Camera Stream (Shared or Local)
+  // Shared Camera Setup
   useEffect(() => {
     let isMounted = true;
 
@@ -104,7 +90,7 @@ export default function HandTrackerCanvas({
         if (videoRef.current) {
           videoRef.current.srcObject = sharedStream;
           videoRef.current.onloadedmetadata = () => {
-            videoRef.current.play().catch(e => console.error("Play error:", e));
+            videoRef.current.play().catch(e => console.error(e));
             if (isMounted) setCameraActive(true);
           };
         }
@@ -133,7 +119,7 @@ export default function HandTrackerCanvas({
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.onloadedmetadata = () => {
-            videoRef.current.play().catch(e => console.error("Play error:", e));
+            videoRef.current.play().catch(e => console.error(e));
             if (isMounted) setCameraActive(true);
           };
         }
@@ -141,7 +127,7 @@ export default function HandTrackerCanvas({
         console.error("Webcam getUserMedia failed:", err);
         if (isMounted) {
           setCameraError(err.name === 'NotAllowedError'
-            ? "Camera permission denied. Please allow camera access in your browser settings."
+            ? "Camera permission denied. Please allow camera access in browser settings."
             : `Camera error: ${err.message || 'Device not available'}`);
           setCameraActive(false);
         }
@@ -158,7 +144,7 @@ export default function HandTrackerCanvas({
     };
   }, [sharedStream, onStreamReady]);
 
-  // Frame processing loop using requestAnimationFrame
+  // Animation Loop with warm/minimal canvas rendering
   const renderLoop = useCallback(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -169,7 +155,6 @@ export default function HandTrackerCanvas({
         lastVideoTimeRef.current = video.currentTime;
         const now = performance.now();
 
-        // FPS Calculation
         fpsCounterRef.current.count++;
         if (now - fpsCounterRef.current.lastTime >= 1000) {
           setFps(Math.round((fpsCounterRef.current.count * 1000) / (now - fpsCounterRef.current.lastTime)));
@@ -177,10 +162,9 @@ export default function HandTrackerCanvas({
           fpsCounterRef.current.lastTime = now;
         }
 
-        // Run detection with exact timestamp
         const results = landmarker.detectForVideo(video, now);
-
         const ctx = canvas.getContext('2d');
+
         if (ctx) {
           ctx.save();
           ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -189,7 +173,6 @@ export default function HandTrackerCanvas({
             setHandDetected(true);
             const landmarks = results.landmarks[0];
 
-            // Send coordinates to active recording listener
             if (onLandmarksUpdate) {
               onLandmarksUpdate({
                 timestamp_ms: now,
@@ -197,9 +180,9 @@ export default function HandTrackerCanvas({
               });
             }
 
-            // Draw skeleton connections
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#06B6D4'; // Vibrant Cyan
+            // Draw skeleton with warm charcoal / gold aesthetics
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#E9BD4B'; // Golden yellow connections
             for (const [start, end] of HAND_CONNECTIONS) {
               const p1 = landmarks[start];
               const p2 = landmarks[end];
@@ -216,35 +199,33 @@ export default function HandTrackerCanvas({
               ctx.beginPath();
 
               if (assessmentMode === 'tapping' && (idx === 4 || idx === 8)) {
-                // Focus: Thumb tip (4) & Index tip (8)
-                ctx.arc(x, y, 7, 0, 2 * Math.PI);
-                ctx.fillStyle = idx === 4 ? '#F59E0B' : '#10B981';
+                ctx.arc(x, y, 6.5, 0, 2 * Math.PI);
+                ctx.fillStyle = idx === 4 ? '#292820' : '#E9BD4B';
                 ctx.fill();
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 2;
                 ctx.stroke();
               } else if (assessmentMode === 'tremor' && idx === 8) {
-                // Focus: Index tip (8)
-                ctx.arc(x, y, 8, 0, 2 * Math.PI);
-                ctx.fillStyle = '#EC4899';
+                ctx.arc(x, y, 7.5, 0, 2 * Math.PI);
+                ctx.fillStyle = '#C66D5B'; // Muted terracotta focus
                 ctx.fill();
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 2;
                 ctx.stroke();
               } else {
-                ctx.arc(x, y, idx === 0 ? 5 : 3.5, 0, 2 * Math.PI);
-                ctx.fillStyle = '#38BDF8';
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fillStyle = '#292820';
                 ctx.fill();
               }
             });
 
-            // In finger-tapping mode, draw connection line
+            // Tapping connection indicator
             if (assessmentMode === 'tapping') {
               const pThumb = landmarks[4];
               const pIndex = landmarks[8];
               ctx.beginPath();
               ctx.setLineDash([4, 4]);
-              ctx.strokeStyle = '#FCD34D';
+              ctx.strokeStyle = '#C66D5B';
               ctx.lineWidth = 2;
               ctx.moveTo(pThumb.x * canvas.width, pThumb.y * canvas.height);
               ctx.lineTo(pIndex.x * canvas.width, pIndex.y * canvas.height);
@@ -271,14 +252,14 @@ export default function HandTrackerCanvas({
   }, [renderLoop]);
 
   return (
-    <div className="relative w-full aspect-[4/3] max-h-[380px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-xl group">
+    <div className="relative w-full aspect-[4/3] max-h-[440px] bg-[#292820] rounded-2xl overflow-hidden border border-[#EAE6D9] shadow-sm group">
       {/* Underlying Webcam Video */}
       <video
         ref={videoRef}
         playsInline
         muted
         autoPlay
-        className="w-full h-full object-cover transform -scale-x-100"
+        className="w-full h-full object-cover transform -scale-x-100 opacity-90"
       />
 
       {/* Hand Skeleton Overlay Canvas */}
@@ -289,25 +270,25 @@ export default function HandTrackerCanvas({
         className="absolute inset-0 w-full h-full object-cover pointer-events-none transform -scale-x-100"
       />
 
-      {/* Top Overlay HUD Bar */}
+      {/* Top Overlay HUD Bar (Warm minimal ivory pills) */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700/60 shadow">
-          <div className={`w-2.5 h-2.5 rounded-full ${cameraActive && !modelLoading ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
-          <span className="text-xs font-mono font-medium tracking-tight text-slate-200">
-            {modelLoading ? 'MODEL INIT...' : cameraActive ? `${fps} FPS` : 'OFFLINE'}
+        <div className="flex items-center gap-2 bg-[#FAF9F4]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#EAE6D9] shadow-sm">
+          <div className={`w-2.5 h-2.5 rounded-full ${cameraActive && !modelLoading ? 'bg-[#789879] animate-pulse' : 'bg-[#C66D5B]'}`} />
+          <span className="text-[11px] font-mono font-semibold tracking-tight text-[#292820]">
+            {modelLoading ? 'INITIALIZING MODEL...' : cameraActive ? `${fps} FPS` : 'CAMERA OFFLINE'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700/60 shadow">
+        <div className="flex items-center gap-2 bg-[#FAF9F4]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#EAE6D9] shadow-sm">
           {handDetected ? (
             <>
-              <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" />
-              <span className="text-xs font-semibold text-teal-300">HAND IN FRAME</span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#789879]" />
+              <span className="text-[11px] font-semibold text-[#292820]">HAND IN FRAME</span>
             </>
           ) : (
             <>
-              <AlertCircle className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
-              <span className="text-xs font-medium text-amber-300">POSITION HAND</span>
+              <AlertCircle className="w-3.5 h-3.5 text-[#D99A38] animate-bounce" />
+              <span className="text-[11px] font-medium text-[#817D70]">POSITION HAND CLEARLY</span>
             </>
           )}
         </div>
@@ -315,21 +296,21 @@ export default function HandTrackerCanvas({
 
       {/* Active Recording Pill */}
       {isRecording && (
-        <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-rose-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse backdrop-blur">
-          <span className="w-2 h-2 rounded-full bg-white" />
-          RECORDING ACTIVE ({assessmentMode.toUpperCase()})
+        <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-[#F4D66D] text-[#292820] text-xs font-bold px-3 py-1.5 rounded-full shadow-md animate-pulse border border-[#E9BD4B]">
+          <span className="w-2 h-2 rounded-full bg-[#C66D5B]" />
+          RECORDING ({assessmentMode.toUpperCase()})
         </div>
       )}
 
-      {/* Camera Error Modal */}
+      {/* Camera Error Notice */}
       {cameraError && (
-        <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-10">
-          <VideoOff className="w-10 h-10 text-rose-500 mb-3" />
-          <p className="text-sm font-semibold text-slate-200 mb-1">Camera Notice</p>
-          <p className="text-xs text-slate-400 max-w-xs mb-4 leading-relaxed">{cameraError}</p>
+        <div className="absolute inset-0 bg-[#FAF9F4]/95 flex flex-col items-center justify-center p-6 text-center z-10">
+          <VideoOff className="w-10 h-10 text-[#C66D5B] mb-3" />
+          <p className="text-sm font-bold text-[#292820] mb-1">Camera Notice</p>
+          <p className="text-xs text-[#817D70] max-w-xs mb-4 leading-relaxed">{cameraError}</p>
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center gap-2 text-xs font-semibold px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition"
+            className="flex items-center gap-2 text-xs font-semibold px-4 py-2 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] rounded-xl border border-[#EAE6D9] transition shadow-sm"
           >
             <RefreshCw className="w-3.5 h-3.5" /> Reload Page
           </button>
