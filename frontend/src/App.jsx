@@ -91,7 +91,7 @@ export default function App() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto bg-[#FFFFFF]">
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-[#EAE6D9] bg-[#FFFFFF]/80 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-10 shrink-0">
+        <header className="h-16 border-b border-[#EAE6D9] bg-[#FFFFFF] backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-10 shrink-0">
           <div className="flex items-center gap-4">
             <span className="text-sm font-bold text-[#292820]">
               {activePage === 'dashboard' && 'Workspace Overview'}
