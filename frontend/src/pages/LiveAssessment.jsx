@@ -28,6 +28,8 @@ export default function LiveAssessment({
   const [calibrationData, setCalibrationData] = useState(null);
   const [notice, setNotice] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [tremorPhase, setTremorPhase] = useState('rest');
+  const [restingTremor, setRestingTremor] = useState(null);
 
   const landmarkBufferRef = useRef([]);
   const recordingTimerRef = useRef(null);
@@ -106,7 +108,23 @@ export default function LiveAssessment({
       try {
         if (mode === 'tremor') {
           const results = analyzeTremorKinematics(captured, 30.0);
-          onAssessmentCompleted('tremor', results);
+          if (!restingTremor) {
+            setRestingTremor(results);
+            setTremorPhase('cognitive');
+            setNotice('Rest phase saved. For the second phase, keep your hand relaxed and perform a simple mental task, such as counting backward.');
+            setIsProcessing(false);
+            return;
+          }
+
+          const amplification = restingTremor.rms_amplitude > 0
+            ? Number((results.rms_amplitude / restingTremor.rms_amplitude).toFixed(2))
+            : null;
+          onAssessmentCompleted('tremor', {
+            ...restingTremor,
+            phase1: restingTremor,
+            phase2: results,
+            cognitive_amplification: amplification
+          });
         } else {
           const results = analyzeFingerTappingKinematics(captured, calibrationData?.threshold, 30.0);
           onAssessmentCompleted('tapping', results);
@@ -152,6 +170,13 @@ export default function LiveAssessment({
         </div>
       )}
 
+      {mode === 'tremor' && (
+        <div className="flex items-center gap-2 text-xs text-[#817D70]" aria-live="polite">
+          <span className="font-mono font-bold text-[#292820]">{tremorPhase === 'rest' ? 'PHASE 1 OF 2' : 'PHASE 2 OF 2'}</span>
+          <span>{tremorPhase === 'rest' ? 'Resting hand' : 'Cognitive load'}</span>
+        </div>
+      )}
+
       {/* Main Grid: Camera & Guidance */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Viewport */}
@@ -174,7 +199,7 @@ export default function LiveAssessment({
                   className="flex items-center gap-2 px-6 py-2.5 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] font-bold text-xs rounded-xl border border-[#E9BD4B] shadow-sm transition active:scale-95"
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  Start 10s Assessment
+                  {mode === 'tremor' && restingTremor ? 'Start 10s Cognitive Load Phase' : 'Start 10s Assessment'}
                 </button>
               ) : (
                 <button
@@ -247,7 +272,7 @@ export default function LiveAssessment({
                   </li>
                   <li className="flex items-start gap-2.5">
                     <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">3</span>
-                    <span>The engine extracts index fingertip oscillations and computes FFT harmonics.</span>
+                    <span>After rest, record a second phase while doing a simple mental task. The report compares both measured signals.</span>
                   </li>
                 </ul>
               </div>

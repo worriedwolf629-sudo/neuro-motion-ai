@@ -112,7 +112,13 @@ This allows meaningful comparison of amplitude across different camera distances
    - Compute Fast Fourier Transform ($|X(f)|$).
    - Identify dominant peak $f_{max}$ in the physiological movement band (typically $3.0\text{ Hz} - 7.0\text{ Hz}$ for resting tremor).
 
-### 4.2 Tapping Kinematics Pipeline
+### 4.2 Two-Phase Tremor Capture and Report Data
+
+The browser tremor flow records two independent 10-second windows: Phase 1 (Rest), followed by Phase 2 (Cognitive Load). Each window is analyzed with the same tremor pipeline and retains its own waveform, FFT spectrum, quality, and measurement values. The result shape keeps the Phase 1 metrics at the top level for compatibility with existing dashboard and history consumers, and adds `phase1`, `phase2`, and `cognitive_amplification` fields for the report. The amplification value is the ratio of Phase 2 RMS amplitude to Phase 1 RMS amplitude; it is a descriptive comparison, not a disease score.
+
+The report plots each phase's raw, filtered, and envelope displacement; compares the two amplitude envelopes; and displays a separate FFT spectrum for each phase. Older saved sessions without Phase 2 show an explicit “not recorded” state instead of fabricated comparison values. All report cards retain the app's white surface styling. No disease category, classifier output, or risk score is generated.
+
+### 4.3 Tapping Kinematics Pipeline
 1. Compute $D_{norm}(t)$ time-series.
 2. Low-pass filter ($f_c \approx 8\text{ Hz}$) to remove landmark jitter.
 3. Apply peak detection (`scipy.signal.find_peaks`) with minimum peak distance and prominence thresholds to isolate opening peaks ($P_k$) and closure troughs ($T_k$).

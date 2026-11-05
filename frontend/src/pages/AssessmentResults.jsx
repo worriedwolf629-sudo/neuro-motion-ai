@@ -14,14 +14,60 @@ import {
 import {
   Activity,
   Radio,
-  FileText,
-  Clock,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight,
-  TrendingDown,
-  Info
+  FileText
 } from 'lucide-react';
+
+const ChartCard = ({ title, subtitle, children, className = '' }) => (
+  <section className={`min-w-0 rounded-2xl border border-[#EAE6D9] bg-[#FFFFFF] p-5 shadow-sm ${className}`}>
+    <div className="mb-3">
+      <h3 className="font-heading text-sm font-bold text-[#292820]">{title}</h3>
+      {subtitle && <p className="mt-1 text-[11px] text-[#817D70]">{subtitle}</p>}
+    </div>
+    {children}
+  </section>
+);
+
+const TremorWaveform = ({ title, data }) => (
+  <ChartCard title={title} subtitle="Finger displacement over time; raw, filtered and amplitude envelope signals." className="h-full">
+    {data?.length ? (
+      <div className="h-56 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#EAE6D9" />
+            <XAxis dataKey="time_sec" stroke="#817D70" fontSize={9} tickFormatter={(v) => `${v}s`} />
+            <YAxis stroke="#817D70" fontSize={9} />
+            <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: 8, fontSize: 10 }} />
+            <Line type="monotone" dataKey="raw_displacement" stroke="#817D70" dot={false} strokeWidth={1} name="raw" />
+            <Line type="monotone" dataKey="filtered" stroke="#E9BD4B" dot={false} strokeWidth={2} name="filtered" />
+            <Line type="monotone" dataKey="envelope" stroke="#C66D5B" strokeDasharray="4 3" dot={false} strokeWidth={1.5} name="envelope" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    ) : <div className="flex h-56 items-center justify-center rounded-xl border border-dashed border-[#EAE6D9] text-xs text-[#817D70]">This phase has not been recorded.</div>}
+  </ChartCard>
+);
+
+const TremorSpectrum = ({ title, phase }) => (
+  <ChartCard title={title} subtitle="FFT frequency spectrum with the 4–6 Hz reference band highlighted.">
+    {phase?.frequency_spectrum?.length ? (
+      <>
+        <p className="mb-2 text-[11px] font-mono text-[#817D70]">Peak: {phase.dominant_frequency_hz} Hz · 4–6 Hz band</p>
+        <div className="h-56 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={phase.frequency_spectrum} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#EAE6D9" />
+              <XAxis dataKey="frequency_hz" stroke="#817D70" fontSize={9} tickFormatter={(v) => `${v} Hz`} />
+              <YAxis stroke="#817D70" fontSize={9} />
+              <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: 8, fontSize: 10 }} />
+              <ReferenceArea x1={4} x2={6} stroke="#C66D5B" fill="#F4D66D" fillOpacity={0.28} />
+              <Bar dataKey="power" fill="#E9BD4B" radius={[3, 3, 0, 0]} name="FFT amplitude" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </>
+    ) : <div className="flex h-56 items-center justify-center rounded-xl border border-dashed border-[#EAE6D9] text-xs text-[#817D70]">Spectrum is unavailable for this phase.</div>}
+  </ChartCard>
+);
 
 export default function AssessmentResults({
   tremorData,
@@ -29,6 +75,18 @@ export default function AssessmentResults({
   setActivePage
 }) {
   const [activeTab, setActiveTab] = useState(tremorData ? 'tremor' : 'tapping');
+  const phase1Data = tremorData?.phase1 || tremorData;
+  const phase2Data = tremorData?.phase2 || null;
+  const envelopeComparison = phase1Data?.filtered_waveform?.map((point, index) => ({
+    time_sec: point.time_sec,
+    rest_envelope: point.envelope,
+    cognitive_envelope: phase2Data?.filtered_waveform?.[index]?.envelope
+  })) || [];
+  const cognitiveAmplification = tremorData?.cognitive_amplification ?? (
+    phase2Data && phase1Data?.rms_amplitude > 0
+      ? Number((phase2Data.rms_amplitude / phase1Data.rms_amplitude).toFixed(2))
+      : null
+  );
 
   return (
     <div className="p-8 space-y-8 max-w-6xl mx-auto">
@@ -83,182 +141,69 @@ export default function AssessmentResults({
         </button>
       </div>
 
-      {/* TREMOR ANALYTICAL VIEW (Faithfully modeled after ParkScreen reference layout) */}
+      {/* TREMOR ANALYTICAL VIEW */}
       {activeTab === 'tremor' && (
         <div className="space-y-6">
           {tremorData ? (
             <>
-              {/* Top Row: Displacement & Envelope Analysis */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Graph 1: Phase 1 Finger Displacement (Raw, Filtered, Envelope) */}
-                <div className="lg:col-span-8 bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h4 className="text-sm font-bold text-[#292820] font-heading">
-                        Phase 1 (Rest) — Finger Displacement
-                      </h4>
-                      <p className="text-[11px] text-[#817D70]">
-                        Normalized index fingertip deviation along principal oscillation axis
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3 text-[11px] font-mono">
-                      <span className="flex items-center gap-1.5 text-[#817D70]">
-                        <span className="w-2.5 h-0.5 bg-[#817D70]" /> Raw
-                      </span>
-                      <span className="flex items-center gap-1.5 text-[#292820] font-bold">
-                        <span className="w-2.5 h-1 bg-[#292820]" /> Filtered
-                      </span>
-                      <span className="flex items-center gap-1.5 text-[#C66D5B] font-bold">
-                        <span className="w-2.5 h-0.5 border-t border-dashed border-[#C66D5B]" /> Envelope
-                      </span>
-                    </div>
-                  </div>
+              <div className="flex flex-col gap-1 border-b border-[#EAE6D9] pb-4">
+                <h2 className="font-heading text-lg font-bold text-[#292820]">ParkScreen | Hand Tremor Analysis Report</h2>
+                <p className="text-xs text-[#817D70]">Measured displacement and frequency characteristics from the recorded rest and cognitive-load phases.</p>
+              </div>
 
-                  <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={tremorData.filtered_waveform} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#EAE6D9" />
-                        <XAxis dataKey="time_sec" stroke="#817D70" fontSize={10} tickFormatter={(v) => `${v}s`} />
-                        <YAxis stroke="#817D70" fontSize={10} />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: '10px', fontSize: '11px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
-                        />
-                        <Line type="monotone" dataKey="raw_displacement" stroke="#D8D2C2" dot={false} strokeWidth={1} name="Raw" />
-                        <Line type="monotone" dataKey="filtered" stroke="#292820" dot={false} strokeWidth={2} name="Filtered" />
-                        <Line type="monotone" dataKey="envelope" stroke="#C66D5B" strokeDasharray="4 4" dot={false} strokeWidth={1.5} name="Envelope" />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+                <TremorWaveform title="Phase 1 (Rest) — Finger Displacement" data={phase1Data?.filtered_waveform} />
+                <TremorWaveform title="Phase 2 (Cognitive Load) — Finger Displacement" data={phase2Data?.filtered_waveform} />
 
-                {/* Graph 2 / Right: Amplitude Envelope & Decay Metric */}
-                <div className="lg:col-span-4 bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-[#292820] font-heading mb-1">
-                      Amplitude Envelope Overview
-                    </h4>
-                    <p className="text-[11px] text-[#817D70] mb-4">
-                      Oscillation stability & amplitude regression slope
-                    </p>
-
-                    <div className="h-44 w-full">
+                <ChartCard
+                  title="Amplitude Envelope Comparison"
+                  subtitle={cognitiveAmplification == null ? 'Record both phases to compare amplitude envelopes.' : `Cognitive Amplification: ${cognitiveAmplification}x`}
+                  className="h-full"
+                >
+                  {phase2Data && envelopeComparison.length ? (
+                    <div className="h-56 w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={tremorData.filtered_waveform} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+                        <LineChart data={envelopeComparison} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#EAE6D9" />
                           <XAxis dataKey="time_sec" stroke="#817D70" fontSize={9} tickFormatter={(v) => `${v}s`} />
                           <YAxis stroke="#817D70" fontSize={9} />
-                          <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: '8px', fontSize: '10px' }} />
-                          <Line type="monotone" dataKey="envelope" stroke="#E9BD4B" strokeWidth={2} dot={false} name="RMS Envelope" />
+                          <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: 8, fontSize: 10 }} />
+                          <Line type="monotone" dataKey="rest_envelope" stroke="#E9BD4B" dot={false} strokeWidth={2} name="Phase 1 (Rest)" />
+                          <Line type="monotone" dataKey="cognitive_envelope" stroke="#C66D5B" dot={false} strokeWidth={2} name="Phase 2 (Cognitive)" />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-[#EAE6D9] space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#817D70]">Envelope Slope:</span>
-                      <span className="font-mono font-bold text-[#292820]">{tremorData.amplitude_slope}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#817D70]">RMS Magnitude:</span>
-                      <span className="font-mono font-bold text-[#292820]">{tremorData.rms_amplitude}</span>
-                    </div>
-                  </div>
-                </div>
+                  ) : <div className="flex h-56 items-center justify-center rounded-xl border border-dashed border-[#EAE6D9] text-center text-xs text-[#817D70]">Phase 2 has not been recorded yet.</div>}
+                </ChartCard>
               </div>
 
-              {/* Middle Row: FFT Power Spectrum (ParkScreen style with 4-6 Hz band highlighted) */}
-              <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 className="text-sm font-bold text-[#292820] font-heading">
-                      FFT Spectrum — Spectral Power Distribution
-                    </h4>
-                    <p className="text-[11px] text-[#817D70]">
-                      Discrete Fourier Transform with highlighted physiological tremor band (4.0–6.0 Hz)
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-[#FAF9F4] text-[#292820] border border-[#EAE6D9]">
-                      Dominant Peak: {tremorData.dominant_frequency_hz} Hz
-                    </span>
-                  </div>
-                </div>
-
-                <div className="h-64 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={tremorData.frequency_spectrum} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#EAE6D9" />
-                      <XAxis dataKey="frequency_hz" stroke="#817D70" fontSize={10} tickFormatter={(v) => `${v} Hz`} />
-                      <YAxis stroke="#817D70" fontSize={10} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: '10px', fontSize: '11px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
-                      />
-                      <ReferenceArea x1={4.0} x2={6.0} stroke="#E9BD4B" fill="#F4D66D" fillOpacity={0.25} />
-                      <Bar dataKey="power" fill="#292820" radius={[3, 3, 0, 0]} name="Spectral Energy" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <TremorSpectrum title="FFT Spectrum — Phase 1" phase={phase1Data} />
+                <TremorSpectrum title="FFT Spectrum — Phase 2" phase={phase2Data} />
               </div>
 
-              {/* Bottom Summary Section (Inspired by ParkScreen bottom report card) */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                {/* Horizontal Recording Quality Bar */}
-                <div className="md:col-span-7 bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm space-y-4">
-                  <h4 className="text-xs font-bold text-[#817D70] uppercase font-mono tracking-wider">
-                    Recording & Sampling Quality Audit
-                  </h4>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs font-semibold">
-                      <span className="text-[#292820]">Effective Frame Rate: {tremorData.effective_fps} FPS</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-                        tremorData.quality === 'Good' ? 'bg-[#789879]/20 text-[#789879]' : 'bg-[#D99A38]/20 text-[#D99A38]'
-                      }`}>
-                        STATUS: {tremorData.quality.toUpperCase()}
-                      </span>
-                    </div>
-
-                    {/* Quality 3-segment bar */}
-                    <div className="w-full h-3 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] flex overflow-hidden">
-                      <div className={`h-full ${tremorData.effective_fps >= 18 ? 'bg-[#789879]' : 'bg-[#FAF9F4]'} flex-1 border-r border-[#EAE6D9]`} title="Sufficient" />
-                      <div className={`h-full ${tremorData.effective_fps >= 24 ? 'bg-[#E9BD4B]' : 'bg-[#FAF9F4]'} flex-1 border-r border-[#EAE6D9]`} title="Optimal" />
-                      <div className={`h-full ${tremorData.effective_fps >= 28 ? 'bg-[#292820]' : 'bg-[#FAF9F4]'} flex-1`} title="High Quality" />
-                    </div>
-                  </div>
-
-                  <p className="text-[11px] text-[#817D70] leading-relaxed">
-                    Sampling meets the Nyquist criterion for 0.5–12.0 Hz bandpass filtering. Frame timestamps were uniformly resampled.
-                  </p>
-                </div>
-
-                {/* Neutral Measurement Telemetry Box */}
-                <div className="md:col-span-5 bg-[#FAF9F4] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h4 className="text-xs font-bold text-[#817D70] uppercase font-mono tracking-wider mb-2">
-                      Kinematic Telemetry Summary
-                    </h4>
-                    <div className="space-y-1.5 text-xs text-[#292820]">
-                      <div className="flex justify-between">
-                        <span className="text-[#817D70]">Observed Peak Frequency:</span>
-                        <span className="font-mono font-bold">{tremorData.dominant_frequency_hz} Hz</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#817D70]">4–6 Hz Band Power Ratio:</span>
-                        <span className="font-mono font-bold">{(tremorData.power_ratio_4_6hz * 100).toFixed(1)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#817D70]">Observation Duration:</span>
-                        <span className="font-mono font-bold">{tremorData.duration_seconds}s</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-[10px] text-[#817D70] mt-4 pt-3 border-t border-[#EAE6D9]">
-                    *Neutral signal processing observation. Does not constitute a clinical neurological diagnosis.
-                  </p>
-                </div>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <ChartCard title="Phase 1 (Rest) — Measurements" subtitle={`Recording quality: ${phase1Data?.quality || 'Unavailable'} · Effective FPS: ${phase1Data?.effective_fps ?? 0}`}>
+                  <dl className="grid grid-cols-2 gap-4 text-xs">
+                    <div><dt className="text-[#817D70]">Peak frequency</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{phase1Data?.dominant_frequency_hz ?? 0} Hz</dd></div>
+                    <div><dt className="text-[#817D70]">4–6 Hz band power</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{((phase1Data?.power_ratio_4_6hz || 0) * 100).toFixed(1)}%</dd></div>
+                    <div><dt className="text-[#817D70]">RMS amplitude</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{phase1Data?.rms_amplitude ?? 0}</dd></div>
+                    <div><dt className="text-[#817D70]">Duration</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{phase1Data?.duration_seconds ?? 0}s</dd></div>
+                  </dl>
+                </ChartCard>
+                <ChartCard title="Phase 2 (Cognitive Load) — Measurements" subtitle={phase2Data ? `Recording quality: ${phase2Data.quality} · Effective FPS: ${phase2Data.effective_fps}` : 'Complete the cognitive-load phase to add its measurements.'}>
+                  {phase2Data ? <dl className="grid grid-cols-2 gap-4 text-xs">
+                    <div><dt className="text-[#817D70]">Peak frequency</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{phase2Data.dominant_frequency_hz} Hz</dd></div>
+                    <div><dt className="text-[#817D70]">4–6 Hz band power</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{(phase2Data.power_ratio_4_6hz * 100).toFixed(1)}%</dd></div>
+                    <div><dt className="text-[#817D70]">RMS amplitude</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{phase2Data.rms_amplitude}</dd></div>
+                    <div><dt className="text-[#817D70]">Duration</dt><dd className="mt-1 font-mono font-bold text-[#292820]">{phase2Data.duration_seconds}s</dd></div>
+                  </dl> : <div className="flex h-20 items-center text-xs text-[#817D70]">Only the rest phase is available in this saved session.</div>}
+                </ChartCard>
               </div>
+
+              <p className="rounded-xl border border-[#EAE6D9] bg-[#FFFFFF] p-4 text-[11px] leading-relaxed text-[#817D70]">
+                These plots show measured hand movement and signal-processing features only. They are not a Parkinson’s disease risk score or a medical diagnosis; no disease classifier is used.
+              </p>
             </>
           ) : (
             <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-12 text-center space-y-4">

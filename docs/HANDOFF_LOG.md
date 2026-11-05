@@ -99,3 +99,31 @@ This document maintains a chronological record of handoffs between **OpenAI Code
   - [Clear, actionable next step]
 ```
 
+
+
+### Handoff Entry: 2026-11-05 16:30 UTC
+- **Outgoing Agent**: OpenAI Codex
+- **Incoming Agent**: Google Antigravity (or next Codex session)
+- **Current Development Phase**: Tremor Analysis / Report
+- **Work Completed in this Session**:
+  - Added a real two-window rest and cognitive-load tremor capture flow.
+  - Added requested report titles and independent waveform/FFT visualizations, plus envelope comparison.
+  - Preserved white chart surfaces and kept diagnostic risk classifications out of the report.
+- **Files Modified / Created**:
+  - `frontend/src/pages/LiveAssessment.jsx`
+  - `frontend/src/pages/AssessmentResults.jsx`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/TASKS.md`
+  - `PROMPT.md`
+  - `docs/HANDOFF_LOG.md`
+- **Verification Performed**:
+  - `npm ci`: succeeded; 0 vulnerabilities reported.
+  - `npm run build`: succeeded; existing large-chunk advisory remains.
+  - `git diff --check`: passed.
+- **Current Operational State**:
+  - Local source builds successfully. Phase 2 requires a fresh tremor assessment because old sessions contain only Phase 1.
+- **Known Quirks / Blockers**:
+  - Browser camera permission and live two-phase capture were not exercised in this session.
+- **Next Recommended Action for Incoming Agent**:
+  - Publish the current source changes, then capture both phases on the live page and verify the result report.

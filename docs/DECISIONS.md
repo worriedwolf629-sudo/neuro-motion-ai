@@ -102,3 +102,20 @@ This document tracks foundational architectural and technical decisions for Neur
   - Rapid setup: `git clone`, `npm install`, `pip install`, run.
   - Zero cloud dependencies during live stage presentations.
 
+
+
+## ADR-007: Capture Both Tremor Assessment Phases Before Comparing Them
+
+- **Date**: 2026-11-05
+- **Status**: Accepted
+- **Context**:
+  The report reference includes rest and cognitive-load displacement, envelope, and FFT plots. The existing browser flow recorded only one tremor window, so rendering a second phase from the same samples would misrepresent the measurement.
+- **Decision**:
+  Record a separate rest window and cognitive-load window, analyze each independently, and compare their measured envelopes and RMS amplitudes only after both are captured. Keep existing top-level Phase 1 result fields for compatibility, while adding nested `phase1` and `phase2` results.
+- **Alternatives Considered**:
+  - Duplicate Phase 1 data to fill Phase 2 plots: Rejected because it would create false measurements.
+  - Show a classifier-derived normal/stress/Parkinson score: Rejected under ADR-001; the product has no validated disease classifier.
+- **Consequences**:
+  - Tremor assessment requires two recording windows.
+  - Older one-phase sessions remain readable and show Phase 2 as unavailable.
+  - The report uses descriptive kinematic comparisons only and retains the existing white UI theme.

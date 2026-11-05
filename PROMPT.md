@@ -76,3 +76,21 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 - **Remaining work**: Live camera integration validation and optional local storage persistence.
 - **Next recommended action**: Start development servers (`uvicorn app.main:app` and `npm run dev`) to test live with webcam.
 
+
+
+### Entry 003: Two-Phase Tremor Assessment Report
+- **Date and time**: 2026-11-05
+- **Agent**: OpenAI Codex
+- **Task**: Match the uploaded hand-tremor reference report while preserving the existing white theme.
+- **Objective**: Capture valid independent rest and cognitive-load measurements and render each requested graph name and signal series without inventing diagnostic classifications.
+- **Files modified**:
+  - `frontend/src/pages/LiveAssessment.jsx`
+  - `frontend/src/pages/AssessmentResults.jsx`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/TASKS.md`
+  - `PROMPT.md`
+  - `docs/HANDOFF_LOG.md`
+- **Implementation**: Added sequential two-phase tremor capture, independent phase FFT/waveform plots, envelope comparison, and support for older one-phase stored sessions. Kept all graph surfaces white. Left out the reference's disease-risk category and score because the project does not implement a validated diagnostic classifier.
+- **Verification**: `npm ci` succeeded with 0 reported vulnerabilities. `npm run build` succeeded; Vite emitted its existing large-chunk advisory. `git diff --check` passed.
+- **Remaining work**: Publish the changes and exercise the two-phase flow with a fresh recording.

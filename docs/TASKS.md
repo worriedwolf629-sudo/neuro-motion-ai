@@ -102,6 +102,11 @@
 ---
 
 ### ✅ Completed
+- [x] **TASK-010**: Two-phase tremor report graphs
+  - **Owner**: OpenAI Codex
+  - **Completed On**: 2026-11-05
+  - **Summary**: Added separate rest and cognitive-load captures; report now shows the requested phase displacement, amplitude-envelope comparison, and per-phase FFT graphs on white cards. No diagnostic risk score is used.
+  - **Verification**: `npm run build` completed successfully.
 - [x] **TASK-000**: Repository Foundation & AI Collaboration Protocol
   - **Owner**: Google Antigravity
   - **Completed On**: 2026-11-05
