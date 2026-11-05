@@ -21,7 +21,7 @@ export default function AssessmentSelection({ setActivePage }) {
           Assessment Selection
         </h2>
         <p className="text-xs text-[#817D70] mt-1 font-mono uppercase tracking-wider">
-          Standardized webcam protocols • 10-second observation windows
+          Guided movement and voice signal tasks • short observation windows
         </p>
       </div>
 
@@ -122,6 +122,14 @@ export default function AssessmentSelection({ setActivePage }) {
         </div>
       </div>
 
+      <div className="bg-[#FFFFFF] rounded-2xl border border-[#EAE6D9] p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center"><Mic className="w-5 h-5 text-[#E9BD4B]" /></div>
+          <div><span className="text-[10px] font-mono uppercase tracking-wider text-[#789879] font-bold">Browser-only • 5 seconds</span><h3 className="text-base font-bold text-[#292820] mt-1">Voice Signal Assessment</h3><p className="text-xs text-[#817D70] mt-1 max-w-2xl">Measure estimated pitch stability and amplitude variation from a sustained vowel. Audio is processed locally and discarded; this task does not classify or diagnose disease.</p></div>
+        </div>
+        <button onClick={() => setActivePage('voice')} className="shrink-0 flex items-center justify-center gap-2 px-5 py-3 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] font-bold text-xs rounded-xl border border-[#E9BD4B] shadow-sm transition active:scale-95">Start Voice Task <ArrowRight className="w-3.5 h-3.5" /></button>
+      </div>
+
       {/* Future Roadmap Modules */}
       <div className="pt-6 border-t border-[#EAE6D9]">
         <h4 className="text-xs font-bold text-[#817D70] uppercase font-mono tracking-wider mb-4">
@@ -146,12 +154,12 @@ export default function AssessmentSelection({ setActivePage }) {
             <div className="flex items-center gap-3">
               <Mic className="w-5 h-5 text-[#817D70]" />
               <div>
-                <p className="text-xs font-bold text-[#292820]">Acoustic Speech Biomarkers</p>
-                <p className="text-[11px] text-[#817D70]">Microphone jitter, shimmer, and vocal tract fatigue tracking</p>
+                <p className="text-xs font-bold text-[#292820]">Voice Signal Analysis</p>
+                <p className="text-[11px] text-[#817D70]">Local sustained-vowel pitch and amplitude measurements</p>
               </div>
             </div>
             <span className="text-[10px] font-mono uppercase bg-[#EAE6D9] px-2 py-0.5 rounded text-[#817D70]">
-              In Development
+              Available
             </span>
           </div>
         </div>

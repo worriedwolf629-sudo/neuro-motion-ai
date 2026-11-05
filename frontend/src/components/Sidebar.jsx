@@ -106,13 +106,17 @@ export default function Sidebar({ activePage, setActivePage }) {
               <span className="text-[9px] font-mono uppercase bg-[#F5F1E6] px-1.5 py-0.5 rounded text-[#817D70]">Soon</span>
             </div>
 
-            <div className="px-3.5 py-2 rounded-xl text-xs font-medium text-[#817D70]/60 flex items-center justify-between cursor-not-allowed">
-              <span className="flex items-center gap-2">
-                <Mic className="w-3.5 h-3.5 text-[#817D70]/50" />
-                Speech Analysis
-              </span>
-              <span className="text-[9px] font-mono uppercase bg-[#F5F1E6] px-1.5 py-0.5 rounded text-[#817D70]">Soon</span>
-            </div>
+            <button
+              onClick={() => setActivePage('voice')}
+              className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium flex items-center justify-between transition ${
+                activePage === 'voice'
+                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+              }`}
+            >
+              <span className="flex items-center gap-2"><Mic className="w-3.5 h-3.5 text-[#292820]" />Voice Signal</span>
+              <ChevronRight className="w-3 h-3 text-[#817D70]" />
+            </button>
           </div>
         </div>
 

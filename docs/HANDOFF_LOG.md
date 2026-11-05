@@ -166,3 +166,38 @@ This document maintains a chronological record of handoffs between **OpenAI Code
 - **Current Operational State**: Build is ready; live browser camera flow was not exercised in this session.
 - **Known Quirks / Blockers**: No validated disease classifier; this UI reports measurements and signal quality only.
 - **Next Recommended Action for Incoming Agent**: Check the published live site and capture a new assessment to inspect the live profile.
+
+
+### Handoff Entry: 2026-11-05 17:44 UTC
+- **Outgoing Agent**: OpenAI Codex
+- **Incoming Agent**: Any
+- **Current Development Phase**: Voice Signal Task
+- **Work Completed in this Session**:
+  - Added a five-second browser microphone task with estimated pitch and RMS-amplitude variation, a pitch timeline, and CSV export.
+  - Added navigation from the assessment selector and sidebar, plus privacy and non-diagnostic disclosures.
+  - Audio is processed locally and released after feature extraction; voice values are not persisted.
+- **Files Modified / Created**:
+  - `frontend/src/features/voice/voiceFeatures.js`
+  - `frontend/src/pages/VoiceAssessment.jsx`
+  - `frontend/src/App.jsx`
+  - `frontend/src/components/Sidebar.jsx`
+  - `frontend/src/pages/AssessmentSelection.jsx`
+  - `frontend/src/pages/LandingPage.jsx`
+  - `frontend/src/pages/AboutMethodology.jsx`
+  - `README.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/TASKS.md`
+  - `PROMPT.md`
+  - `docs/HANDOFF_LOG.md`
+- **Verification Performed**:
+  - `npm ci`: passed; 0 vulnerabilities.
+  - `npm run build`: passed; Vite emitted the existing large-chunk advisory.
+  - `git diff --check`: passed.
+- **Current Operational State**:
+  - Source changes are on branch `codex/voice-signal-assessment`, based on the collaborator's latest `origin/main` commit. They have not been pushed or published.
+- **Known Quirks / Blockers**:
+  - Live microphone permission/capture was not independently verified by Codex; the user requested and was given the local test page.
+  - Pitch estimates are experimental and may be inaccurate with noise, weak voicing, or device audio processing.
+- **Next Recommended Action for Incoming Agent**:
+  - Push this branch and open a pull request for review; do not merge until the collaborator approves it.

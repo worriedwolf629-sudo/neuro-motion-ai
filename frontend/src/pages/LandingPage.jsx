@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Activity,
   Radio,
+  Mic,
   ArrowRight,
   ShieldCheck,
   Video,
@@ -46,7 +47,7 @@ export default function LandingPage({ setActivePage }) {
       <section className="px-8 py-20 max-w-5xl mx-auto text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F5F1E6] border border-[#EAE6D9] text-xs font-mono font-semibold text-[#817D70]">
           <span className="w-2 h-2 rounded-full bg-[#789879] animate-pulse" />
-          Computer-Vision Motor Kinematics Platform
+          Movement and Voice Signal Assessment Prototype
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#292820] font-heading leading-tight">
@@ -55,8 +56,8 @@ export default function LandingPage({ setActivePage }) {
         </h1>
 
         <p className="text-base sm:text-lg text-[#817D70] max-w-2xl mx-auto font-body leading-relaxed">
-          An explainable, browser-based motor assessment platform that uses webcam hand tracking
-          to quantify resting-hand tremor frequencies and rapid finger-tapping kinematics.
+          An explainable, browser-based assessment platform for movement measurements and
+          exploratory voice-signal features, processed locally in your browser.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -80,14 +81,14 @@ export default function LandingPage({ setActivePage }) {
       <section className="px-8 py-12 max-w-6xl mx-auto w-full">
         <div className="text-center mb-12">
           <h2 className="text-2xl font-bold font-heading text-[#292820]">
-            Dual Analytical Modalities
+            Movement and Voice Signal Measurements
           </h2>
           <p className="text-xs text-[#817D70] mt-1 font-mono uppercase tracking-wider">
             Zero specialized hardware • Browser-local MediaPipe tracking
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {/* Module 1 Card */}
           <div className="bg-[#FFFFFF] rounded-2xl border border-[#EAE6D9] p-8 shadow-sm hover:border-[#E9BD4B] transition space-y-4">
             <div className="w-12 h-12 rounded-xl bg-[#FFFFFF] border border-[#EAE6D9] flex items-center justify-center text-[#292820]">
@@ -104,6 +105,18 @@ export default function LandingPage({ setActivePage }) {
               <span className="w-1.5 h-1.5 rounded-full bg-[#789879]" />
               Butterworth filtering (0.5–12 Hz) • Uniform 30 Hz grid
             </div>
+          </div>
+          <div className="bg-[#FFFFFF] rounded-2xl border border-[#EAE6D9] p-8 shadow-sm hover:border-[#E9BD4B] transition space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-[#FFFFFF] border border-[#EAE6D9] flex items-center justify-center text-[#292820]">
+              <Mic className="w-6 h-6 text-[#E9BD4B]" />
+            </div>
+            <h3 className="text-lg font-bold text-[#292820] font-heading">Voice Signal Assessment</h3>
+            <p className="text-xs text-[#817D70] leading-relaxed">
+              Records a five-second sustained vowel to estimate pitch stability and RMS amplitude variation. Audio is analyzed locally and discarded; measurements are not a diagnosis or validated disease biomarker.
+            </p>
+            <button onClick={() => setActivePage('voice')} className="pt-2 flex items-center gap-2 font-mono text-[11px] text-[#292820] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#789879]" />Open microphone task <ArrowRight className="w-3 h-3" />
+            </button>
           </div>
 
           {/* Module 2 Card */}

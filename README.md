@@ -8,7 +8,7 @@
 
 **Understand movement beyond what the eye can see.**
 
-NeuroMotion AI is an explainable, browser-based motor assessment platform that utilizes commodity webcam hand tracking and deterministic signal processing to quantify resting-hand tremor frequencies and rapid finger-tapping kinematics.
+NeuroMotion AI is an explainable, browser-based assessment prototype that uses commodity webcam hand tracking and local signal processing to quantify resting-hand tremor, finger-tapping kinematics, and exploratory voice-signal measurements.
 
 ---
 
@@ -21,7 +21,7 @@ NeuroMotion AI is an explainable, browser-based motor assessment platform that u
 > - **We are NOT building a Parkinson's disease prediction model or diagnostic classifier.**
 > - **We DO NOT calculate disease probabilities, severity risk scores, or diagnostic labels.**
 > - **The software does NOT claim clinical validation.**
-> - All reported telemetry outputs are **purely descriptive physical kinematics** (oscillation frequency in Hz, tapping intervals, amplitude fatigue decrement).
+> - All reported telemetry outputs are **descriptive signal measurements** (movement frequencies, tapping intervals, estimated voice pitch, and amplitude variation).
 > - These observations must never replace consultation with a qualified neurologist or formal in-person MDS-UPDRS examination.
 
 ---
@@ -37,14 +37,14 @@ Observational motor assessments—such as items on the **Movement Disorder Socie
 ### The NeuroMotion AI Solution
 NeuroMotion AI bridges this gap with a **zero-hardware-overhead, privacy-first, fully explainable kinematic engine**:
 - **Commodity RGB Webcams**: Runs at 30+ FPS directly in modern web browsers using WebGL acceleration.
-- **Client-Side Privacy**: Raw camera frames never leave the user's browser. Only mathematical coordinate time-series are computed.
+- **Client-Side Privacy**: Camera frames and microphone audio are processed in the browser and are not uploaded. Voice audio is discarded after feature extraction.
 - **Deterministic Signal Processing**: Replaces black-box neural networks with transparent signal processing (Fast Fourier Transform, Butterworth filtering, anatomical scale normalization, and peak prominence detection).
 
 ---
 
 ## 2. Core Scientific Methodology
 
-NeuroMotion AI implements two distinct motor assessment modules:
+NeuroMotion AI offers two movement assessments and an exploratory voice-signal task:
 
 ```
 Webcam Frame (Browser)
@@ -66,6 +66,8 @@ MediaPipe Tasks-Vision (21 3D Landmarks @ ~30 FPS)
                                                 ▼
                          [Explainable Telemetry Dashboard & Motor Report]
 ```
+
+The microphone task records a five-second sustained vowel, estimates pitch from short audio windows, calculates pitch and RMS-amplitude variation, and plots estimated pitch over time. Audio is processed locally in memory and discarded; it is not uploaded or stored. This is not a validated voice biomarker or a diagnostic feature.
 
 ### Module A: Resting Tremor Analysis
 1. **Landmark Extraction**: Tracks Landmark 8 (Index Fingertip) while the subject's forearm rests comfortably.
@@ -97,6 +99,7 @@ The application is architected as a high-performance, client-side progressive we
 | **Computer Vision** | `@mediapipe/tasks-vision` | WebAssembly & WebGL hand landmark detection |
 | **Kinematics Engine** | Pure JavaScript/TypeScript (`kinematicsEngine.js`) | Client-side FFT, resampling, Butterworth filters, kinematics |
 | **Visual Telemetry** | Recharts | Displacement waveforms, 4–6 Hz highlighted FFT spectra |
+| **Voice Signal Analysis** | Browser MediaRecorder + Web Audio | Local estimated pitch and RMS-amplitude variation; audio discarded |
 | **CI/CD & Hosting** | GitHub Pages + GitHub Actions | Automated build and HTTPS deployment on push |
 
 ---
@@ -153,6 +156,7 @@ neuro-motion-ai/
 ### Prerequisites
 - **Node.js**: v18+ (v20+ recommended)
 - **Webcam**: Standard USB or built-in webcam
+- **Microphone**: Required only for the optional voice task
 - **Browser**: Google Chrome, Microsoft Edge, or Mozilla Firefox (WebGL enabled)
 
 ### Running the Application
@@ -170,3 +174,5 @@ npm run dev
 ```
 
 Open your browser at **`http://localhost:5173/`** (or the port specified in terminal output).
+
+For the voice task, open **Assessment Selection → Voice Signal Assessment**, allow microphone access, and sustain a comfortable “ah” sound during the five-second capture. The browser analyzes audio locally and discards it; the exported CSV contains derived signal measurements only. Microphone access requires HTTPS or localhost.
