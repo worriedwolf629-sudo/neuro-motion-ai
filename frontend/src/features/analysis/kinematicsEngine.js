@@ -363,3 +363,4 @@ export function analyzeFingerTappingKinematics(samples, calibrationThreshold = n
     }))
   };
 }
+
