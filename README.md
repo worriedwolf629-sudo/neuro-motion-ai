@@ -1,7 +1,7 @@
 # NeuroMotion AI
 
 [![Project Status: Planned / Foundation Phase](https://img.shields.io/badge/status-foundation%20phase-yellow.svg)](#current-development-status)
-[![License: MIT/Open Source Compatible](https://img.shields.io/badge/license-pending%20audit-blue.svg)](#research-attribution--licensing)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#important-medical-disclaimer)
 [![Hackathon: 24-Hour Healthcare Hackathon](https://img.shields.io/badge/event-healthcare%20hackathon-red.svg)](#project-overview)
 
 An explainable, computer-vision-based motor assessment platform that uses standard webcam hand tracking to quantify movement characteristics through resting-hand tremor analysis and finger-tapping assessment.
@@ -125,16 +125,4 @@ npm install
 npm run dev
 ```
 
----
-
-## Research Attribution & Licensing
-
-NeuroMotion AI studies and adapts techniques from the open-source scientific community:
-
-1. **Parkscreen** ([yasnaask/parkscreen](https://github.com/yasnaask/parkscreen))
-   - *Explored areas*: Webcam hand tracking, signal processing, FFT frequency analysis, resting tremor measurement.
-2. **UBU-PD-FT-Assessment** ([arelraptor/UBU-PD-FT-Assessment](https://github.com/arelraptor/UBU-PD-FT-Assessment))
-   - *Explored areas*: MediaPipe landmarks, thumb-index Euclidean distance calculation, tapping cycle segmentation, kinematics.
-
-See [RESEARCH_REFERENCES.md](docs/RESEARCH_REFERENCES.md) and [REUSE_AND_ATTRIBUTION.md](docs/REUSE_AND_ATTRIBUTION.md) for licensing verification, exact adaptation boundaries, and attribution notices. We do not claim invention of existing signal processing methods.
 
