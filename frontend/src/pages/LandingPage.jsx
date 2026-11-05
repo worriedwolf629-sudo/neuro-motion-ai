@@ -14,9 +14,9 @@ import {
 
 export default function LandingPage({ setActivePage }) {
   return (
-    <div className="min-h-full bg-[#FAF9F4] text-[#292820] flex flex-col">
+    <div className="min-h-full bg-[#FFFFFF] text-[#292820] flex flex-col">
       {/* Top Banner Navigation */}
-      <nav className="h-16 px-8 border-b border-[#EAE6D9] bg-[#FAF9F4]/80 backdrop-blur-md flex items-center justify-between sticky top-0 z-30">
+      <nav className="h-16 px-8 border-b border-[#EAE6D9] bg-[#FFFFFF]/80 backdrop-blur-md flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#F4D66D] border border-[#E9BD4B] flex items-center justify-center shadow-sm">
             <Activity className="w-5 h-5 text-[#292820]" />
@@ -90,7 +90,7 @@ export default function LandingPage({ setActivePage }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Module 1 Card */}
           <div className="bg-[#FFFFFF] rounded-2xl border border-[#EAE6D9] p-8 shadow-sm hover:border-[#E9BD4B] transition space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#292820]">
+            <div className="w-12 h-12 rounded-xl bg-[#FFFFFF] border border-[#EAE6D9] flex items-center justify-center text-[#292820]">
               <Radio className="w-6 h-6 text-[#E9BD4B]" />
             </div>
             <h3 className="text-lg font-bold text-[#292820] font-heading">
@@ -108,7 +108,7 @@ export default function LandingPage({ setActivePage }) {
 
           {/* Module 2 Card */}
           <div className="bg-[#FFFFFF] rounded-2xl border border-[#EAE6D9] p-8 shadow-sm hover:border-[#E9BD4B] transition space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#292820]">
+            <div className="w-12 h-12 rounded-xl bg-[#FFFFFF] border border-[#EAE6D9] flex items-center justify-center text-[#292820]">
               <Activity className="w-6 h-6 text-[#E9BD4B]" />
             </div>
             <h3 className="text-lg font-bold text-[#292820] font-heading">
@@ -135,7 +135,7 @@ export default function LandingPage({ setActivePage }) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#EAE6D9]">
-              <span className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] text-xs font-mono font-bold flex items-center justify-center text-[#292820] mb-3">
+              <span className="w-7 h-7 rounded-lg bg-[#FFFFFF] border border-[#EAE6D9] text-xs font-mono font-bold flex items-center justify-center text-[#292820] mb-3">
                 1
               </span>
               <h4 className="text-sm font-bold text-[#292820] mb-1">Webcam Hand Tracking</h4>
@@ -145,7 +145,7 @@ export default function LandingPage({ setActivePage }) {
             </div>
 
             <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#EAE6D9]">
-              <span className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] text-xs font-mono font-bold flex items-center justify-center text-[#292820] mb-3">
+              <span className="w-7 h-7 rounded-lg bg-[#FFFFFF] border border-[#EAE6D9] text-xs font-mono font-bold flex items-center justify-center text-[#292820] mb-3">
                 2
               </span>
               <h4 className="text-sm font-bold text-[#292820] mb-1">Signal Processing</h4>
@@ -155,7 +155,7 @@ export default function LandingPage({ setActivePage }) {
             </div>
 
             <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#EAE6D9]">
-              <span className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] text-xs font-mono font-bold flex items-center justify-center text-[#292820] mb-3">
+              <span className="w-7 h-7 rounded-lg bg-[#FFFFFF] border border-[#EAE6D9] text-xs font-mono font-bold flex items-center justify-center text-[#292820] mb-3">
                 3
               </span>
               <h4 className="text-sm font-bold text-[#292820] mb-1">Explainable Telemetry</h4>
