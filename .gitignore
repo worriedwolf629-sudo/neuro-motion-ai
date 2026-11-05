@@ -70,3 +70,4 @@ recordings/*.json
 research/downloads/
 research/clones/
 
+frontend/public/models/*.task
