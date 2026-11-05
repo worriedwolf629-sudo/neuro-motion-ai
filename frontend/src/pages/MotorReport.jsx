@@ -3,7 +3,6 @@ import {
   Download,
   Printer,
   FileText,
-  ShieldAlert,
   Radio,
   Activity,
   Calendar,
@@ -202,14 +201,6 @@ export default function MotorReport({
           </div>
         </div>
 
-        {/* Section 3: Limitations & Medical Disclaimer */}
-        <div className="bg-[#FAF9F4] border border-[#D99A38] rounded-xl p-4 flex items-start gap-3">
-          <ShieldAlert className="w-5 h-5 text-[#D99A38] shrink-0 mt-0.5" />
-          <div className="text-[11px] text-[#292820] leading-relaxed">
-            <strong className="font-bold block mb-0.5 text-[#292820]">Mandatory Research Prototype Disclaimer</strong>
-            NeuroMotion AI is an experimental computer-vision motor assessment tool intended strictly for research and movement quantification. <strong>This report is NOT a clinical diagnosis for Parkinson's disease or any motor disorder.</strong> The platform does NOT utilize machine-learning disease classifiers. All reported values are physical kinematic measurements and signal-processing harmonics.
-          </div>
-        </div>
       </div>
     </div>
   );

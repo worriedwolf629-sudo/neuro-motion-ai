@@ -71,14 +71,6 @@ export default function AboutMethodology({ setActivePage }) {
         </p>
       </div>
 
-      {/* Section 4: Non-Diagnostic Disclaimer */}
-      <div className="bg-[#FAF9F4] border border-[#D99A38] rounded-2xl p-6 text-xs text-[#292820] space-y-2">
-        <strong className="font-bold text-[#292820] block text-sm">Non-Diagnostic Research Tool</strong>
-        <p className="text-[#817D70] leading-relaxed">
-          NeuroMotion AI does not predict or diagnose Parkinson's disease, essential tremor, or any neurological condition. No machine learning classifiers or probability algorithms are used to label health status. All telemetry consists of physical kinematic observations intended for exploratory benchmarking.
-        </p>
-      </div>
-
       <div className="pt-2">
         <button
           onClick={() => setActivePage('assessments')}
