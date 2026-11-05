@@ -15,7 +15,7 @@ import {
 
 export default function Sidebar({ activePage, setActivePage }) {
   return (
-    <aside className="w-64 bg-[#FAF9F4] border-r border-[#EAE6D9] flex flex-col justify-between p-4 z-20 shrink-0 h-screen select-none">
+    <aside className="w-64 bg-[#FFFFFF] border-r border-[#EAE6D9] flex flex-col justify-between p-4 z-20 shrink-0 h-screen select-none">
       <div>
         {/* Brand Header */}
         <div
