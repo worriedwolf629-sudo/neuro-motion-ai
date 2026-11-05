@@ -107,6 +107,11 @@
   - **Completed On**: 2026-11-05
   - **Summary**: Added separate rest and cognitive-load captures; report now shows the requested phase displacement, amplitude-envelope comparison, and per-phase FFT graphs on white cards. No diagnostic risk score is used.
   - **Verification**: `npm run build` completed successfully.
+- [x] **TASK-011**: Live movement measurement profile
+  - **Owner**: OpenAI Codex
+  - **Completed On**: 2026-11-05
+  - **Summary**: Added a live, 2 Hz readout of tremor amplitude, 4–6 Hz signal-power share, guarded frequency estimate, recording quality, and tapping cadence/amplitude. Values come from the same analysis functions as the report; no disease probability or safety classification is displayed.
+  - **Verification**: `npm run build` and `git diff --check`.
 - [x] **TASK-000**: Repository Foundation & AI Collaboration Protocol
   - **Owner**: Google Antigravity
   - **Completed On**: 2026-11-05

@@ -149,3 +149,20 @@ This document maintains a chronological record of handoffs between **OpenAI Code
   - No disease classifier output is produced.
 - **Next Recommended Action for Incoming Agent**:
   - Publish the UI update, then verify the rendered summary with a fresh two-phase recording.
+### Handoff Entry: 2026-11-05 17:20 UTC
+- **Outgoing Agent**: OpenAI Codex
+- **Incoming Agent**: Any
+- **Current Development Phase**: Tremor Analysis / Live Dashboard
+- **Work Completed in this Session**:
+  - Added live descriptive tremor and tapping measurements at 2 Hz using the existing analysis engine.
+  - Guarded frequency display until 3 seconds and at least 24 FPS; preserved the white theme.
+  - Documented why disease probabilities and safe/fatal labels are excluded.
+- **Files Modified / Created**:
+  - `frontend/src/pages/LiveAssessment.jsx`
+  - `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `PROMPT.md`
+- **Verification Performed**:
+  - `npm run build` succeeded (existing large-chunk warning only).
+  - `git diff --check` passed.
+- **Current Operational State**: Build is ready; live browser camera flow was not exercised in this session.
+- **Known Quirks / Blockers**: No validated disease classifier; this UI reports measurements and signal quality only.
+- **Next Recommended Action for Incoming Agent**: Check the published live site and capture a new assessment to inspect the live profile.

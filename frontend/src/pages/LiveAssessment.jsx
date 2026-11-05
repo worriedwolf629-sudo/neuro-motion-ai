@@ -30,10 +30,12 @@ export default function LiveAssessment({
   const [isProcessing, setIsProcessing] = useState(false);
   const [tremorPhase, setTremorPhase] = useState('rest');
   const [restingTremor, setRestingTremor] = useState(null);
+  const [liveTelemetry, setLiveTelemetry] = useState(null);
 
   const landmarkBufferRef = useRef([]);
   const recordingTimerRef = useRef(null);
   const calibrationSamplesRef = useRef([]);
+  const lastTelemetryUpdateRef = useRef(0);
 
   // Auto-stop recording at 10s
   useEffect(() => {
@@ -59,6 +61,15 @@ export default function LiveAssessment({
   const handleLandmarkSample = (sample) => {
     if (isRecording) {
       landmarkBufferRef.current.push(sample);
+      // Refresh the descriptive live readout at 2 Hz to keep camera rendering smooth.
+      if (sample.timestamp_ms - lastTelemetryUpdateRef.current >= 500) {
+        lastTelemetryUpdateRef.current = sample.timestamp_ms;
+        const captured = landmarkBufferRef.current;
+        const results = mode === 'tremor'
+          ? analyzeTremorKinematics(captured, 30.0)
+          : analyzeFingerTappingKinematics(captured, calibrationData?.threshold, 30.0);
+        setLiveTelemetry({ ...results, sample_count: captured.length });
+      }
     }
     if (isCalibrating && sample.landmarks && sample.landmarks.length >= 10) {
       const lm = sample.landmarks;
@@ -90,6 +101,8 @@ export default function LiveAssessment({
 
   const startTest = () => {
     landmarkBufferRef.current = [];
+    lastTelemetryUpdateRef.current = 0;
+    setLiveTelemetry(null);
     setNotice(null);
     setIsRecording(true);
   };
@@ -176,6 +189,37 @@ export default function LiveAssessment({
           <span>{tremorPhase === 'rest' ? 'Resting hand' : 'Cognitive load'}</span>
         </div>
       )}
+
+      <section className="rounded-2xl border border-[#EAE6D9] bg-[#FFFFFF] p-5 shadow-sm" aria-live="polite">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-bold text-[#292820]">Live movement profile</h3>
+            <p className="mt-1 text-[11px] text-[#817D70]">Measured from tracked hand landmarks during this recording. Not a disease probability.</p>
+          </div>
+          <span className={`rounded-full border px-3 py-1 text-[10px] font-bold ${!liveTelemetry ? 'border-[#EAE6D9] bg-[#FAF9F4] text-[#817D70]' : liveTelemetry.quality === 'Good' ? 'border-[#B7D7C0] bg-[#EFF7F0] text-[#39734A]' : liveTelemetry.quality === 'Acceptable' ? 'border-[#E9BD4B] bg-[#FFF8DF] text-[#8B6810]' : 'border-[#E9BD4B] bg-[#FAF9F4] text-[#817D70]'}`}>
+            {isRecording ? `RECORDING · ${liveTelemetry?.quality || 'Collecting data'}` : liveTelemetry ? `LAST SAMPLE · ${liveTelemetry.quality}` : 'AWAITING RECORDING'}
+          </span>
+        </div>
+        {mode === 'tremor' ? (
+          <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <LiveMetric label="Movement amplitude (RMS)" value={liveTelemetry ? `${liveTelemetry.rms_amplitude} a.u.` : '—'} />
+            <LiveMetric label="4–6 Hz band power" value={liveTelemetry ? `${(liveTelemetry.power_ratio_4_6hz * 100).toFixed(1)}%` : '—'} />
+            <LiveMetric label="Dominant frequency" value={liveTelemetry?.duration_seconds >= 3 && liveTelemetry?.effective_fps >= 24 ? `${liveTelemetry.dominant_frequency_hz} Hz` : 'Need 3s & ≥24 FPS'} />
+            <LiveMetric label="Effective sampling" value={liveTelemetry ? `${liveTelemetry.effective_fps} FPS` : '—'} />
+          </div>
+        ) : (
+          <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <LiveMetric label="Detected tap cycles" value={liveTelemetry?.total_taps ?? '—'} />
+            <LiveMetric label="Tapping rate" value={liveTelemetry ? `${liveTelemetry.taps_per_second} taps/s` : '—'} />
+            <LiveMetric label="Mean normalized amplitude" value={liveTelemetry ? `${liveTelemetry.average_amplitude}` : '—'} />
+            <LiveMetric label="Effective sampling" value={liveTelemetry ? `${liveTelemetry.effective_fps} FPS` : '—'} />
+          </div>
+        )}
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#F5F1E6]" role="img" aria-label={liveTelemetry ? mode === 'tremor' ? `Measured 4 to 6 hertz band power ${Math.round(liveTelemetry.power_ratio_4_6hz * 100)} percent` : `Measured normalized tapping amplitude ${liveTelemetry.average_amplitude}` : 'No signal measurement yet'}>
+          <div className="h-full rounded-full bg-[#E9BD4B] transition-[width] duration-300" style={{ width: `${mode === 'tremor' ? Math.min(100, Math.max(0, (liveTelemetry?.power_ratio_4_6hz || 0) * 100)) : Math.min(100, Math.max(0, (liveTelemetry?.average_amplitude || 0) * 100))}%` }} />
+        </div>
+        <p className="mt-2 text-[10px] text-[#817D70]">{mode === 'tremor' ? 'Bar shows measured share of signal power in the 4–6 Hz band; it is not a risk score.' : 'Bar visualizes the measured normalized tapping amplitude.'} {liveTelemetry?.duration_seconds < 3 && mode === 'tremor' ? 'Frequency estimate is withheld until at least 3 seconds are available.' : ''}</p>
+      </section>
 
       {/* Main Grid: Camera & Guidance */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -312,5 +356,12 @@ export default function LiveAssessment({
       </div>
     </div>
   );
+}
+
+function LiveMetric({ label, value }) {
+  return <div className="min-w-0 rounded-xl border border-[#EAE6D9] bg-[#FAF9F4] p-3">
+    <div className="text-[10px] font-semibold text-[#817D70]">{label}</div>
+    <div className="mt-1 truncate font-mono text-lg font-bold text-[#292820]">{value}</div>
+  </div>;
 }
 

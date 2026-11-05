@@ -105,3 +105,11 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 - **Implementation**: Added a relative amplitude bar, measured phase values, and Phase 2 / Phase 1 RMS ratio. It contains no class percentages, disease label, or risk score.
 - **Verification**: `npm run build` succeeded; `git diff --check` passed. Existing Vite large-chunk advisory remains.
 - **Research note**: ParkScreen's `visualizer.py` plots classifier probabilities and `risk_score`; `classifier.py` uses SVC `predict_proba`; README states the training data is simulated rather than clinical.
+### Entry 004: Live Descriptive Movement Profile
+- **Date and time**: 2026-11-05
+- **Agent**: OpenAI Codex
+- **Task**: Add a live measurement indicator requested in place of an unsupported disease-probability gauge.
+- **Files modified**: `frontend/src/pages/LiveAssessment.jsx`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `docs/HANDOFF_LOG.md`, `PROMPT.md`.
+- **Implementation**: Reuses the existing deterministic analyzers for a 2 Hz live readout. Tremor frequency is withheld until 3 seconds and 24 FPS are present. White UI colors are preserved.
+- **Verification**: `npm run build`; `git diff --check`.
+- **Limit**: Readouts describe captured movement and sampling only; they are not disease chances or a safety assessment.

@@ -56,6 +56,7 @@
   - Run MediaPipe Hands client-side to extract 21 $(x, y, z)$ landmarks in real-time without sending raw video streams across the network (privacy-preserving & zero backend GPU requirements).
   - Draw real-time hand skeleton overlay on an HTML5 canvas layer.
   - Buffer landmark streams with high-resolution timestamps (`performance.now()`).
+- During an active assessment, refresh a descriptive movement profile at 2 Hz using the same in-browser kinematics functions used for the final report. Tremor frequency is shown only after at least 3 seconds and an effective sample rate of at least 24 FPS.
   - Dispatch batches of coordinate time series to the backend analysis service.
   - Render interactive charts:
     - Tremor displacement waveform ($y(t)$).

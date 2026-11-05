@@ -119,3 +119,11 @@ This document tracks foundational architectural and technical decisions for Neur
   - Tremor assessment requires two recording windows.
   - Older one-phase sessions remain readable and show Phase 2 as unavailable.
   - The report uses descriptive kinematic comparisons only and retains the existing white UI theme.
+
+## ADR-008: Live Readouts Are Measurements, Not Disease Probabilities
+
+- **Date**: 2026-11-05
+- **Status**: Accepted
+- **Context**: Users asked for a live “chance” or safe/fatal result similar to ParkScreen. NeuroMotion has no clinically validated disease classifier, and the ParkScreen class outputs do not establish calibrated real-world disease probabilities.
+- **Decision**: Show live movement amplitude, measured 4–6 Hz signal-power share, tapping kinematics, and sampling quality using the same deterministic analyzer as the final report. Withhold the tremor frequency until at least 3 seconds and 24 FPS are available. Do not show a disease probability, risk score, or safe/fatal label.
+- **Consequences**: The live profile stays factual and interpretable; it must retain explanatory labels and must not imply that any individual metric predicts disease.
