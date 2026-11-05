@@ -2,7 +2,7 @@
 
 @layer base {
   :root {
-    --bg-main: #FAF9F4;
+    --bg-main: #FFFFFF;
     --bg-secondary: #F5F1E6;
     --card-white: #FFFFFF;
     --accent-primary: #F4D66D;
@@ -21,7 +21,7 @@
 
 body {
   font-family: var(--font-body);
-  background-color: #FAF9F4;
+  background-color: #FFFFFF;
   color: #292820;
   overflow-x: hidden;
 }
