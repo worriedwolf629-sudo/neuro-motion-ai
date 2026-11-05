@@ -201,6 +201,33 @@ export default function AssessmentResults({
                 </ChartCard>
               </div>
 
+              <ChartCard
+                title="Cognitive Load Response"
+                subtitle="Measured Phase 2 RMS amplitude relative to Phase 1 (Rest). This is a signal comparison, not a class probability."
+              >
+                {phase2Data && cognitiveAmplification != null ? (
+                  <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto]">
+                    <div>
+                      <div className="mb-2 flex justify-between text-[11px] text-[#817D70]">
+                        <span>Phase 1 (Rest): <strong className="font-mono text-[#292820]">{phase1Data.rms_amplitude}</strong></span>
+                        <span>Phase 2 (Cognitive Load): <strong className="font-mono text-[#292820]">{phase2Data.rms_amplitude}</strong></span>
+                      </div>
+                      <div className="relative h-3 overflow-hidden rounded-full border border-[#EAE6D9] bg-[#F5F1E6]" aria-label={`Cognitive amplification ${cognitiveAmplification} times`}>
+                        <div className="h-full rounded-full bg-[#E9BD4B]" style={{ width: `${Math.min(100, Math.max(0, cognitiveAmplification / 2 * 100))}%` }} />
+                        <span className="absolute inset-y-[-2px] left-1/2 border-l border-dashed border-[#817D70]" aria-hidden="true" />
+                      </div>
+                      <div className="mt-1 flex justify-between text-[10px] text-[#817D70]"><span>0×</span><span>1× baseline</span><span>2×</span></div>
+                    </div>
+                    <div className="rounded-xl border border-[#EAE6D9] bg-[#FFFFFF] px-5 py-3 text-center">
+                      <div className="font-mono text-xl font-bold text-[#292820]">{cognitiveAmplification}×</div>
+                      <div className="mt-1 text-[10px] text-[#817D70]">Phase 2 / Phase 1 RMS</div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-[#817D70]">Record both phases to calculate a measured amplitude comparison.</p>
+                )}
+              </ChartCard>
+
               <p className="rounded-xl border border-[#EAE6D9] bg-[#FFFFFF] p-4 text-[11px] leading-relaxed text-[#817D70]">
                 These plots show measured hand movement and signal-processing features only. They are not a Parkinson’s disease risk score or a medical diagnosis; no disease classifier is used.
               </p>

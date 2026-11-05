@@ -94,3 +94,14 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 - **Implementation**: Added sequential two-phase tremor capture, independent phase FFT/waveform plots, envelope comparison, and support for older one-phase stored sessions. Kept all graph surfaces white. Left out the reference's disease-risk category and score because the project does not implement a validated diagnostic classifier.
 - **Verification**: `npm ci` succeeded with 0 reported vulnerabilities. `npm run build` succeeded; Vite emitted its existing large-chunk advisory. `git diff --check` passed.
 - **Remaining work**: Publish the changes and exercise the two-phase flow with a fresh recording.
+
+
+### Entry 004: Non-Diagnostic Cognitive-Load Summary Panel
+- **Date and time**: 2026-11-05
+- **Agent**: OpenAI Codex
+- **Task**: Match the uploaded report's lower summary area without presenting ParkScreen's classifier output.
+- **Objective**: Show NeuroMotion's real two-phase RMS amplitude comparison in the unchanged white theme.
+- **Files modified**: `frontend/src/pages/AssessmentResults.jsx`, `PROMPT.md`, `docs/HANDOFF_LOG.md`.
+- **Implementation**: Added a relative amplitude bar, measured phase values, and Phase 2 / Phase 1 RMS ratio. It contains no class percentages, disease label, or risk score.
+- **Verification**: `npm run build` succeeded; `git diff --check` passed. Existing Vite large-chunk advisory remains.
+- **Research note**: ParkScreen's `visualizer.py` plots classifier probabilities and `risk_score`; `classifier.py` uses SVC `predict_proba`; README states the training data is simulated rather than clinical.
