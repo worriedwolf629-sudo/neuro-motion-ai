@@ -81,16 +81,16 @@ export default function HandTrackerCanvas({
     };
   }, []);
 
-  // Shared Camera Setup
+  // Stream Management: Avoid unmounting race conditions
   useEffect(() => {
     let isMounted = true;
 
     async function setupCamera() {
-      if (sharedStream) {
+      if (sharedStream && sharedStream.active) {
         if (videoRef.current) {
           videoRef.current.srcObject = sharedStream;
           videoRef.current.onloadedmetadata = () => {
-            videoRef.current.play().catch(e => console.error(e));
+            videoRef.current.play().catch(e => console.error("Play error:", e));
             if (isMounted) setCameraActive(true);
           };
         }
@@ -114,15 +114,16 @@ export default function HandTrackerCanvas({
         }
 
         localStreamRef.current = stream;
-        if (onStreamReady) onStreamReady(stream);
-
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.onloadedmetadata = () => {
-            videoRef.current.play().catch(e => console.error(e));
+            videoRef.current.play().catch(e => console.error("Play error:", e));
             if (isMounted) setCameraActive(true);
           };
         }
+
+        // Notify parent without causing re-render loop
+        if (onStreamReady) onStreamReady(stream);
       } catch (err) {
         console.error("Webcam getUserMedia failed:", err);
         if (isMounted) {
@@ -138,11 +139,13 @@ export default function HandTrackerCanvas({
 
     return () => {
       isMounted = false;
-      if (localStreamRef.current) {
+      // Do not stop tracks if shared with parent
+      if (localStreamRef.current && !sharedStream) {
         localStreamRef.current.getTracks().forEach(t => t.stop());
+        localStreamRef.current = null;
       }
     };
-  }, [sharedStream, onStreamReady]);
+  }, [sharedStream]);
 
   // Animation Loop with warm/minimal canvas rendering
   const renderLoop = useCallback(() => {
