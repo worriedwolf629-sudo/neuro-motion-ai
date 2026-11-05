@@ -50,7 +50,7 @@ export default function HandTrackerCanvas({
         const landmarker = await HandLandmarker.createFromOptions(wasmFileset, {
           baseOptions: {
             modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task",
-            delegate: "GPU"
+            delegate: "CPU"
           },
           runningMode: "VIDEO",
           numHands: 1,
@@ -255,7 +255,7 @@ export default function HandTrackerCanvas({
   }, [renderLoop]);
 
   return (
-    <div className="relative w-full aspect-[4/3] max-h-[440px] bg-[#292820] rounded-2xl overflow-hidden border border-[#EAE6D9] shadow-sm group">
+    <div className="relative w-full aspect-[4/3] max-h-[440px] bg-[#FFFFFF] rounded-2xl overflow-hidden border border-[#EAE6D9] shadow-sm group">
       {/* Underlying Webcam Video */}
       <video
         ref={videoRef}
