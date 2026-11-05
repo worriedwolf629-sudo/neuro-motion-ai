@@ -140,7 +140,7 @@ export default function HandTrackerCanvas({
     return () => {
       isMounted = false;
       // Do not stop tracks if shared with parent
-      if (localStreamRef.current && !sharedStream) {
+      if (localStreamRef.current && !onStreamReady) {
         localStreamRef.current.getTracks().forEach(t => t.stop());
         localStreamRef.current = null;
       }
