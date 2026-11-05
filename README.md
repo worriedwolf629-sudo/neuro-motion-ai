@@ -170,10 +170,3 @@ npm run dev
 ```
 
 Open your browser at **`http://localhost:5173/`** (or the port specified in terminal output).
-
----
-
-## 7. Intellectual Property & Ethics
-
-- **Open Source Attribution**: Techniques from public repositories (`parkscreen` [MIT] and `UBU-PD-FT-Assessment` [Apache 2.0]) were inspected and adapted in clean-room fashion with architectural enhancements. See [`docs/REUSE_AND_ATTRIBUTION.md`](docs/REUSE_AND_ATTRIBUTION.md) for licensing notices.
-- **Privacy Standard**: Zero biometric data is stored remotely. All webcam analysis is processed transiently inside browser memory.
