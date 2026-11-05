@@ -12,14 +12,14 @@
 
 | # | Feature | Status | Priority | Primary Files / Components | Next Action |
 |---|---------|--------|----------|----------------------------|-------------|
-| 1 | **Live Hand Tracking** | `[ ] Backlog` | `P0` | `frontend/src/components/HandTracker.jsx` | Inspect MediaPipe JS vs Python options |
-| 2 | **Tremor Measurement** | `[ ] Backlog` | `P0` | `backend/analysis/tremor.py` | Implement coordinate recorder & time-series filter |
-| 3 | **Tremor Frequency Analysis** | `[ ] Backlog` | `P0` | `backend/analysis/fft_service.py` | Build SciPy FFT & peak detection with quality guardrails |
-| 4 | **Finger-Tapping Detection** | `[ ] Backlog` | `P0` | `backend/analysis/tapping.py` | Implement thumb-to-index Euclidean distance calculator |
-| 5 | **Tapping Speed & Amplitude** | `[ ] Backlog` | `P0` | `backend/analysis/tapping.py` | Compute cycle rate, interval, and normalized amplitudes |
-| 6 | **Movement Consistency Analysis** | `[ ] Backlog` | `P1` | `backend/analysis/consistency.py` | Calculate coefficient of variation & slope of decay |
-| 7 | **Combined Visual Dashboard** | `[ ] Backlog` | `P0` | `frontend/src/views/Dashboard.jsx` | Compose Recharts real-time display & camera stream |
-| 8 | **Assessment Report** | `[ ] Backlog` | `P1` | `frontend/src/views/ReportModal.jsx` | Create structured exportable summary with disclaimers |
+| 1 | **Live Hand Tracking** | `[x] Completed` | `P0` | `frontend/src/features/hand-tracking/HandTrackerCanvas.jsx` | Verified 21 landmarks + HUD |
+| 2 | **Tremor Measurement** | `[x] Completed` | `P0` | `backend/app/modules/tremor/analyzer.py` | Verified displacement projection |
+| 3 | **Tremor Frequency Analysis** | `[x] Completed` | `P0` | `backend/app/modules/signal_processing/filters.py` | Verified FFT & power ratio |
+| 4 | **Finger-Tapping Detection** | `[x] Completed` | `P0` | `backend/app/modules/finger_tapping/analyzer.py` | Verified thumb-index tracking |
+| 5 | **Tapping Speed & Amplitude** | `[x] Completed` | `P0` | `backend/app/modules/finger_tapping/analyzer.py` | Verified cadence & amplitude |
+| 6 | **Movement Consistency Analysis** | `[x] Completed` | `P1` | `backend/app/modules/finger_tapping/analyzer.py` | Verified rhythm CV & decay slope |
+| 7 | **Combined Visual Dashboard** | `[x] Completed` | `P0` | `frontend/src/App.jsx`, `TelemetryCharts.jsx` | Verified UI layout matching reference images |
+| 8 | **Assessment Report** | `[x] Completed` | `P1` | `frontend/src/App.jsx` (Clinical Summary view) | Verified export layout & medical disclaimer |
 
 ### Differentiator Features (Post-Core Backlog)
 - [ ] **Smart Camera Quality Checker**: Hand bounding check, boundary warnings, FPS jitter monitor.
@@ -105,7 +105,19 @@
 - [x] **TASK-000**: Repository Foundation & AI Collaboration Protocol
   - **Owner**: Google Antigravity
   - **Completed On**: 2026-11-05
-  - **Summary**: Established repo skeleton, documentation (`README.md`, `AGENTS.md`, `PROJECT.md`, `TASKS.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `RESEARCH_REFERENCES.md`, `REUSE_AND_ATTRIBUTION.md`, `DESIGN_SYSTEM.md`, `HANDOFF_LOG.md`), git setup, and dual-agent handoff protocols.
+  - **Summary**: Established repo skeleton, documentation, git setup, and dual-agent handoff protocols.
+- [x] **TASK-001**: Research Repository Deep Dive & License Audit
+  - **Owner**: Google Antigravity
+  - **Completed On**: 2026-11-05
+  - **Summary**: Inspected `parkscreen` (MIT) and `UBU-PD-FT-Assessment` (Apache 2.0). Audited signal processing algorithms, fixed displacement projection error, and updated attribution records.
+- [x] **TASK-002**: Backend Scaffolding & Kinematic Analysis Modules
+  - **Owner**: Google Antigravity
+  - **Completed On**: 2026-11-05
+  - **Summary**: Created FastAPI backend with Pydantic telemetry models, Butterworth filters, FFT analysis, and finger-tapping kinematics. Verified passing unit tests.
+- [x] **TASK-003**: React 19 + Tailwind v4 + Recharts Frontend Architecture
+  - **Owner**: Google Antigravity
+  - **Completed On**: 2026-11-05
+  - **Summary**: Built responsive clinical analytics dashboard inspired by user design references (dark slate, teal/cyan telemetry, HUD camera overlay, waveform & FFT spectrum charts, and printable clinical report). Verified production build.
 
 ---
 

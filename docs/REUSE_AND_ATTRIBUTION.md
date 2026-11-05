@@ -8,10 +8,10 @@ This document serves as our transparent legal and intellectual property ledger. 
 
 | Component / Concept | Original Source | Source License | What We Adapt / Study | Our Original Modifications & Improvements | Attribution Notice Required? |
 |---------------------|-----------------|----------------|-----------------------|-------------------------------------------|------------------------------|
-| **Tremor Signal Filtering & FFT** | `yasnaask/parkscreen` | *Pending source code verification* | Bandpass filtering parameters (0.5–12 Hz) & FFT frequency binning concept | Added dynamic timestamp resampling for variable webcam FPS, custom Nyquist quality checks, and real-time Recharts visualization | Yes (cite repo URL & authors) |
-| **Finger Tapping Distance Calculation** | `arelraptor/UBU-PD-FT-Assessment` | *Pending source code verification* | Euclidean distance formulation between Landmark 4 & Landmark 8 | Added anatomical scaling ($S_{ref}$ = Wrist-to-Middle MCP distance) for perspective invariance, plus client-side real-time rendering | Yes (cite repo URL & authors) |
-| **Hand Landmark Tracking** | Google MediaPipe | Apache 2.0 | MediaPipe Hands model and 21-landmark topology | Wrapped in modern React 18 hook with quality check overlay | Yes (Apache 2.0 license notice retained) |
-| **Signal Processing Routines** | SciPy / NumPy | BSD-3-Clause | `scipy.signal.find_peaks`, `scipy.fft.rfft` | Custom Pydantic validation and typed API endpoints | Yes (standard Python package credit) |
+| **Tremor Signal Filtering & FFT** | `yasnaask/parkscreen` | MIT License (Verified) | Displacement from coordinates, 4–6 Hz power ratio concept, Butterworth bandpass filter parameters | Replaced Euclidean norm center-displacement with signed principal axis projection to preserve fundamental frequency $f_0$; added uniform grid interpolation for webcam timestamp jitter | Yes (Preserved in code & docs) |
+| **Finger Tapping Distance Calculation** | `arelraptor/UBU-PD-FT-Assessment` | Apache 2.0 (Verified) | Landmark 4 (Thumb) & Landmark 8 (Index) distance calculation; cycle cadence concepts | Added anatomical reference scaling $S_{ref} = \text{Wrist-to-Middle MCP}$ for webcam distance invariance; peak/trough validation; rhythm variability CV | Yes (Preserved in code & docs) |
+| **Hand Landmark Tracking** | Google MediaPipe | Apache 2.0 | MediaPipe Hands model and 21-landmark topology | Real-time browser canvas HUD overlay with FPS monitor and landmark loss safeguards | Yes (Standard Apache 2.0 attribution) |
+| **Scientific Computing** | SciPy / NumPy | BSD-3-Clause | `scipy.signal.find_peaks`, `scipy.signal.butter`, `scipy.fft.rfft` | Custom Pydantic REST schemas and FastAPI telemetry pipeline | Yes (Standard Python package attribution) |
 
 ---
 
