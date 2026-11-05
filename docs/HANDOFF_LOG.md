@@ -211,6 +211,7 @@ This document maintains a chronological record of handoffs between **OpenAI Code
   - Added a personal dashboard preview and full assessment comparison page with date/time, measurement table, trend chart, and previous-to-latest delta.
   - Preserved legacy browser history where measurements exist and labeled missing times instead of inventing them.
   - Documented that FastAPI remains an analysis service not called by the current browser capture UI.
+  - Updated the GitHub Pages workflow to pass Supabase URL and publishable-key settings from repository variables/secrets into the frontend build.
 - **Files Modified / Created**:
   - Frontend auth, dashboard, records, comparison and Vite config files; Supabase SQL migration; README and architecture/task/decision/handoff documentation.
 - **Verification Performed**:
