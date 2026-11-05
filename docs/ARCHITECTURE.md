@@ -75,6 +75,12 @@
     - **Tapping Module**: Euclidean distance calculation, reference scaling normalization, peak detection (SciPy `find_peaks`), rhythm variability, linear regression on amplitude peaks for decrement slope.
   - Return typed JSON schemas with clear physical units.
 
+### 2.3 Voice Signal Task (`frontend/src/features/voice/`)
+- Audio is captured only after a user gesture and processed in the browser using Web Audio decoding.
+- Pitch is estimated from 40 ms frames using normalized autocorrelation over a 70–400 Hz search range; RMS is calculated per frame. Summary values are pitch mean/range/SD/CV, RMS amplitude CV, and number of voiced frames.
+- The recording is held in memory for analysis only, then released. No audio upload, audio file download, browser storage, backend endpoint, diagnosis, or disease score is part of this task.
+- Values are experimental signal summaries and are sensitive to device, room, microphone processing, and task performance.
+
 ---
 
 ## 3. Coordinate System & Normalization Strategy

@@ -8,9 +8,10 @@ import AssessmentResults from './pages/AssessmentResults';
 import MotorReport from './pages/MotorReport';
 import SessionHistory from './pages/SessionHistory';
 import AboutMethodology from './pages/AboutMethodology';
+import VoiceAssessment from './pages/VoiceAssessment';
 
 export default function App() {
-  // Navigation State: 'landing' | 'dashboard' | 'assessments' | 'live-tremor' | 'live-tapping' | 'results' | 'report' | 'history' | 'about'
+  // Navigation State: dashboard, assessments, movement tests, voice, reports, history, and methodology.
   const [activePage, setActivePage] = useState('dashboard');
 
   // Shared Camera Stream across all modules
@@ -98,6 +99,7 @@ export default function App() {
               {activePage === 'assessments' && 'Assessment Protocol Selection'}
               {activePage === 'live-tremor' && 'Resting Tremor Examination'}
               {activePage === 'live-tapping' && 'Rapid Finger-Tapping Task'}
+              {activePage === 'voice' && 'Voice Signal Assessment'}
               {activePage === 'results' && 'Kinematics & Spectral Decomposition'}
               {activePage === 'report' && 'Motor Assessment Report'}
               {activePage === 'history' && 'Session-to-Session History'}
@@ -158,6 +160,8 @@ export default function App() {
               setActivePage={setActivePage}
             />
           )}
+
+          {activePage === 'voice' && <VoiceAssessment />}
 
           {activePage === 'results' && (
             <AssessmentResults

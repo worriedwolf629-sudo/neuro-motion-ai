@@ -97,7 +97,7 @@
 ---
 
 ### ⏳ In Progress
-*(No tasks currently in progress. Ready for Phase 1 kickoff.)*
+- [~] **Exploratory Browser Voice Signal Task**: Implementation is integrated locally and the production build passes; browser microphone validation and website deployment remain pending.
 
 ---
 

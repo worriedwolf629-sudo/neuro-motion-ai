@@ -127,3 +127,19 @@ This document tracks foundational architectural and technical decisions for Neur
 - **Context**: Users asked for a live “chance” or safe/fatal result similar to ParkScreen. NeuroMotion has no clinically validated disease classifier, and the ParkScreen class outputs do not establish calibrated real-world disease probabilities.
 - **Decision**: Show live movement amplitude, measured 4–6 Hz signal-power share, tapping kinematics, and sampling quality using the same deterministic analyzer as the final report. Withhold the tremor frequency until at least 3 seconds and 24 FPS are available. Do not show a disease probability, risk score, or safe/fatal label.
 - **Consequences**: The live profile stays factual and interpretable; it must retain explanatory labels and must not imply that any individual metric predicts disease.
+
+## ADR-009: Browser-Local Exploratory Voice Measurements
+
+- **Date**: 2026-11-05
+- **Status**: Accepted
+- **Context**:
+  The project requested the microphone feature explored separately. The app's product rules exclude Parkinson's classification, and raw voice recordings are sensitive data.
+- **Decision**:
+  Add an optional five-second sustained-vowel task that estimates pitch and RMS-amplitude variation in the browser. Discard captured audio after extracting descriptive features; do not upload it, persist voice results, or produce a diagnosis or disease score.
+- **Alternatives Considered**:
+  - Importing a voice-disease classifier: Rejected because it conflicts with ADR-001 and would add unvalidated diagnostic claims.
+  - Sending audio to the existing backend: Rejected because local browser processing is sufficient for this experimental measurement and would expand exposure of voice data.
+- **Consequences**:
+  - Requires browser microphone permission and a secure context (HTTPS or localhost).
+  - Pitch outputs are estimates and can be wrong under noise, weak voicing, or microphone processing; the UI labels them accordingly.
+  - Only a user-downloaded CSV persists derived measurements outside the page.

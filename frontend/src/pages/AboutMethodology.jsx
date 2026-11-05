@@ -50,6 +50,10 @@ export default function AboutMethodology({ setActivePage }) {
             <strong className="text-[#292820] block mb-1">Finger-Tapping Scale Normalization:</strong>
             Fingertip separation is normalized against the instantaneous anatomical distance between the wrist and middle finger MCP joint ($S_{'{ref}'}$), ensuring that camera distance variations do not distort amplitude measurements.
           </div>
+          <div className="p-3 bg-[#FAF9F4] rounded-xl border border-[#EAE6D9]">
+            <strong className="text-[#292820] block mb-1">Exploratory Voice Signal:</strong>
+            A five-second sustained vowel is analyzed in the browser using windowed autocorrelation for estimated pitch and RMS amplitude variation. These are descriptive signal measurements, not Parkinson’s biomarkers or classifier output.
+          </div>
         </div>
       </div>
 
@@ -60,7 +64,7 @@ export default function AboutMethodology({ setActivePage }) {
           Local Browser-First Privacy
         </h3>
         <p className="text-xs text-[#817D70] leading-relaxed">
-          The application operates 100% locally on your machine. MediaPipe Tasks-Vision runs directly in the browser via WebAssembly and WebGL. Video frames never leave your computer, and only derived mathematical metrics are retained in browser storage.
+          Camera frames and microphone audio are processed in your browser and are not uploaded. The short voice recording is discarded after feature extraction; the voice task does not save audio or persist voice metrics. Existing movement session metrics may be retained in this browser’s local storage.
         </p>
       </div>
 

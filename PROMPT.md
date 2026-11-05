@@ -10,6 +10,29 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 
 ## Log Entries
 
+### Entry 005: Browser-Local Voice Signal Task
+- **Date and time**: 2026-11-05
+- **Agent**: OpenAI Codex
+- **Task**: Integrate the previously prototyped microphone feature into NeuroMotion AI without adding a disease classifier.
+- **Objective**: Provide a five-second sustained-vowel capture, descriptive pitch/amplitude metrics, a signal plot, and downloadable CSV while keeping audio local and short-lived.
+- **Files modified**:
+  - `frontend/src/features/voice/voiceFeatures.js`
+  - `frontend/src/pages/VoiceAssessment.jsx`
+  - `frontend/src/App.jsx`
+  - `frontend/src/pages/AssessmentSelection.jsx`
+  - `frontend/src/pages/LandingPage.jsx`
+  - `frontend/src/pages/AboutMethodology.jsx`
+  - `frontend/src/components/Sidebar.jsx`
+  - `README.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/TASKS.md`
+  - `PROMPT.md`
+  - `docs/HANDOFF_LOG.md`
+- **Implementation summary**: User-initiated browser `MediaRecorder` capture is decoded in memory; short-window autocorrelation estimates pitch and RMS windows summarize amplitude variation. The recording is released after processing. No backend, upload, persistence, classifier, probability, or diagnosis is involved.
+- **Verification**: Installed locked packages with `npm ci` (0 vulnerabilities); `npm run build` succeeded. Vite reports its existing large-chunk advisory. `git diff --check` passed. Live microphone access was not verified.
+- **Remaining work**: Test microphone capture on HTTPS or localhost and publish the changes to update GitHub Pages.
+
 ### Entry 001: Repository Foundation & AI Collaboration Protocol
 - **Date and time**: 2026-11-05 16:30 UTC
 - **Agent**: Google Antigravity
