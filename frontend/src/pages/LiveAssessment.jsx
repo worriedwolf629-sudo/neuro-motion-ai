@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import HandTrackerCanvas from '../features/hand-tracking/HandTrackerCanvas';
 import { analyzeTremorKinematics, analyzeFingerTappingKinematics } from '../features/analysis/kinematicsEngine';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 export default function LiveAssessment({
   mode, // 'tremor' | 'tapping'
@@ -153,7 +154,9 @@ export default function LiveAssessment({
   };
 
   return (
-    <div className="p-8 space-y-6 max-w-6xl mx-auto">
+    <div className="relative p-8 space-y-6 max-w-6xl mx-auto overflow-hidden">
+      {/* Subtle non-intrusive background accent */}
+      <FlowingRibbon variant="subtle" className="opacity-20" />
       {/* Page Title */}
       <div className="flex items-center justify-between">
         <div>

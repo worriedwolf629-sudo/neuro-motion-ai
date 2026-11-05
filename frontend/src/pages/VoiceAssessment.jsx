@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Activity, Download, Mic, MicOff, RotateCcw, ShieldCheck } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { analyzeVoiceSamples, toVoiceCsv } from '../features/voice/voiceFeatures';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 const CAPTURE_SECONDS = 5;
 const format = (value, digits = 2) => Number.isFinite(value) ? value.toFixed(digits) : '—';
@@ -103,15 +104,17 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
   };
 
   return (
-    <div className="p-8 space-y-6 max-w-6xl mx-auto">
-      <div>
+    <div className="relative p-8 space-y-6 max-w-6xl mx-auto overflow-hidden">
+      {/* Subtle background ribbon accent */}
+      <FlowingRibbon variant="subtle" className="opacity-20" />
+      <div className="relative z-10">
         <p className="text-[10px] font-mono uppercase tracking-wider text-[#817D70] font-bold">Exploratory acoustic measurement</p>
         <h2 className="text-2xl font-bold font-heading text-[#292820]">Voice Signal Assessment</h2>
         <p className="text-sm text-[#817D70] mt-1">Sustain a comfortable “ah” sound for five seconds. Keep the microphone at a steady distance.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <section className="lg:col-span-4 bg-white border border-[#EAE6D9] rounded-2xl p-6 shadow-sm space-y-5">
+        <section className="lg:col-span-4 card-flowing rounded-2xl p-6 space-y-5 relative z-10">
           <div className="w-12 h-12 rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center">
             {status === 'recording' ? <Mic className="w-5 h-5 text-[#D99A38] animate-pulse" /> : <MicOff className="w-5 h-5 text-[#817D70]" />}
           </div>
@@ -131,7 +134,7 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
           <div className="flex gap-2 border-t border-[#EAE6D9] pt-4 text-xs text-[#817D70] leading-relaxed"><ShieldCheck className="w-4 h-4 shrink-0 text-[#789879]" /><p>Audio is analyzed in this browser, then discarded. No audio is uploaded or retained by this feature.</p></div>
         </section>
 
-        <section className="lg:col-span-8 bg-white border border-[#EAE6D9] rounded-2xl p-6 shadow-sm">
+        <section className="lg:col-span-8 card-flowing rounded-2xl p-6 relative z-10">
           <div className="flex items-center justify-between mb-4">
             <div><h3 className="text-base font-bold text-[#292820]">Pitch over time</h3><p className="text-xs text-[#817D70]">Estimated fundamental frequency • Hz</p></div>
             {metrics && <button onClick={downloadCsv} className="flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-lg border border-[#EAE6D9] hover:bg-[#FAF9F4]"><Download className="w-3.5 h-3.5" />Download CSV</button>}
@@ -142,7 +145,7 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
               <XAxis dataKey="elapsed_seconds" type="number" domain={[0, 5]} tick={{ fontSize: 11 }} label={{ value: 'Elapsed seconds', position: 'insideBottom', offset: -2, fontSize: 11 }} />
               <YAxis domain={['auto', 'auto']} tick={{ fontSize: 11 }} label={{ value: 'Hz', angle: -90, position: 'insideLeft', fontSize: 11 }} />
               <Tooltip formatter={(value) => [`${value} Hz`, 'Estimated pitch']} labelFormatter={(value) => `${value}s`} />
-              <Line type="monotone" dataKey="pitch_hz" name="Estimated pitch" stroke="#789879" dot={false} connectNulls={false} isAnimationActive={false} />
+              <Line type="monotone" dataKey="pitch_hz" name="Estimated pitch" stroke="#75D5C7" strokeWidth={2.5} dot={false} connectNulls={false} isAnimationActive={false} />
             </LineChart></ResponsiveContainer> : <div className="h-full rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex flex-col items-center justify-center text-center px-6"><Activity className="w-7 h-7 text-[#C4BEAD] mb-2" /><p className="text-sm font-semibold text-[#817D70]">Your measured signal will appear here</p><p className="text-xs text-[#817D70] mt-1">No sample or simulated values are shown.</p></div>}
           </div>
         </section>

@@ -8,12 +8,15 @@ import {
   Lock,
   ArrowRight
 } from 'lucide-react';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 export default function AboutMethodology({ setActivePage }) {
   return (
-    <div className="p-8 space-y-8 max-w-4xl mx-auto">
+    <div className="relative p-8 space-y-8 max-w-4xl mx-auto overflow-hidden">
+      {/* Subtle background ribbon accent */}
+      <FlowingRibbon variant="subtle" className="opacity-20" />
       {/* Header */}
-      <div className="border-b border-[#EAE6D9] pb-4">
+      <div className="relative z-10 border-b border-[#EAE6D9] pb-4">
         <span className="text-[10px] font-mono uppercase text-[#817D70] font-bold">Scientific Methodology</span>
         <h2 className="text-2xl font-bold font-heading text-[#292820]">
           About NeuroMotion AI
@@ -24,7 +27,7 @@ export default function AboutMethodology({ setActivePage }) {
       </div>
 
       {/* Section 1: Principles */}
-      <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm space-y-4">
+      <div className="card-flowing rounded-2xl p-6 relative z-10 space-y-4">
         <h3 className="text-sm font-bold font-heading text-[#292820] flex items-center gap-2">
           <Cpu className="w-4 h-4 text-[#E9BD4B]" />
           Zero-Hardware Accessibility
@@ -35,7 +38,7 @@ export default function AboutMethodology({ setActivePage }) {
       </div>
 
       {/* Section 2: Kinematic Signal Pipeline */}
-      <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm space-y-4">
+      <div className="card-flowing rounded-2xl p-6 relative z-10 space-y-4">
         <h3 className="text-sm font-bold font-heading text-[#292820] flex items-center gap-2">
           <Activity className="w-4 h-4 text-[#E9BD4B]" />
           Explainable Kinematic Pipeline
@@ -58,7 +61,7 @@ export default function AboutMethodology({ setActivePage }) {
       </div>
 
       {/* Section 3: Privacy Architecture */}
-      <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm space-y-4">
+      <div className="card-flowing rounded-2xl p-6 relative z-10 space-y-4">
         <h3 className="text-sm font-bold font-heading text-[#292820] flex items-center gap-2">
           <Lock className="w-4 h-4 text-[#E9BD4B]" />
           Local Browser-First Privacy

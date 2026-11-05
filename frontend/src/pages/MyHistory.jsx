@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Activity, Clock, Info, Radio, TrendingUp } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 const METRICS = {
   tremor: [
@@ -61,8 +62,10 @@ export default function MyHistory({ records = [], loading = false, onOpenRecord 
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-6 md:p-8">
-      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-[#EAE6D9] pb-5">
+    <div className="relative mx-auto max-w-6xl space-y-6 p-6 md:p-8 overflow-hidden">
+      {/* Subtle background ribbon accent */}
+      <FlowingRibbon variant="subtle" className="opacity-20" />
+      <header className="relative z-10 flex flex-wrap items-end justify-between gap-3 border-b border-[#EAE6D9] pb-5">
         <div>
           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#817D70]">Your account</span>
           <h2 className="mt-1 text-2xl font-bold font-heading text-[#292820]">Assessment History & Comparison</h2>
@@ -71,7 +74,7 @@ export default function MyHistory({ records = [], loading = false, onOpenRecord 
         <span className="rounded-full border border-[#EAE6D9] bg-white px-3 py-1.5 text-xs font-semibold text-[#292820]">{records.length} saved {records.length === 1 ? 'record' : 'records'}</span>
       </header>
 
-      <section className="rounded-2xl border border-[#EAE6D9] bg-white p-5 shadow-sm">
+      <section className="card-flowing rounded-2xl p-5 relative z-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-bold text-[#292820]"><TrendingUp className="h-4 w-4 text-[#D99A38]" />Compare your sessions</h3>
@@ -109,10 +112,10 @@ export default function MyHistory({ records = [], loading = false, onOpenRecord 
         </div>}
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-[#EAE6D9] bg-white shadow-sm">
+      <section className="card-flowing overflow-hidden rounded-2xl relative z-10">
         <div className="border-b border-[#EAE6D9] p-5"><h3 className="text-sm font-bold text-[#292820]">Every saved assessment</h3><p className="mt-1 text-[11px] text-[#817D70]">Date and time are shown in your browser’s local timezone.</p></div>
         {sortedRecords.length ? <div className="overflow-x-auto"><table className="w-full min-w-[780px] text-left text-xs">
-          <thead className="bg-[#FAF9F4] text-[10px] uppercase tracking-wide text-[#817D70]"><tr><th className="px-5 py-3">Date & time</th><th className="px-5 py-3">Assessment</th><th className="px-5 py-3">Recording quality</th><th className="px-5 py-3">Key measurements</th><th className="px-5 py-3">Report</th></tr></thead>
+          <thead className="bg-[#F5F1E9] text-[10px] uppercase tracking-wide text-[#817D70] font-semibold border-b border-[#EAE6D9]"><tr><th className="px-5 py-3">Date & time</th><th className="px-5 py-3">Assessment</th><th className="px-5 py-3">Recording quality</th><th className="px-5 py-3">Key measurements</th><th className="px-5 py-3">Report</th></tr></thead>
           <tbody className="divide-y divide-[#F0EDE4]">{sortedRecords.map((record) => <RecordRow key={record.id} record={record} onOpenRecord={onOpenRecord} />)}</tbody>
         </table></div> : <div className="p-10 text-center"><Clock className="mx-auto h-7 w-7 text-[#D7CDAE]" /><p className="mt-2 text-sm font-semibold text-[#292820]">No records saved</p><p className="mt-1 text-xs text-[#817D70]">Your completed assessments will appear here.</p></div>}
       </section>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Activity, ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 export default function LoginPage({ configured, onContinueLocal }) {
   const [email, setEmail] = useState('');
@@ -29,8 +30,11 @@ export default function LoginPage({ configured, onContinueLocal }) {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAF9F4] px-5 py-10 flex items-center justify-center">
-      <section className="w-full max-w-md rounded-3xl border border-[#EAE6D9] bg-white p-8 shadow-sm">
+    <main className="relative min-h-screen bg-[#FAF9F4] px-5 py-10 flex items-center justify-center overflow-hidden">
+      {/* Signature Flowing Ribbon Layer */}
+      <FlowingRibbon variant="hero" className="opacity-50" />
+
+      <section className="card-flowing w-full max-w-md rounded-3xl p-8 relative z-10">
         <div className="mb-7 flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E9BD4B] bg-[#F4D66D]"><Activity className="h-6 w-6 text-[#292820]" /></div>
           <div><h1 className="font-heading text-lg font-extrabold text-[#292820]">NeuroMotion AI</h1><p className="text-[10px] uppercase tracking-[0.18em] text-[#817D70]">Personal assessment records</p></div>

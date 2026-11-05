@@ -2,17 +2,31 @@
 
 @layer base {
   :root {
-    --bg-main: #FFFFFF;
-    --bg-secondary: #F5F1E6;
+    /* Flowing Intelligence Base Backgrounds */
+    --bg-main: #FAF9F4;
+    --bg-ivory: #FAF9F4;
+    --bg-cream: #F5F1E9;
     --card-white: #FFFFFF;
+
+    /* Existing Brand Accents */
     --accent-primary: #F4D66D;
     --accent-secondary: #E9BD4B;
     --text-primary: #292820;
     --text-secondary: #817D70;
     --border-warm: #EAE6D9;
+
+    /* Status Indicators */
     --color-success: #789879;
     --color-warning: #D99A38;
     --color-error: #C66D5B;
+
+    /* Flowing Ribbon Decorative Palette */
+    --ribbon-teal: #75D5C7;
+    --ribbon-cyan: #A0DDEB;
+    --ribbon-lavender: #B8A8E8;
+    --ribbon-violet: #D0B5EA;
+    --ribbon-pale-blue: #B9D5ED;
+
     --font-heading: 'Plus Jakarta Sans', -apple-system, sans-serif;
     --font-body: 'Inter', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -21,7 +35,7 @@
 
 body {
   font-family: var(--font-body);
-  background-color: #FFFFFF;
+  background-color: #FAF9F4;
   color: #292820;
   overflow-x: hidden;
 }
@@ -36,7 +50,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F1E6;
+  background: #F5F1E9;
 }
 ::-webkit-scrollbar-thumb {
   background: #D8D2C2;
@@ -44,4 +58,40 @@ h1, h2, h3, h4, h5, h6 {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #C4BEAD;
+}
+
+/* Flowing Ribbon Subtle Ambient Float Keyframes */
+@keyframes flowingRibbonSlow {
+  0% {
+    transform: translateY(0px) scale(1.02);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.04);
+  }
+  100% {
+    transform: translateY(4px) scale(1.01);
+  }
+}
+
+.animate-flowing-ribbon-slow {
+  animation: flowingRibbonSlow 18s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flowing-ribbon-slow {
+    animation: none !important;
+  }
+}
+
+/* Premium SaaS Card Surface Utility */
+.card-flowing {
+  background: #FFFFFF;
+  border: 1px solid rgba(234, 230, 217, 0.9);
+  box-shadow: 0 4px 20px -4px rgba(41, 40, 32, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-flowing:hover {
+  border-color: rgba(184, 168, 232, 0.45);
+  box-shadow: 0 8px 30px -4px rgba(41, 40, 32, 0.08);
 }

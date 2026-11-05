@@ -10,6 +10,7 @@ import {
   Clock,
   Info
 } from 'lucide-react';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 export default function MotorReport({
   tremorData,
@@ -38,7 +39,9 @@ export default function MotorReport({
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6">
+    <div className="relative p-8 max-w-4xl mx-auto space-y-6 overflow-hidden">
+      {/* Subtle background ribbon accent */}
+      <FlowingRibbon variant="subtle" className="opacity-20" />
       {/* Top Action Bar */}
       <div className="flex items-center justify-between border-b border-[#EAE6D9] pb-4">
         <div>

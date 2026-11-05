@@ -11,6 +11,7 @@ import {
   Layers,
   Sparkles
 } from 'lucide-react';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 export default function Dashboard({
   tremorData,
@@ -25,10 +26,13 @@ export default function Dashboard({
 
   return (
     <div className="p-8 space-y-8 max-w-6xl mx-auto">
-      {/* Welcome Workspace Banner */}
-      <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] text-[11px] font-mono font-semibold text-[#817D70] mb-2">
+      {/* Welcome Workspace Banner with Subtle Flowing Ribbon */}
+      <div className="card-flowing rounded-2xl p-7 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* Subtle decorative ribbon banner */}
+        <FlowingRibbon variant="banner" className="opacity-40" />
+
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] text-[11px] font-mono font-semibold text-[#817D70] mb-2.5 shadow-xs">
             <Sparkles className="w-3 h-3 text-[#E9BD4B]" />
             {accountEmail ? `Personal dashboard · ${accountEmail}` : 'Browser-only demo · records stay on this device'}
           </div>
@@ -43,7 +47,7 @@ export default function Dashboard({
 
         <button
           onClick={() => setActivePage('assessments')}
-          className="flex items-center gap-2 px-5 py-3 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] font-bold text-xs rounded-xl border border-[#E9BD4B] shadow-sm transition active:scale-95 shrink-0"
+          className="relative z-10 flex items-center gap-2 px-5 py-3 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] font-bold text-xs rounded-xl border border-[#E9BD4B] shadow-sm transition active:scale-95 shrink-0 hover:shadow"
         >
           Start New Assessment <ArrowRight className="w-3.5 h-3.5" />
         </button>
@@ -51,10 +55,12 @@ export default function Dashboard({
 
       {/* 4 Stat Telemetry Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-5 shadow-sm space-y-2">
+        <div className="card-flowing rounded-2xl p-5 space-y-2 group">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#817D70]">Tremor Frequency</span>
-            <Radio className="w-4 h-4 text-[#E9BD4B]" />
+            <div className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#E9BD4B] group-hover:border-[#75D5C7] transition">
+              <Radio className="w-4 h-4" />
+            </div>
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#292820]">
             {tremorData ? `${tremorData.dominant_frequency_hz} Hz` : '--'}
@@ -64,10 +70,12 @@ export default function Dashboard({
           </p>
         </div>
 
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-5 shadow-sm space-y-2">
+        <div className="card-flowing rounded-2xl p-5 space-y-2 group">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#817D70]">Tremor RMS Amplitude</span>
-            <Activity className="w-4 h-4 text-[#E9BD4B]" />
+            <div className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#E9BD4B] group-hover:border-[#A0DDEB] transition">
+              <Activity className="w-4 h-4" />
+            </div>
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#292820]">
             {tremorData ? `${tremorData.rms_amplitude}` : '--'}
@@ -77,10 +85,12 @@ export default function Dashboard({
           </p>
         </div>
 
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-5 shadow-sm space-y-2">
+        <div className="card-flowing rounded-2xl p-5 space-y-2 group">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#817D70]">Tapping Frequency</span>
-            <Activity className="w-4 h-4 text-[#E9BD4B]" />
+            <div className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#E9BD4B] group-hover:border-[#B8A8E8] transition">
+              <Activity className="w-4 h-4" />
+            </div>
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#292820]">
             {tappingData ? `${tappingData.taps_per_second} taps/s` : '--'}
@@ -90,10 +100,12 @@ export default function Dashboard({
           </p>
         </div>
 
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-5 shadow-sm space-y-2">
+        <div className="card-flowing rounded-2xl p-5 space-y-2 group">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#817D70]">Tapping Rhythm (CV)</span>
-            <Clock className="w-4 h-4 text-[#E9BD4B]" />
+            <div className="w-7 h-7 rounded-lg bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#E9BD4B] group-hover:border-[#D0B5EA] transition">
+              <Clock className="w-4 h-4" />
+            </div>
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#292820]">
             {tappingData ? `${tappingData.interval_variability_cv}%` : '--'}
@@ -107,7 +119,7 @@ export default function Dashboard({
       {/* Assessment Modules Overview Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Module 1 Card */}
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="card-flowing rounded-2xl p-6 flex flex-col justify-between space-y-4 relative overflow-hidden group">
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono font-bold text-[#817D70] uppercase">Module A</span>
@@ -129,14 +141,14 @@ export default function Dashboard({
 
           <button
             onClick={() => setActivePage('live-tremor')}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#FAF9F4] hover:bg-[#F5F1E6] text-[#292820] font-bold text-xs rounded-xl border border-[#EAE6D9] transition"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#FAF9F4] hover:bg-[#F5F1E9] text-[#292820] font-bold text-xs rounded-xl border border-[#EAE6D9] transition active:scale-98"
           >
             {tremorData ? 'Retake Tremor Test' : 'Launch Tremor Assessment'} <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Module 2 Card */}
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="card-flowing rounded-2xl p-6 flex flex-col justify-between space-y-4 relative overflow-hidden group">
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono font-bold text-[#817D70] uppercase">Module B</span>
@@ -158,7 +170,7 @@ export default function Dashboard({
 
           <button
             onClick={() => setActivePage('live-tapping')}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#FAF9F4] hover:bg-[#F5F1E6] text-[#292820] font-bold text-xs rounded-xl border border-[#EAE6D9] transition"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#FAF9F4] hover:bg-[#F5F1E9] text-[#292820] font-bold text-xs rounded-xl border border-[#EAE6D9] transition active:scale-98"
           >
             {tappingData ? 'Retake Tapping Test' : 'Launch Tapping Assessment'} <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -167,7 +179,7 @@ export default function Dashboard({
 
       {/* Latest Completed Session Preview */}
       {hasAnyData && (
-        <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="card-flowing rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <span className="text-[11px] font-mono uppercase text-[#817D70] font-bold block mb-1">
               Active Assessment Telemetry Available
@@ -180,7 +192,7 @@ export default function Dashboard({
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setActivePage('results')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#FAF9F4] hover:bg-[#F5F1E6] text-[#292820] font-bold text-xs rounded-xl border border-[#EAE6D9] transition"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#FAF9F4] hover:bg-[#F5F1E9] text-[#292820] font-bold text-xs rounded-xl border border-[#EAE6D9] transition"
             >
               View Analytics
             </button>
@@ -194,30 +206,54 @@ export default function Dashboard({
         </div>
       )}
 
-      <section className="overflow-hidden rounded-2xl border border-[#EAE6D9] bg-white shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE6D9] p-5">
+      {/* Assessment Records Table */}
+      <section className="card-flowing overflow-hidden rounded-2xl">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE6D9] p-5 bg-[#FFFFFF]">
           <div>
             <h3 className="text-sm font-bold text-[#292820]">Recent assessment records</h3>
             <p className="mt-1 text-[11px] text-[#817D70]">Each completed assessment is saved with its date, time, quality, and measured values.</p>
           </div>
-          <button onClick={() => setActivePage('history')} className="rounded-lg border border-[#EAE6D9] bg-[#FAF9F4] px-3 py-2 text-xs font-bold text-[#292820] hover:bg-[#F5F1E6]">Compare all records</button>
+          <button onClick={() => setActivePage('history')} className="rounded-lg border border-[#EAE6D9] bg-[#FAF9F4] px-3 py-2 text-xs font-bold text-[#292820] hover:bg-[#F5F1E9] transition">Compare all records</button>
         </div>
-        {recentRecords.length ? <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left text-xs">
-          <thead className="bg-[#FAF9F4] text-[10px] uppercase tracking-wide text-[#817D70]"><tr><th className="px-5 py-3">Date & time</th><th className="px-5 py-3">Assessment</th><th className="px-5 py-3">Quality</th><th className="px-5 py-3">Key measurement</th></tr></thead>
-          <tbody className="divide-y divide-[#F0EDE4]">{recentRecords.map((record) => {
-            const values = record.results || {};
-            const summary = record.assessment_type === 'tremor'
-              ? `${values.dominant_frequency_hz ?? values.phase1?.dominant_frequency_hz ?? '—'} Hz peak frequency · RMS ${values.rms_amplitude ?? values.phase1?.rms_amplitude ?? '—'}`
-              : record.assessment_type === 'tapping'
-                ? `${values.total_taps ?? '—'} cycles · ${values.taps_per_second ?? '—'} taps/s`
-                : `${values.estimated_pitch_mean_hz ?? '—'} Hz mean pitch · ${values.voiced_analysis_windows ?? 0} voiced windows`;
-            const label = { tremor: 'Resting tremor', tapping: 'Finger tapping', voice: 'Voice signal' }[record.assessment_type] || record.assessment_type;
-            const when = record.completed_at ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(record.completed_at)) : 'Time unavailable';
-            return <tr key={record.id}><td className="whitespace-nowrap px-5 py-4 text-[#292820]">{when}</td><td className="px-5 py-4 font-semibold text-[#292820]">{label}</td><td className="px-5 py-4 text-[#817D70]">{record.quality || 'Not reported'}</td><td className="px-5 py-4 text-[#817D70]">{summary}</td></tr>;
-          })}</tbody>
-        </table></div> : <div className="p-7 text-center text-xs text-[#817D70]">No assessments saved yet. Complete an assessment while signed in to begin your comparison history.</div>}
+        {recentRecords.length ? (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[620px] text-left text-xs">
+              <thead className="bg-[#F5F1E9] text-[10px] uppercase tracking-wide text-[#817D70] font-semibold border-b border-[#EAE6D9]">
+                <tr>
+                  <th className="px-5 py-3">Date & time</th>
+                  <th className="px-5 py-3">Assessment</th>
+                  <th className="px-5 py-3">Quality</th>
+                  <th className="px-5 py-3">Key measurement</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#F0EDE4] bg-[#FFFFFF]">
+                {recentRecords.map((record) => {
+                  const values = record.results || {};
+                  const summary = record.assessment_type === 'tremor'
+                    ? `${values.dominant_frequency_hz ?? values.phase1?.dominant_frequency_hz ?? '—'} Hz peak frequency · RMS ${values.rms_amplitude ?? values.phase1?.rms_amplitude ?? '—'}`
+                    : record.assessment_type === 'tapping'
+                      ? `${values.total_taps ?? '—'} cycles · ${values.taps_per_second ?? '—'} taps/s`
+                      : `${values.estimated_pitch_mean_hz ?? '—'} Hz mean pitch · ${values.voiced_analysis_windows ?? 0} voiced windows`;
+                  const label = { tremor: 'Resting tremor', tapping: 'Finger tapping', voice: 'Voice signal' }[record.assessment_type] || record.assessment_type;
+                  const when = record.completed_at ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(record.completed_at)) : 'Time unavailable';
+                  return (
+                    <tr key={record.id} className="hover:bg-[#FAF9F4] transition">
+                      <td className="whitespace-nowrap px-5 py-4 text-[#292820]">{when}</td>
+                      <td className="px-5 py-4 font-semibold text-[#292820]">{label}</td>
+                      <td className="px-5 py-4 text-[#817D70]">{record.quality || 'Not reported'}</td>
+                      <td className="px-5 py-4 text-[#817D70]">{summary}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-8 text-center text-xs text-[#817D70]">
+            No assessments saved yet. Complete an assessment while signed in to begin your comparison history.
+          </div>
+        )}
       </section>
     </div>
   );
 }
-

@@ -16,9 +16,10 @@ import {
   Radio,
   FileText
 } from 'lucide-react';
+import FlowingRibbon from '../components/FlowingRibbon';
 
 const ChartCard = ({ title, subtitle, children, className = '' }) => (
-  <section className={`min-w-0 rounded-2xl border border-[#EAE6D9] bg-[#FFFFFF] p-5 shadow-sm ${className}`}>
+  <section className={`min-w-0 rounded-2xl card-flowing p-5 ${className}`}>
     <div className="mb-3">
       <h3 className="font-heading text-sm font-bold text-[#292820]">{title}</h3>
       {subtitle && <p className="mt-1 text-[11px] text-[#817D70]">{subtitle}</p>}
@@ -37,9 +38,9 @@ const TremorWaveform = ({ title, data }) => (
             <XAxis dataKey="time_sec" stroke="#817D70" fontSize={9} tickFormatter={(v) => `${v}s`} />
             <YAxis stroke="#817D70" fontSize={9} />
             <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: 8, fontSize: 10 }} />
-            <Line type="monotone" dataKey="raw_displacement" stroke="#817D70" dot={false} strokeWidth={1} name="raw" />
+            <Line type="monotone" dataKey="raw_displacement" stroke="#B1AA98" dot={false} strokeWidth={1} name="raw" />
             <Line type="monotone" dataKey="filtered" stroke="#E9BD4B" dot={false} strokeWidth={2} name="filtered" />
-            <Line type="monotone" dataKey="envelope" stroke="#C66D5B" strokeDasharray="4 3" dot={false} strokeWidth={1.5} name="envelope" />
+            <Line type="monotone" dataKey="envelope" stroke="#B8A8E8" strokeDasharray="4 3" dot={false} strokeWidth={1.5} name="envelope" />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -89,7 +90,9 @@ export default function AssessmentResults({
   );
 
   return (
-    <div className="p-8 space-y-8 max-w-6xl mx-auto">
+    <div className="relative p-8 space-y-8 max-w-6xl mx-auto overflow-hidden">
+      {/* Subtle background ribbon accent */}
+      <FlowingRibbon variant="subtle" className="opacity-25" />
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EAE6D9] pb-6">
         <div>
@@ -281,7 +284,7 @@ export default function AssessmentResults({
                         contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: '10px', fontSize: '11px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
                       />
                       <Line type="monotone" dataKey="smoothed_distance" stroke="#292820" dot={false} strokeWidth={2} name="Smoothed Distance" />
-                      <Line type="monotone" dataKey="is_tap" stroke="#C66D5B" strokeWidth={0} dot={{ r: 4, fill: '#C66D5B' }} name="Tap Peak" />
+                      <Line type="monotone" dataKey="is_tap" stroke="#75D5C7" strokeWidth={0} dot={{ r: 4, fill: '#75D5C7' }} name="Tap Peak" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -308,7 +311,7 @@ export default function AssessmentResults({
                         <XAxis dataKey="tap_index" stroke="#817D70" fontSize={10} tickFormatter={(v) => `#${v}`} />
                         <YAxis stroke="#817D70" fontSize={10} />
                         <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: '8px', fontSize: '11px' }} />
-                        <Line type="monotone" dataKey="interval_sec" stroke="#E9BD4B" strokeWidth={2} dot={{ r: 3, fill: '#E9BD4B' }} name="Interval (s)" />
+                        <Line type="monotone" dataKey="interval_sec" stroke="#75D5C7" strokeWidth={2} dot={{ r: 3, fill: '#75D5C7' }} name="Interval (s)" />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -333,7 +336,7 @@ export default function AssessmentResults({
                         <XAxis dataKey="tap_index" stroke="#817D70" fontSize={10} tickFormatter={(v) => `#${v}`} />
                         <YAxis stroke="#817D70" fontSize={10} />
                         <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6D9', borderRadius: '8px', fontSize: '11px' }} />
-                        <Line type="monotone" dataKey="normalized_amplitude" stroke="#C66D5B" strokeWidth={2} dot={{ r: 3, fill: '#C66D5B' }} name="Peak Amplitude" />
+                        <Line type="monotone" dataKey="normalized_amplitude" stroke="#B8A8E8" strokeWidth={2} dot={{ r: 3, fill: '#B8A8E8' }} name="Peak Amplitude" />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>

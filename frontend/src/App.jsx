@@ -245,14 +245,14 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#FFFFFF] text-[#292820] overflow-hidden font-sans">
+    <div className="flex h-screen w-screen bg-[#FAF9F4] text-[#292820] overflow-hidden font-sans">
       {/* Shared Sidebar */}
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto bg-[#FFFFFF]">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto bg-[#FAF9F4]">
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-[#EAE6D9] bg-[#FFFFFF] backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-10 shrink-0">
+        <header className="h-16 border-b border-[#EAE6D9] bg-[#FAF9F4]/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-10 shrink-0">
           <div className="flex items-center gap-4">
             <span className="text-sm font-bold text-[#292820]">
               {activePage === 'dashboard' && 'Workspace Overview'}

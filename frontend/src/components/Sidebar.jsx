@@ -15,12 +15,12 @@ import {
 
 export default function Sidebar({ activePage, setActivePage }) {
   return (
-    <aside className="w-64 bg-[#FFFFFF] border-r border-[#EAE6D9] flex flex-col justify-between p-4 z-20 shrink-0 h-screen select-none">
+    <aside className="w-64 bg-[#FAF9F4] border-r border-[#EAE6D9] flex flex-col justify-between p-4 z-20 shrink-0 h-screen select-none">
       <div>
         {/* Brand Header */}
         <div
           onClick={() => setActivePage('landing')}
-          className="flex items-center gap-3 px-3 py-3 mb-6 cursor-pointer group"
+          className="flex items-center gap-3 px-3 py-3 mb-6 cursor-pointer group rounded-xl transition hover:bg-[#F5F1E9]"
         >
           <div className="w-10 h-10 rounded-xl bg-[#F4D66D] border border-[#E9BD4B] flex items-center justify-center shadow-sm group-hover:bg-[#E9BD4B] transition">
             <Activity className="w-5 h-5 text-[#292820]" />
@@ -40,7 +40,7 @@ export default function Sidebar({ activePage, setActivePage }) {
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
               activePage === 'dashboard'
                 ? 'bg-[#FFFFFF] text-[#292820] border border-[#EAE6D9] shadow-sm font-bold'
-                : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
             }`}
           >
             <Layers className="w-4 h-4 text-[#E9BD4B]" />
@@ -52,7 +52,7 @@ export default function Sidebar({ activePage, setActivePage }) {
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
               activePage === 'assessments'
                 ? 'bg-[#FFFFFF] text-[#292820] border border-[#EAE6D9] shadow-sm font-bold'
-                : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
             }`}
           >
             <Sparkles className="w-4 h-4 text-[#E9BD4B]" />
@@ -71,8 +71,8 @@ export default function Sidebar({ activePage, setActivePage }) {
               onClick={() => setActivePage('live-tremor')}
               className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium flex items-center justify-between transition ${
                 activePage === 'live-tremor'
-                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50'
-                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50 shadow-sm'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
               }`}
             >
               <span className="flex items-center gap-2">
@@ -86,8 +86,8 @@ export default function Sidebar({ activePage, setActivePage }) {
               onClick={() => setActivePage('live-tapping')}
               className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium flex items-center justify-between transition ${
                 activePage === 'live-tapping'
-                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50'
-                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50 shadow-sm'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
               }`}
             >
               <span className="flex items-center gap-2">
@@ -103,15 +103,15 @@ export default function Sidebar({ activePage, setActivePage }) {
                 <Footprints className="w-3.5 h-3.5 text-[#817D70]/50" />
                 Gait Analysis
               </span>
-              <span className="text-[9px] font-mono uppercase bg-[#F5F1E6] px-1.5 py-0.5 rounded text-[#817D70]">Soon</span>
+              <span className="text-[9px] font-mono uppercase bg-[#F5F1E9] px-1.5 py-0.5 rounded text-[#817D70]">Soon</span>
             </div>
 
             <button
               onClick={() => setActivePage('voice')}
               className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium flex items-center justify-between transition ${
                 activePage === 'voice'
-                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50'
-                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                  ? 'bg-[#F4D66D]/40 text-[#292820] font-bold border border-[#E9BD4B]/50 shadow-sm'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
               }`}
             >
               <span className="flex items-center gap-2"><Mic className="w-3.5 h-3.5 text-[#292820]" />Voice Signal</span>
@@ -132,7 +132,7 @@ export default function Sidebar({ activePage, setActivePage }) {
               className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                 activePage === 'results'
                   ? 'bg-[#FFFFFF] text-[#292820] border border-[#EAE6D9] shadow-sm font-bold'
-                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
               }`}
             >
               <Activity className="w-3.5 h-3.5 text-[#E9BD4B]" />
@@ -144,7 +144,7 @@ export default function Sidebar({ activePage, setActivePage }) {
               className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                 activePage === 'report'
                   ? 'bg-[#FFFFFF] text-[#292820] border border-[#EAE6D9] shadow-sm font-bold'
-                : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
               }`}
             >
               <FileText className="w-3.5 h-3.5 text-[#E9BD4B]" />
@@ -156,7 +156,7 @@ export default function Sidebar({ activePage, setActivePage }) {
               className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                 activePage === 'history'
                   ? 'bg-[#FFFFFF] text-[#292820] border border-[#EAE6D9] shadow-sm font-bold'
-                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E6]'
+                  : 'text-[#817D70] hover:text-[#292820] hover:bg-[#F5F1E9]'
               }`}
             >
               <Clock className="w-3.5 h-3.5 text-[#E9BD4B]" />
@@ -177,7 +177,7 @@ export default function Sidebar({ activePage, setActivePage }) {
           <Info className="w-3.5 h-3.5 text-[#817D70]" />
           About Methodology
         </button>
-        <div className="mt-3 p-3 bg-[#FFFFFF] rounded-xl border border-[#EAE6D9]">
+        <div className="mt-3 p-3 bg-[#FFFFFF] rounded-xl border border-[#EAE6D9] shadow-sm">
           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#D99A38] block mb-1">
             Research Prototype
           </span>
@@ -189,4 +189,3 @@ export default function Sidebar({ activePage, setActivePage }) {
     </aside>
   );
 }
-

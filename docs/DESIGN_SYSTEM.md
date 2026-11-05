@@ -1,92 +1,101 @@
-# DESIGN_SYSTEM.md — UI/UX Design System & Telemetry Tokens
+# DESIGN_SYSTEM.md — UI/UX Design System & "Flowing Intelligence" Tokens
 
-> **Design Direction**: Modern, high-contrast healthcare analytics dashboard.
-> Designed for rapid legibility during live 24-hour hackathon demonstrations, clinical usability, and accessible contrast ratios.
+> **Visual Identity**: "FLOWING INTELLIGENCE"  
+> Combines warm, elegant ivory and cream backgrounds, flowing multi-colour gradient ribbons (teal, cyan, pale blue, lavender, violet, and gentle gold), crisp white cards, clean typography, and golden-yellow brand actions. Designed for rapid legibility during live healthcare demonstrations, clinical usability, and accessible contrast ratios.
 
 ---
 
 ## 1. Visual Theme & Color Palette
 
-The interface adopts a default **clinical dark theme** to maximize the visual punch of real-time camera skeleton overlays and animated telemetry waveforms.
+The interface adopts the **"Flowing Intelligence"** light-surface healthcare aesthetic. The signature visual element is layered, organic, translucent gradient ribbons that evoke flowing silk, liquid glass, or neural light trails.
 
-### Palette Tokens
+### 1.1 Foundation Backgrounds
 
-| Token Name | Hex Code | Role / Usage | Contrast Ratio vs Background |
-|------------|----------|--------------|------------------------------|
-| `--bg-base` | `#0A0F1D` | Main dashboard deep background | Base |
-| `--bg-surface` | `#111827` | Card / panel background | 1.2:1 |
-| `--bg-surface-elevated` | `#1F2937` | Modals, active states, dropdowns | 2.1:1 |
-| `--border-subtle` | `#374151` | Panel borders and chart gridlines | 3.5:1 |
-| `--text-primary` | `#F9FAFB` | Primary headers, dominant metric values | 16.5:1 (AAA) |
-| `--text-secondary` | `#9CA3AF` | Labels, axis titles, secondary descriptions | 7.8:1 (AAA) |
-| `--accent-emerald` | `#10B981` | Positive status, normal rhythm, healthy sync | 8.2:1 |
-| `--accent-cyan` | `#06B6D4` | Primary brand accent, live camera landmark points | 8.9:1 |
-| `--accent-amber` | `#F59E0B` | Warnings, low camera FPS, tracking jitter | 10.1:1 |
-| `--accent-rose` | `#F43F5E` | Critical warnings, landmark lost, amplitude decay | 7.4:1 |
+| Token Name | Hex Code | Role / Usage |
+|------------|----------|--------------|
+| `Warm Ivory` | `#FAF9F4` | Primary viewport, sidebar, and application root canvas |
+| `Soft Cream` | `#F5F1E9` | Table headers, secondary banners, subtle accent sections |
+| `Pure White` | `#FFFFFF` | Primary SaaS cards, elevated chart surfaces, modal panels |
+
+### 1.2 Core Brand Accents
+
+| Token Name | Hex Code | Role / Usage |
+|------------|----------|--------------|
+| `Butter Yellow` | `#F4D66D` | Primary action buttons, brand logo mark |
+| `Golden Yellow` | `#E9BD4B` | Primary chart data series, hover states, badges |
+| `Warm Charcoal` | `#292820` | Headings, high-contrast values, primary text (14.2:1 AAA) |
+| `Muted Slate` | `#817D70` | Secondary descriptions, axis labels, caption copy |
+| `Warm Border` | `#EAE6D9` | Card perimeter borders, separators, subtle grid lines |
+
+### 1.3 Signature Flowing Ribbon Palette
+
+Layered, translucent SVG bezier-curve ribbons that flow behind headers, banners, and the landing page hero:
+
+| Token Name | Hex Code | Role in Gradient Ribbon |
+|------------|----------|-------------------------|
+| `Soft Teal` | `#75D5C7` | Left anchor, fresh clinical organic tone, secondary chart series |
+| `Light Cyan` | `#A0DDEB` | Luminous flow, highlights, signal curves |
+| `Pale Blue` | `#B9D5ED` | Ethereal midpoint transition |
+| `Muted Lavender` | `#B8A8E8` | Deep harmonic transition, tertiary chart series |
+| `Soft Violet` | `#D0B5EA` | Sophisticated neural tone, envelope indicators |
+| `Subtle Gold` | `#F4D66D` | Brand-retaining warmth at terminal ribbon tips |
 
 ---
 
-## 2. Typography
+## 2. Signature Flowing Ribbon Architecture
 
-We pair a crisp, geometric display font with a highly legible technical sans-serif:
+Implemented via `<FlowingRibbon />` ([`frontend/src/components/FlowingRibbon.jsx`](../frontend/src/components/FlowingRibbon.jsx)):
+- **Technology**: Pure responsive vector SVG with multi-stop linear gradients, soft gaussian blur filters, and gentle ambient keyframe float animation.
+- **Performance**: Zero heavy WebGL/Three.js overhead. Sub-1ms render cost.
+- **Accessibility**: 100% `pointer-events-none` with `aria-hidden="true"`. Respects `@media (prefers-reduced-motion: reduce)`.
+- **Placement**:
+  - **Landing Page**: Full multi-layer hero ribbon tapestry sweeping behind the headline and call-to-actions.
+  - **Dashboard**: Subtle banner flourish behind the workspace banner and overview grid.
+  - **Assessment Selection**: Flowing diagonal ribbon accent framing the protocol cards.
+  - **Live Assessment / Results / Reports**: Restrained ambient accent along container perimeters, strictly separated from webcam viewports and data charts.
 
-- **Display & Headings**: `Space Grotesk`, sans-serif (weights: 600, 700)
-  - Used for project title, dominant metric readouts, and section banners.
-- **Body & Data Telemetry**: `Archivo` / `Inter`, system-ui, sans-serif (weights: 400, 500, 600)
-  - Used for numbers, coordinates, chart labels, and medical disclaimers.
-- **Monospace Numbers**: `JetBrains Mono` / `ui-monospace`
-  - Used for raw coordinates, millisecond timestamps, and frequency readouts ($4.8\text{ Hz}$).
+---
+
+## 3. Typography
+
+- **Display & Headings**: `Plus Jakarta Sans` / `Space Grotesk` (weights: 700, 800)
+- **Body & Data Telemetry**: `Inter`, system-ui, sans-serif (weights: 400, 500, 600)
+- **Monospace Numbers**: `JetBrains Mono` / `ui-monospace` (weights: 600, 700)
 
 ### Typography Scale
-- `Metric Jumbo`: `3.0rem` (`48px`), weight `700`, leading `1.0` (e.g. `4.8 Hz`, `18 Taps`)
-- `Heading 1`: `1.75rem` (`28px`), weight `700`, leading `1.2`
-- `Heading 2`: `1.25rem` (`20px`), weight `600`, leading `1.3`
-- `Card Title`: `0.875rem` (`14px`), weight `600`, tracking `wider`, uppercase
-- `Body Text`: `0.9375rem` (`15px`), weight `400`, leading `1.5`
-- `Caption / Disclaimer`: `0.75rem` (`12px`), weight `400`, leading `1.4`
+- `Hero Heading`: `3.5rem` (`56px`), weight `800`, leading `1.1`
+- `Metric Jumbo`: `2.0rem` (`32px`) - `2.5rem` (`40px`), weight `800`, font-mono
+- `Heading 1`: `1.5rem` (`24px`), weight `700`
+- `Heading 2`: `1.125rem` (`18px`), weight `700`
+- `Body Text`: `0.875rem` (`14px`) - `0.9375rem` (`15px`), weight `400`
+- `Caption / Disclaimer`: `0.6875rem` (`11px`) - `0.75rem` (`12px`), weight `400`
 
 ---
 
-## 3. Visual Layout Architecture
+## 4. Cards & Component System
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│ [HEADER] NeuroMotion AI | [Live FPS: 30] [Status: Tracking Active]     │
-├───────────────────────────────────┬────────────────────────────────────┤
-│ [CAMERA & OVERLAY PANE]           │ [TELEMETRY DASHBOARD PANE]         │
-│ - Live WebCam Feed                │                                    │
-│ - MediaPipe 21-point Skeleton     │ ┌────────────────────────────────┐ │
-│ - Bounding Box & Center Target    │ │ Card 1: Dominant Tremor Hz     │ │
-│ - Quality Badge: OK (30 FPS)      │ │ Value: 4.8 Hz | Band: 3-7 Hz   │ │
-│                                   │ └────────────────────────────────┘ │
-│ ┌───────────────────────────────┐ │ ┌────────────────────────────────┐ │
-│ │ Control Bar                   │ │ │ Card 2: Finger-Tapping Stats   │ │
-│ │ [● Start Test] [■ Reset]      │ │ │ 22 Taps | 2.8 /sec | Dec: -12% │ │
-│ └───────────────────────────────┘ │ └────────────────────────────────┘ │
-├───────────────────────────────────┴────────────────────────────────────┤
-│ [ANALYTICS & WAVEFORMS (Recharts)]                                     │
-│ ┌───────────────────────────────┐ ┌──────────────────────────────────┐ │
-│ │ Graph A: Tremor FFT Spectrum  │ │ Graph B: Tapping Amplitude Wave  │ │
-│ │ (Frequency vs Power)          │ │ (Normalized Distance vs Time)    │ │
-│ └───────────────────────────────┘ └──────────────────────────────────┘ │
-└────────────────────────────────────────────────────────────────────────┘
-```
+- **Class**: `.card-flowing`
+  - Background: `#FFFFFF`
+  - Border: `1px solid rgba(234, 230, 217, 0.9)`
+  - Shadow: `0 4px 20px -4px rgba(41, 40, 32, 0.04)`
+  - Hover: `border-color: rgba(184, 168, 232, 0.45); box-shadow: 0 8px 30px -4px rgba(41, 40, 32, 0.08)`
+- **Primary Buttons**:
+  - Background: Butter Yellow `#F4D66D`, border `#E9BD4B`
+  - Text: Warm Charcoal `#292820`, font-bold
+  - Hover: `#E9BD4B` with subtle scale transition (`active:scale-95`)
+- **Secondary Buttons**:
+  - Background: White `#FFFFFF`, border `#EAE6D9`
+  - Text: Warm Charcoal `#292820`, font-semibold
+  - Hover: `#F5F1E9`
 
 ---
 
-## 4. UI Components & Interaction States
+## 5. Charts & Analytics Styling
 
-1. **Live Camera Card**:
-   - Aspect ratio: 16:9 or 4:3 fixed to avoid reflow.
-   - Canvas overlay positioned directly over `<video>` using absolute styling.
-   - Pulsing status indicator: Green (`#10B981`) when hand detected; Amber (`#F59E0B`) when hand partially outside frame; Red (`#F43F5E`) when tracking lost.
-2. **Kinematic Metric Cards**:
-   - Card container with `bg-[#111827] border border-[#374151] rounded-xl p-4`.
-   - Subtle hover highlight (`hover:border-cyan-500/50 transition-colors`).
-3. **Buttons & Controls**:
-   - `Primary Button`: Emerald background, bold white text, subtle glowing shadow (`shadow-emerald-500/20`).
-   - `Secondary Button`: Ghost outline with slate border.
-   - High accessibility with `:focus-visible` ring styling.
-4. **Assessment Report Modal**:
-   - Clean printable layout with high-contrast light mode override for physical paper/PDF printing (`@media print`).
-
+- **Chart Surface**: Pure White `#FFFFFF` inside `.card-flowing`
+- **Grid Lines**: Warm Beige `#EAE6D9` (dashed `3 3`)
+- **Axes & Ticks**: Charcoal Muted `#817D70`
+- **Primary Data Series**: Golden Yellow `#E9BD4B`
+- **Secondary Data Series**: Soft Teal `#75D5C7`
+- **Envelope / Variability**: Muted Lavender `#B8A8E8`
+- **4–6 Hz Physiological Band**: Soft Gold `#F4D66D` with 25% opacity
