@@ -64,3 +64,4 @@ def test_finger_tapping_cycle_detection():
     assert 8 <= res.total_taps <= 12
     assert abs(res.taps_per_second - 2.5) <= 0.6
     assert res.average_amplitude > 0.0
+

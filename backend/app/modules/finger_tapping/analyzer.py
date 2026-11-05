@@ -154,3 +154,4 @@ def analyze_finger_tapping_stream(request: FingerTappingRequest) -> FingerTappin
         distance_timeseries=timeseries_data,
         quality_warning=quality_warning
     )
+

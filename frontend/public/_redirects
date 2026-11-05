@@ -1,0 +1,7 @@
+/*    /index.html   200
+
+[[headers]]
+  for = "/models/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/octet-stream"

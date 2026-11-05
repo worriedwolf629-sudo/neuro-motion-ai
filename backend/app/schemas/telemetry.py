@@ -68,3 +68,4 @@ class ComprehensiveSessionSummary(BaseModel):
         "NeuroMotion AI is an experimental motor-assessment prototype, not a medical or diagnostic system. "
         "All measurements are kinematic telemetry and signal processing observations."
     )
+

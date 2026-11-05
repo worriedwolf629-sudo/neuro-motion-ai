@@ -49,3 +49,4 @@ def analyze_finger_tapping(request: FingerTappingRequest):
         return analyze_finger_tapping_stream(request)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Finger-tapping analysis failed: {str(e)}")
+

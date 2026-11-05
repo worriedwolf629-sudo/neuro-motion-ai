@@ -100,3 +100,4 @@ def compute_linear_slope(y: np.ndarray) -> float:
     x = np.arange(len(y), dtype=float)
     slope, _ = np.polyfit(x, y, 1)
     return float(slope)
+
