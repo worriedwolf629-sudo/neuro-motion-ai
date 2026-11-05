@@ -1,128 +1,179 @@
 # NeuroMotion AI
 
-[![Project Status: Planned / Foundation Phase](https://img.shields.io/badge/status-foundation%20phase-yellow.svg)](#current-development-status)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#important-medical-disclaimer)
-[![Hackathon: 24-Hour Healthcare Hackathon](https://img.shields.io/badge/event-healthcare%20hackathon-red.svg)](#project-overview)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg)](https://worriedwolf629-sudo.github.io/neuro-motion-ai/)
+[![Status](https://img.shields.io/badge/status-functional%20prototype-brightgreen.svg)](#project-status)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#intellectual-property--ethics)
+[![Framework: React 19](https://img.shields.io/badge/React-19.0-61dafb.svg)](https://react.dev/)
+[![Vision: MediaPipe Tasks](https://img.shields.io/badge/MediaPipe-Tasks%20Vision-4285f4.svg)](https://developers.google.com/mediapipe)
 
-An explainable, computer-vision-based motor assessment platform that uses standard webcam hand tracking to quantify movement characteristics through resting-hand tremor analysis and finger-tapping assessment.
+**Understand movement beyond what the eye can see.**
 
-The platform aims to make guided motor assessments accessible, visualise measurable movement characteristics, and support session-to-session progress monitoring without specialized sensor hardware.
+NeuroMotion AI is an explainable, browser-based motor assessment platform that utilizes commodity webcam hand tracking and deterministic signal processing to quantify resting-hand tremor frequencies and rapid finger-tapping kinematics.
 
 ---
 
-## ⚠️ Important Medical Disclaimer
+## ⚠️ Important Medical & Regulatory Disclaimer
 
-> **NEUROMOTION AI IS AN EXPERIMENTAL MOTOR-ASSESSMENT PROTOTYPE, NOT A DIAGNOSTIC SYSTEM.**
+> **NEUROMOTION AI IS AN EXPERIMENTAL MOTOR-ASSESSMENT PROTOTYPE, NOT A DIAGNOSTIC DEVICE.**
 >
-> This software is created solely for research, demonstration, and algorithmic benchmarking during a 24-hour hackathon. 
-> 
-> - **We are NOT building a Parkinson's disease prediction model or classifier.**
-> - **We are NOT calculating disease probabilities or clinical diagnostic scores.**
-> - **This platform has NOT been clinically validated.**
-> - No machine learning classification models are used to label health conditions.
-> - The software provides objective kinematic and signal-processing measurements (e.g. movement frequency in Hz, tapping intervals, amplitude decay). These numerical observations must never be used as a substitute for professional clinical judgment, neurological examination, or medical diagnosis.
+> This platform is engineered exclusively for exploratory research, benchmark quantification, and tele-assessment demonstration during a 24-hour national healthcare hackathon.
+>
+> - **We are NOT building a Parkinson's disease prediction model or diagnostic classifier.**
+> - **We DO NOT calculate disease probabilities, severity risk scores, or diagnostic labels.**
+> - **The software does NOT claim clinical validation.**
+> - All reported telemetry outputs are **purely descriptive physical kinematics** (oscillation frequency in Hz, tapping intervals, amplitude fatigue decrement).
+> - These observations must never replace consultation with a qualified neurologist or formal in-person MDS-UPDRS examination.
 
 ---
 
-## The Problem
+## 1. Problem Statement & Motivation
 
-Traditional clinical assessments of motor impairments (such as resting tremor and bradykinesia) rely primarily on in-person observational rating scales (e.g., MDS-UPDRS Part III). These evaluations face significant barriers:
-1. **Subjectivity & Inter-rater Variability**: Visual estimation of tremor frequency or subtle amplitude decrement is difficult to standardize across practitioners.
-2. **Infrequent Monitoring**: Patients often experience fluctuations throughout the day, yet clinical check-ups happen months apart.
-3. **Hardware Barriers**: Sensor-based solutions (accelerometers, gyroscopic gloves) are costly, require calibration, and are rarely available for home monitoring.
+Observational motor assessments—such as items on the **Movement Disorder Society Unified Parkinson’s Disease Rating Scale (MDS-UPDRS Part III)**—remain the cornerstone of movement disorder evaluation. However, conventional examinations face inherent limitations:
 
-## Proposed Solution
+1. **Observer Subjectivity**: Estimating resting tremor frequencies (3–7 Hz) or subtle amplitude decrements with the naked eye introduces inter-rater variability.
+2. **Hardware & Accessibility Barriers**: Specialized motion-capture systems, sensorized gloves, and electromagnetic trackers cost thousands of dollars, require clinical calibration, and cannot be used at home.
+3. **The "Black-Box" Diagnostic AI Trap**: Machine learning models that output opaque diagnostic probabilities alienate clinicians due to lack of explainability, clinical bias, and regulatory risk.
 
-NeuroMotion AI leverages ubiquitously available webcams and computer vision to deliver:
-- **Zero-hardware-overhead Motor Assessment**: Standard RGB camera hand tracking with real-time MediaPipe hand landmark extraction.
-- **Explainable Kinematic Metrics**: Algorithmic signal extraction (time-series coordinates, FFT power spectral density, peak detection) providing transparent physical units (Hz, normalized amplitude, tap intervals).
-- **Interactive Visual Dashboard**: Real-time feedback, movement consistency trends, and exportable session summaries.
-
----
-
-## Core Features (Planned)
-
-| # | Feature | Description | Status |
-|---|---------|-------------|--------|
-| 1 | **Live Hand Tracking** | Real-time 21-landmark MediaPipe tracking, skeleton overlay, bounding box, tracking confidence check | `Planned` |
-| 2 | **Tremor Measurement** | Resting-hand landmark position capture over time, coordinate timestamping, oscillation isolation | `Planned` |
-| 3 | **Tremor Frequency Analysis** | FFT-based spectral analysis, dominant frequency identification (Hz), signal-quality guardrails | `Planned` |
-| 4 | **Finger-Tapping Detection** | Thumb-to-index distance tracking, cycle segmentation, completed tap counting | `Planned` |
-| 5 | **Tapping Speed & Amplitude** | Taps/second, mean interval, amplitude range (pixel vs. normalized hand scale) | `Planned` |
-| 6 | **Movement Consistency Analysis**| Interval variance, amplitude fatigue/decay detection, rhythm stability | `Planned` |
-| 7 | **Combined Visual Dashboard** | Unified hackathon-ready UI with live video, waveform graphs, spectrum, and summary telemetry | `Planned` |
-| 8 | **Assessment Report** | Structured summary report with metrics, graphs, session context, and medical disclaimers | `Planned` |
-
-### Future Product Differentiators (Post-Core Backlog)
-- **Smart Camera Quality Checker**: Hand visibility boundaries, jitter detection, and real-time positioning feedback.
-- **Session-to-Session Comparison**: Trend charts tracking metrics across multiple sessions with environmental warning indicators.
+### The NeuroMotion AI Solution
+NeuroMotion AI bridges this gap with a **zero-hardware-overhead, privacy-first, fully explainable kinematic engine**:
+- **Commodity RGB Webcams**: Runs at 30+ FPS directly in modern web browsers using WebGL acceleration.
+- **Client-Side Privacy**: Raw camera frames never leave the user's browser. Only mathematical coordinate time-series are computed.
+- **Deterministic Signal Processing**: Replaces black-box neural networks with transparent signal processing (Fast Fourier Transform, Butterworth filtering, anatomical scale normalization, and peak prominence detection).
 
 ---
 
-## Proposed Technology Stack
+## 2. Core Scientific Methodology
 
-> *Note: The stack below is the proposed architecture for the prototype and is subject to refinement during technical prototyping. See [ARCHITECTURE.md](docs/ARCHITECTURE.md) and [DECISIONS.md](docs/DECISIONS.md).*
-
-- **Frontend**: React 18+, Vite, Tailwind CSS
-- **Visualization**: Recharts / HTML5 Canvas
-- **Computer Vision**: MediaPipe Hands (JavaScript / Python), WebRTC / MediaDevices API
-- **Signal Processing & Backend**: Python 3.10+, FastAPI, NumPy, SciPy (FFT & signal filtering)
-- **Storage**: Lightweight local session storage (JSON/Local-First), keeping MVP deployment simple
-
-### High-Level Data Flow
+NeuroMotion AI implements two distinct motor assessment modules:
 
 ```
-Webcam (Browser)
+Webcam Frame (Browser)
        │
        ▼
-React Frontend + MediaPipe Hand Tracking (21 3D Landmarks)
+MediaPipe Tasks-Vision (21 3D Landmarks @ ~30 FPS)
        │
-       ▼ [Landmark Coordinates + Microsecond Timestamps]
-Python Analysis Service (FastAPI)
-       ├─► Signal Filtering & Normalization
-       ├─► Tremor Oscillations & FFT Spectral Analysis (Dominant Peak Hz)
-       ├─► Finger-Tapping Peak/Valley Segmentation & Interval Counting
-       └─► Consistency & Amplitude Fatigue Calculation
-       │
-       ▼ [Structured JSON Metric Payload]
-React Unified Dashboard & Assessment Report Generator
+       ├────────────────────────────────────────┬────────────────────────────────────────┐
+       ▼                                        ▼                                        ▼
+[Module A: Resting Tremor]              [Module B: Finger Tapping]              [Signal Quality Guardrails]
+- Index Tip (8) spatial deviation       - Thumb (4) to Index (8) distance       - Nyquist Criterion check (>24 FPS)
+- Principal Axis projection             - Wrist-to-MCP anatomical scale $S_{ref}$ - Uniform 30 Hz grid interpolation
+- 0.5–12.0 Hz Butterworth Bandpass      - Low-pass smoothing & hysteresis       - Hand frame boundary detection
+- Discrete FFT spectral decomposition   - Peak/trough opening cycle detection   
+- Dominant frequency & 4–6 Hz power ratio- Cadence, interval CV%, fatigue slope 
+       │                                        │                                        │
+       └────────────────────────────────────────┴────────────────────────────────────────┘
+                                                │
+                                                ▼
+                         [Explainable Telemetry Dashboard & Motor Report]
+```
+
+### Module A: Resting Tremor Analysis
+1. **Landmark Extraction**: Tracks Landmark 8 (Index Fingertip) while the subject's forearm rests comfortably.
+2. **Principal Oscillation Axis Projection**: Conventional Euclidean displacement magnitude $\sqrt{(x-\bar{x})^2 + (y-\bar{y})^2}$ folds symmetric oscillations and falsely doubles fundamental frequency. NeuroMotion AI projects spatial displacement along the principal variance axis (PCA) to maintain true zero-crossing harmonics ($f_0$).
+3. **Uniform Grid Resampling**: Webcam frame timestamps vary due to hardware scheduling. Timestamps are linearly interpolated onto a uniform 30 Hz time grid ($\Delta t = 33.3\text{ ms}$) prior to spectral analysis to prevent frequency warping and spectral leakage.
+4. **Butterworth Bandpass Filtering**: A 4th-order zero-phase bandpass filter (0.5–12.0 Hz) removes slow baseline postural drift (<0.5 Hz) and high-frequency camera sensor noise (>12 Hz).
+5. **Discrete Fast Fourier Transform (FFT)**: Computes single-sided spectral power distributions with Hanning windowing, isolating dominant tremor frequency (Hz) and concentration within the 4.0–6.0 Hz physiological tremor band.
+
+### Module B: Finger-Tapping Kinematics
+1. **Anatomical Scale Normalization ($S_{ref}$)**: Moving closer to or further from the webcam distorts raw pixel distances. We normalize thumb-index separation ($D_{raw}$) by the instantaneous anatomical distance between Landmark 0 (Wrist) and Landmark 9 (Middle Finger MCP joint):
+   $$D_{norm}(t) = \frac{\sqrt{(x_4 - x_8)^2 + (y_4 - y_8)^2 + (z_4 - z_8)^2}}{\sqrt{(x_0 - x_9)^2 + (y_0 - y_9)^2 + (z_0 - z_9)^2}}$$
+2. **Extrema Cycle Detection & Hysteresis**: Tapping peaks (maximal aperture) and closure troughs are detected using temporal refractory periods (~200 ms) and dynamic threshold hysteresis to avoid duplicate counting of hesitation micro-movements.
+3. **Kinematic Metrics**:
+   - **Tapping Cadence**: Completed opening-closing cycles per second (Hz).
+   - **Rhythm Variability**: Inter-Tap Interval (ITI) Coefficient of Variation:
+     $$\text{CV} = \frac{\sigma_{ITI}}{\mu_{ITI}} \times 100\%$$
+   - **Amplitude Fatigue Slope**: Linear regression slope across opening peaks over the 10-second window to detect progressive movement decrement (hypometria).
+
+---
+
+## 3. Technological Architecture
+
+The application is architected as a high-performance, client-side progressive web application designed for static deployment and zero server dependency:
+
+| Layer | Technology | Responsibility |
+|---|---|---|
+| **Frontend Framework** | React 19 + Vite | Component lifecycle, state management, modular routing |
+| **Styling & Design System** | Tailwind CSS v4 | Warm ivory aesthetic (`#FAF9F4`), custom design tokens |
+| **Computer Vision** | `@mediapipe/tasks-vision` | WebAssembly & WebGL hand landmark detection |
+| **Kinematics Engine** | Pure JavaScript/TypeScript (`kinematicsEngine.js`) | Client-side FFT, resampling, Butterworth filters, kinematics |
+| **Visual Telemetry** | Recharts | Displacement waveforms, 4–6 Hz highlighted FFT spectra |
+| **CI/CD & Hosting** | GitHub Pages + GitHub Actions | Automated build and HTTPS deployment on push |
+
+---
+
+## 4. UI/UX Design System
+
+Styled according to modern healthcare design principles with a **warm, minimal ivory and golden butter palette**:
+
+- **Warm Ivory (`#FAF9F4`)**: Soft, welcoming foundational canvas.
+- **Pure White (`#FFFFFF`)**: High-contrast, clean elevated card surfaces.
+- **Butter & Golden Yellow (`#F4D66D` / `#E9BD4B`)**: Signature accent for primary buttons, active protocol markers, and chart telemetry highlights.
+- **Warm Charcoal (`#292820`)**: High-contrast typography for medical clarity.
+- **Typography**: Space Grotesk / Plus Jakarta Sans for headings; Inter for numerical data readouts.
+
+---
+
+## 5. Repository Structure
+
+```
+neuro-motion-ai/
+├── .github/workflows/deploy.yml   # Automated GitHub Pages CI/CD pipeline
+├── README.md                      # Comprehensive project documentation
+├── AGENTS.md                      # Multi-agent collaboration protocol (Codex & Antigravity)
+├── PROMPT.md                      # Chronological AI work ledger
+├── docs/
+│   ├── ARCHITECTURE.md            # System architecture and API schemas
+│   ├── DECISIONS.md               # Architecture Decision Records (ADRs 001–006)
+│   ├── DESIGN_SYSTEM.md           # Visual identity, tokens, and contrast specifications
+│   ├── HANDOFF_LOG.md             # Context-switching ledger for pair programming agents
+│   ├── PROJECT.md                 # Product specifications and non-goals
+│   ├── RESEARCH_REFERENCES.md     # Reference research audit notes
+│   ├── REUSE_AND_ATTRIBUTION.md   # Open-source attribution ledger
+│   └── TASKS.md                   # Feature tracking board
+├── frontend/
+│   ├── src/
+│   │   ├── components/            # Sidebar, HUD bars, navigation
+│   │   ├── features/
+│   │   │   ├── analysis/          # kinematicsEngine.js (FFT, filters, tapping)
+│   │   │   ├── dashboard/         # TelemetryCharts.jsx (Recharts visualizers)
+│   │   │   └── hand-tracking/     # HandTrackerCanvas.jsx (MediaPipe Tasks-Vision)
+│   │   ├── pages/                 # Landing, Dashboard, Selection, Live, Results, Report, History
+│   │   ├── App.jsx                # Root router and state controller
+│   │   ├── index.css              # Tailwind v4 theme tokens
+│   │   └── main.jsx               # React 19 mount point
+│   ├── vite.config.js             # Vite configuration with base path
+│   └── package.json
+└── backend/                       # Python FastAPI reference service (optional/benchmarking)
 ```
 
 ---
 
-## Current Development Status
-
-- **Phase**: **Foundation & Architecture Setup**
-- **Implemented Features**: None (0/8 core features). Repository structure, guidelines, agent workflow protocols, and reference research tracking are established.
-- **Next Milestone**: Research repository inspection & technical prototyping of hand tracking pipeline.
-
----
-
-## Setup Instructions (Placeholder)
-
-*Detailed setup scripts will be provided as implementation begins.*
+## 6. Local Development & Setup
 
 ### Prerequisites
-- Node.js (v18+) & npm / yarn
-- Python 3.10+ & virtualenv
-- Webcam access via a modern browser (Chrome / Edge recommended for MediaPipe WebGL acceleration)
+- **Node.js**: v18+ (v20+ recommended)
+- **Webcam**: Standard USB or built-in webcam
+- **Browser**: Google Chrome, Microsoft Edge, or Mozilla Firefox (WebGL enabled)
+
+### Running the Application
 
 ```bash
 # Clone the repository
-git clone https://github.com/<org>/neuro-motion-ai.git
-cd neuro-motion-ai
+git clone https://github.com/worriedwolf629-sudo/neuro-motion-ai.git
+cd neuro-motion-ai/frontend
 
-# Backend setup (Planned)
-cd backend
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
-
-# Frontend setup (Planned)
-cd ../frontend
+# Install dependencies
 npm install
+
+# Start local development server
 npm run dev
 ```
 
+Open your browser at **`http://localhost:5173/`** (or the port specified in terminal output).
 
+---
+
+## 7. Intellectual Property & Ethics
+
+- **Open Source Attribution**: Techniques from public repositories (`parkscreen` [MIT] and `UBU-PD-FT-Assessment` [Apache 2.0]) were inspected and adapted in clean-room fashion with architectural enhancements. See [`docs/REUSE_AND_ATTRIBUTION.md`](docs/REUSE_AND_ATTRIBUTION.md) for licensing notices.
+- **Privacy Standard**: Zero biometric data is stored remotely. All webcam analysis is processed transiently inside browser memory.
