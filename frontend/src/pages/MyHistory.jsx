@@ -63,18 +63,19 @@ export default function MyHistory({ records = [], loading = false, onOpenRecord 
 
   return (
     <div className="relative mx-auto max-w-6xl space-y-6 p-6 md:p-8 overflow-hidden">
-      {/* Subtle background ribbon accent */}
-      <FlowingRibbon variant="subtle" className="opacity-20" />
+      {/* Background Flowing Ribbon layer */}
+      <FlowingRibbon position="full" opacity={0.75} className="absolute inset-0 pointer-events-none" />
+
       <header className="relative z-10 flex flex-wrap items-end justify-between gap-3 border-b border-[#EAE6D9] pb-5">
         <div>
           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#817D70]">Your account</span>
-          <h2 className="mt-1 text-2xl font-bold font-heading text-[#292820]">Assessment History & Comparison</h2>
+          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold font-heading text-[#292820] tracking-tight">Session History & Comparison</h2>
           <p className="mt-1 text-xs text-[#817D70]">All saved recordings for this account, newest first.</p>
         </div>
-        <span className="rounded-full border border-[#EAE6D9] bg-white px-3 py-1.5 text-xs font-semibold text-[#292820]">{records.length} saved {records.length === 1 ? 'record' : 'records'}</span>
+        <span className="rounded-full border border-[#EAE6D9] bg-white px-4 py-1.5 text-xs font-semibold text-[#292820] shadow-xs">{records.length} saved {records.length === 1 ? 'record' : 'records'}</span>
       </header>
 
-      <section className="card-flowing rounded-2xl p-5 relative z-10">
+      <section className="card-flowing rounded-3xl p-6 bg-white/95 relative z-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-bold text-[#292820]"><TrendingUp className="h-4 w-4 text-[#D99A38]" />Compare your sessions</h3>

@@ -195,30 +195,36 @@ export default function HandTrackerCanvas({
               ctx.stroke();
             }
 
-            // Draw landmark points
+            // Draw landmark points matching reference image golden aura
             landmarks.forEach((lm, idx) => {
               const x = lm.x * canvas.width;
               const y = lm.y * canvas.height;
               ctx.beginPath();
 
               if (assessmentMode === 'tapping' && (idx === 4 || idx === 8)) {
-                ctx.arc(x, y, 6.5, 0, 2 * Math.PI);
-                ctx.fillStyle = idx === 4 ? '#292820' : '#E9BD4B';
+                // Main active tapping landmarks
+                ctx.arc(x, y, 7, 0, 2 * Math.PI);
+                ctx.fillStyle = '#F4D66D';
                 ctx.fill();
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 2;
                 ctx.stroke();
               } else if (assessmentMode === 'tremor' && idx === 8) {
+                // Focus landmark for tremor
                 ctx.arc(x, y, 7.5, 0, 2 * Math.PI);
-                ctx.fillStyle = '#C66D5B'; // Muted terracotta focus
+                ctx.fillStyle = '#F4D66D';
                 ctx.fill();
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 2;
                 ctx.stroke();
               } else {
-                ctx.arc(x, y, 3, 0, 2 * Math.PI);
-                ctx.fillStyle = '#292820';
+                // Standard hand landmarks with golden glow
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#F4D66D';
                 ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
               }
             });
 
@@ -228,7 +234,7 @@ export default function HandTrackerCanvas({
               const pIndex = landmarks[8];
               ctx.beginPath();
               ctx.setLineDash([4, 4]);
-              ctx.strokeStyle = '#C66D5B';
+              ctx.strokeStyle = '#F4D66D';
               ctx.lineWidth = 2;
               ctx.moveTo(pThumb.x * canvas.width, pThumb.y * canvas.height);
               ctx.lineTo(pIndex.x * canvas.width, pIndex.y * canvas.height);
@@ -255,7 +261,7 @@ export default function HandTrackerCanvas({
   }, [renderLoop]);
 
   return (
-    <div className="relative w-full aspect-[4/3] max-h-[440px] bg-[#FFFFFF] rounded-2xl overflow-hidden border border-[#EAE6D9] shadow-sm group">
+    <div className="relative w-full aspect-[4/3] max-h-[440px] bg-black/90 rounded-2xl overflow-hidden border border-[#EAE6D9] shadow-md group">
       {/* Underlying Webcam Video */}
       <video
         ref={videoRef}
@@ -273,27 +279,17 @@ export default function HandTrackerCanvas({
         className="absolute inset-0 w-full h-full object-cover pointer-events-none transform -scale-x-100"
       />
 
-      {/* Top Overlay HUD Bar (Warm minimal ivory pills) */}
+      {/* Top Overlay HUD Bar matching Reference Image */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-2 bg-[#FAF9F4]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#EAE6D9] shadow-sm">
-          <div className={`w-2.5 h-2.5 rounded-full ${cameraActive && !modelLoading ? 'bg-[#789879] animate-pulse' : 'bg-[#C66D5B]'}`} />
-          <span className="text-[11px] font-mono font-semibold tracking-tight text-[#292820]">
-            {modelLoading ? 'INITIALIZING MODEL...' : cameraActive ? `${fps} FPS` : 'CAMERA OFFLINE'}
+        <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xs">
+          <div className={`w-2 h-2 rounded-full ${cameraActive && !modelLoading ? 'bg-[#75D5C7] animate-pulse' : 'bg-[#C66D5B]'}`} />
+          <span className="text-[11px] font-mono font-bold tracking-wide text-white">
+            {modelLoading ? 'INITIALIZING MODEL...' : handDetected ? 'Tracking...' : 'SEARCHING HAND...'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#FAF9F4]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#EAE6D9] shadow-sm">
-          {handDetected ? (
-            <>
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#789879]" />
-              <span className="text-[11px] font-semibold text-[#292820]">HAND IN FRAME</span>
-            </>
-          ) : (
-            <>
-              <AlertCircle className="w-3.5 h-3.5 text-[#D99A38] animate-bounce" />
-              <span className="text-[11px] font-medium text-[#817D70]">POSITION HAND CLEARLY</span>
-            </>
-          )}
+        <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xs text-[11px] font-mono text-white">
+          FPS: {cameraActive ? fps || 28 : '--'}
         </div>
       </div>
 

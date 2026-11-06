@@ -12,13 +12,13 @@ import FlowingRibbon from '../components/FlowingRibbon';
 
 export default function AboutMethodology({ setActivePage }) {
   return (
-    <div className="relative p-8 space-y-8 max-w-4xl mx-auto overflow-hidden">
-      {/* Subtle background ribbon accent */}
-      <FlowingRibbon variant="subtle" className="opacity-20" />
+    <div className="relative p-6 sm:p-8 space-y-8 max-w-4xl mx-auto overflow-hidden">
+      {/* Background Flowing Ribbon layer */}
+      <FlowingRibbon position="full" opacity={0.75} className="absolute inset-0 pointer-events-none" />
       {/* Header */}
       <div className="relative z-10 border-b border-[#EAE6D9] pb-4">
         <span className="text-[10px] font-mono uppercase text-[#817D70] font-bold">Scientific Methodology</span>
-        <h2 className="text-2xl font-bold font-heading text-[#292820]">
+        <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-[#292820] tracking-tight">
           About NeuroMotion AI
         </h2>
         <p className="text-xs text-[#817D70] mt-1">
@@ -27,7 +27,7 @@ export default function AboutMethodology({ setActivePage }) {
       </div>
 
       {/* Section 1: Principles */}
-      <div className="card-flowing rounded-2xl p-6 relative z-10 space-y-4">
+      <div className="card-flowing rounded-3xl p-7 bg-white/95 relative z-10 space-y-4">
         <h3 className="text-sm font-bold font-heading text-[#292820] flex items-center gap-2">
           <Cpu className="w-4 h-4 text-[#E9BD4B]" />
           Zero-Hardware Accessibility

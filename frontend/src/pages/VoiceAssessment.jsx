@@ -104,18 +104,18 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
   };
 
   return (
-    <div className="relative p-8 space-y-6 max-w-6xl mx-auto overflow-hidden">
-      {/* Subtle background ribbon accent */}
-      <FlowingRibbon variant="subtle" className="opacity-20" />
+    <div className="relative p-6 sm:p-8 space-y-6 max-w-6xl mx-auto overflow-hidden">
+      {/* Background Flowing Ribbon layer */}
+      <FlowingRibbon position="full" opacity={0.75} className="absolute inset-0 pointer-events-none" />
       <div className="relative z-10">
         <p className="text-[10px] font-mono uppercase tracking-wider text-[#817D70] font-bold">Exploratory acoustic measurement</p>
-        <h2 className="text-2xl font-bold font-heading text-[#292820]">Voice Signal Assessment</h2>
+        <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-[#292820] tracking-tight">Voice Signal Assessment</h2>
         <p className="text-sm text-[#817D70] mt-1">Sustain a comfortable “ah” sound for five seconds. Keep the microphone at a steady distance.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <section className="lg:col-span-4 card-flowing rounded-2xl p-6 space-y-5 relative z-10">
-          <div className="w-12 h-12 rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center">
+        <section className="lg:col-span-4 card-flowing rounded-3xl p-6 space-y-5 relative z-10 bg-white/95">
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center">
             {status === 'recording' ? <Mic className="w-5 h-5 text-[#D99A38] animate-pulse" /> : <MicOff className="w-5 h-5 text-[#817D70]" />}
           </div>
           <div>
@@ -124,9 +124,9 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
           </div>
           {status === 'recording' && <div className="h-2 bg-[#F5F1E6] rounded-full overflow-hidden"><div className="h-full bg-[#E9BD4B] transition-all" style={{ width: `${((CAPTURE_SECONDS - remaining) / CAPTURE_SECONDS) * 100}%` }} /></div>}
           {status === 'recording' ? (
-            <button onClick={stopCapture} className="w-full px-5 py-3 rounded-xl bg-[#C66D5B] text-white text-sm font-bold">Stop recording</button>
+            <button onClick={stopCapture} className="w-full px-5 py-3 rounded-full bg-[#C66D5B] text-white text-sm font-bold shadow-xs active:scale-95 transition">Stop recording</button>
           ) : (
-            <button onClick={startCapture} disabled={status === 'processing'} className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#F4D66D] hover:bg-[#E9BD4B] disabled:opacity-60 text-[#292820] text-sm font-bold border border-[#E9BD4B]">
+            <button onClick={startCapture} disabled={status === 'processing'} className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-gradient-to-r from-[#F4D66D] to-[#E9BD4B] hover:opacity-95 disabled:opacity-60 text-[#292820] text-sm font-bold border border-[#E9BD4B] shadow-xs hover:shadow transition active:scale-95">
               {status === 'complete' ? <RotateCcw className="w-4 h-4" /> : <Mic className="w-4 h-4" />}{status === 'complete' ? 'Record again' : 'Record 5 seconds'}
             </button>
           )}
@@ -134,10 +134,10 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
           <div className="flex gap-2 border-t border-[#EAE6D9] pt-4 text-xs text-[#817D70] leading-relaxed"><ShieldCheck className="w-4 h-4 shrink-0 text-[#789879]" /><p>Audio is analyzed in this browser, then discarded. No audio is uploaded or retained by this feature.</p></div>
         </section>
 
-        <section className="lg:col-span-8 card-flowing rounded-2xl p-6 relative z-10">
+        <section className="lg:col-span-8 card-flowing rounded-3xl p-6 relative z-10 bg-white/95">
           <div className="flex items-center justify-between mb-4">
             <div><h3 className="text-base font-bold text-[#292820]">Pitch over time</h3><p className="text-xs text-[#817D70]">Estimated fundamental frequency • Hz</p></div>
-            {metrics && <button onClick={downloadCsv} className="flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-lg border border-[#EAE6D9] hover:bg-[#FAF9F4]"><Download className="w-3.5 h-3.5" />Download CSV</button>}
+            {metrics && <button onClick={downloadCsv} className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full border border-[#EAE6D9] hover:bg-[#FAF9F4] transition shadow-xs"><Download className="w-3.5 h-3.5" />Download CSV</button>}
           </div>
           <div className="h-64">
             {metrics ? <ResponsiveContainer width="100%" height="100%"><LineChart data={metrics.timeline} margin={{ top: 8, right: 12, bottom: 4, left: 0 }}>

@@ -10,7 +10,9 @@ import {
   Clock,
   ArrowRight,
   Radio,
-  Activity
+  Activity,
+  RotateCcw,
+  Pause
 } from 'lucide-react';
 import HandTrackerCanvas from '../features/hand-tracking/HandTrackerCanvas';
 import { analyzeTremorKinematics, analyzeFingerTappingKinematics } from '../features/analysis/kinematicsEngine';
@@ -153,56 +155,246 @@ export default function LiveAssessment({
     }, 300);
   };
 
+  const resetTest = () => {
+    setIsRecording(false);
+    landmarkBufferRef.current = [];
+    setRecordingSeconds(0);
+    setLiveTelemetry(null);
+    setRestingTremor(null);
+    setTremorPhase('rest');
+    setNotice(null);
+  };
+
+  const timerPercent = Math.min(100, (recordingSeconds / 10) * 100);
+  const remainingSeconds = 10 - recordingSeconds;
+
   return (
-    <div className="relative p-8 space-y-6 max-w-6xl mx-auto overflow-hidden">
-      {/* Subtle non-intrusive background accent */}
-      <FlowingRibbon variant="subtle" className="opacity-20" />
-      {/* Page Title */}
-      <div className="flex items-center justify-between">
+    <div className="relative p-6 sm:p-8 space-y-6 max-w-6xl mx-auto overflow-hidden">
+      {/* Background Flowing Ribbon layer */}
+      <FlowingRibbon position="full" opacity={0.75} className="absolute inset-0 pointer-events-none" />
+
+      {/* Header section matching Reference Image */}
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#E9BD4B]" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#817D70]">
-              Active Protocol: {mode === 'tremor' ? 'Resting-Hand Tremor' : 'Rapid Finger-Tapping'}
+          <div className="flex items-center gap-2 text-xs font-mono text-[#817D70] mb-1">
+            <span onClick={() => setActivePage('assessments')} className="cursor-pointer hover:text-[#292820] transition">Assessments</span>
+            <span>&gt;</span>
+            <span className="font-bold text-[#292820]">
+              {mode === 'tremor' ? 'Resting Tremor' : 'Finger Tapping'}
             </span>
           </div>
-          <h2 className="text-2xl font-bold font-heading text-[#292820]">
-            Live Movement Examination
+          <h2 className="text-2xl font-extrabold font-heading text-[#292820] tracking-tight">
+            {mode === 'tremor' ? 'Resting Tremor Assessment' : 'Rapid Finger-Tapping Assessment'}
           </h2>
+          <p className="text-xs text-[#817D70] mt-0.5">
+            {mode === 'tremor'
+              ? 'Measure hand movement characteristics during a resting pose.'
+              : 'Quantify repetitive thumb-index tapping frequency and fatigue rate.'}
+          </p>
         </div>
 
-        <button
-          onClick={() => setActivePage('assessments')}
-          className="text-xs font-semibold text-[#817D70] hover:text-[#292820] px-3 py-1.5 rounded-xl border border-[#EAE6D9] bg-[#FFFFFF] transition"
-        >
-          Change Protocol
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#EAE6D9] text-xs font-mono font-bold text-[#292820] shadow-xs">
+            <Clock className="w-3.5 h-3.5 text-[#E9BD4B]" />
+            ~10 seconds phase
+          </span>
+          <button
+            onClick={() => setActivePage('assessments')}
+            className="text-xs font-semibold text-[#817D70] hover:text-[#292820] px-4 py-1.5 rounded-full border border-[#EAE6D9] bg-white transition shadow-xs"
+          >
+            Change Protocol
+          </button>
+        </div>
       </div>
 
       {notice && (
-        <div className="bg-[#FAF9F4] border border-[#D99A38] rounded-xl p-4 flex items-center gap-3 text-xs text-[#292820]">
+        <div className="relative z-10 bg-[#FAF9F4] border border-[#D99A38] rounded-2xl p-4 flex items-center gap-3 text-xs text-[#292820] shadow-xs">
           <AlertTriangle className="w-4 h-4 text-[#D99A38] shrink-0" />
           <span>{notice}</span>
         </div>
       )}
 
       {mode === 'tremor' && (
-        <div className="flex items-center gap-2 text-xs text-[#817D70]" aria-live="polite">
-          <span className="font-mono font-bold text-[#292820]">{tremorPhase === 'rest' ? 'PHASE 1 OF 2' : 'PHASE 2 OF 2'}</span>
-          <span>{tremorPhase === 'rest' ? 'Resting hand' : 'Cognitive load'}</span>
+        <div className="relative z-10 flex items-center gap-2 text-xs text-[#817D70]">
+          <span className="font-mono font-bold text-[#292820] px-2.5 py-0.5 rounded-full bg-white border border-[#EAE6D9]">
+            {tremorPhase === 'rest' ? 'PHASE 1 OF 2' : 'PHASE 2 OF 2'}
+          </span>
+          <span className="font-semibold text-[#292820]">
+            {tremorPhase === 'rest' ? 'Resting Hand Baseline' : 'Cognitive Distraction Load'}
+          </span>
         </div>
       )}
 
-      <section className="rounded-2xl border border-[#EAE6D9] bg-[#FFFFFF] p-5 shadow-sm" aria-live="polite">
+      {/* Main Grid: Camera Viewport (Left) & Instructions Card (Right) */}
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Webcam Card & Bottom Controls */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* Central Camera Card */}
+          <div className="card-flowing rounded-3xl p-4 bg-white/95 overflow-hidden">
+            <HandTrackerCanvas
+              onLandmarksUpdate={handleLandmarkSample}
+              isRecording={isRecording}
+              assessmentMode={mode}
+              sharedStream={sharedStream}
+              onStreamReady={onStreamReady}
+            />
+          </div>
+
+          {/* Bottom Action Controls matching Reference Screenshot */}
+          <div className="card-flowing rounded-2xl p-4 flex flex-wrap items-center justify-center gap-4 bg-white/95">
+            <button
+              onClick={resetTest}
+              disabled={isRecording}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#F5F1E9] text-[#292820] text-xs font-semibold border border-[#EAE6D9] shadow-xs transition active:scale-95 disabled:opacity-50"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#817D70]" />
+              Retake
+            </button>
+
+            {!isRecording ? (
+              <button
+                onClick={startTest}
+                disabled={isProcessing}
+                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#F4D66D] to-[#E9BD4B] hover:opacity-95 text-[#292820] font-bold text-sm rounded-full border border-[#E9BD4B] shadow-md hover:shadow-lg transition active:scale-95"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                {mode === 'tremor' && restingTremor ? 'Start Cognitive Phase' : 'Start Test'}
+              </button>
+            ) : (
+              <button
+                onClick={stopTest}
+                className="flex items-center gap-2 px-8 py-3 bg-[#C66D5B] hover:bg-[#B55C4A] text-white font-bold text-sm rounded-full shadow-md transition animate-pulse active:scale-95"
+              >
+                <Square className="w-4 h-4 fill-current" />
+                Stop & Compute
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsRecording(false)}
+              disabled={!isRecording}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#F5F1E9] text-[#292820] text-xs font-semibold border border-[#EAE6D9] shadow-xs transition active:scale-95 disabled:opacity-50"
+            >
+              <Pause className="w-3.5 h-3.5 text-[#817D70]" />
+              Pause
+            </button>
+
+            {mode === 'tapping' && !isRecording && (
+              <button
+                onClick={startCalibration}
+                disabled={isCalibrating}
+                className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full bg-[#FAF9F4] hover:bg-[#F5F1E9] text-[#292820] border border-[#EAE6D9] transition"
+              >
+                <Sliders className="w-3.5 h-3.5 text-[#E9BD4B]" />
+                {isCalibrating ? 'Calibrating (3s)...' : calibrationData ? 'Re-Calibrate' : 'Calibrate Range'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Instructions & Circular Progress Timer */}
+        <div className="lg:col-span-4 card-flowing rounded-3xl p-6 bg-white/95 space-y-6 flex flex-col justify-between">
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-[#292820] flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#E9BD4B]" />
+              Instructions
+            </h3>
+
+            <div className="space-y-3 text-xs text-[#817D70]">
+              <div className="flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] text-[#292820] font-bold text-[11px] flex items-center justify-center shrink-0">
+                  1
+                </span>
+                <p className="leading-snug">
+                  {mode === 'tremor' ? 'Keep your hand relaxed and still' : 'Hold hand upright facing webcam'}
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] text-[#292820] font-bold text-[11px] flex items-center justify-center shrink-0">
+                  2
+                </span>
+                <p className="leading-snug">Ensure good lighting</p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] text-[#292820] font-bold text-[11px] flex items-center justify-center shrink-0">
+                  3
+                </span>
+                <p className="leading-snug">
+                  {mode === 'tremor' ? 'Avoid large movements' : 'Tap thumb and index as wide as possible'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Circular Countdown Progress Ring matching Reference Image */}
+          <div className="flex flex-col items-center justify-center py-4 space-y-2">
+            <div className="relative w-28 h-28 flex items-center justify-center">
+              {/* Background ring */}
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#FAF9F4"
+                  strokeWidth="8"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#EAE6D9"
+                  strokeWidth="6"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#F4D66D"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray={264}
+                  strokeDashoffset={264 - (264 * timerPercent) / 100}
+                  className="transition-all duration-500 ease-linear"
+                />
+              </svg>
+
+              {/* Center Countdown Digit */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-extrabold font-mono text-[#292820]">
+                  {isRecording ? remainingSeconds : '10'}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs font-semibold text-[#817D70]">
+              {isRecording ? 'Recording in progress...' : 'Get ready...'}
+            </p>
+          </div>
+
+          <div className="pt-3 border-t border-[#EAE6D9] text-[10px] text-[#817D70] space-y-1">
+            <p className="font-semibold text-[#292820]">Target Sampling Quality:</p>
+            <p>Uniform 30 Hz grid • Nyquist criterion &gt;24 FPS enforced.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Live Movement Profile Section */}
+      <section className="relative z-10 card-flowing rounded-3xl p-6 bg-white/95" aria-live="polite">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="text-sm font-bold text-[#292820]">Live movement profile</h3>
-            <p className="mt-1 text-[11px] text-[#817D70]">Measured from tracked hand landmarks during this recording. Not a disease probability.</p>
+            <h3 className="text-sm font-bold text-[#292820]">Live Movement Profile</h3>
+            <p className="mt-0.5 text-[11px] text-[#817D70]">Measured from tracked hand landmarks during this recording. Non-diagnostic kinematics.</p>
           </div>
-          <span className={`rounded-full border px-3 py-1 text-[10px] font-bold ${!liveTelemetry ? 'border-[#EAE6D9] bg-[#FAF9F4] text-[#817D70]' : liveTelemetry.quality === 'Good' ? 'border-[#B7D7C0] bg-[#EFF7F0] text-[#39734A]' : liveTelemetry.quality === 'Acceptable' ? 'border-[#E9BD4B] bg-[#FFF8DF] text-[#8B6810]' : 'border-[#E9BD4B] bg-[#FAF9F4] text-[#817D70]'}`}>
-            {isRecording ? `RECORDING · ${liveTelemetry?.quality || 'Collecting data'}` : liveTelemetry ? `LAST SAMPLE · ${liveTelemetry.quality}` : 'AWAITING RECORDING'}
+          <span className={`rounded-full border px-3.5 py-1 text-[10px] font-bold ${!liveTelemetry ? 'border-[#EAE6D9] bg-[#FAF9F4] text-[#817D70]' : liveTelemetry.quality === 'Good' ? 'border-[#B7D7C0] bg-[#EFF7F0] text-[#39734A]' : 'border-[#E9BD4B] bg-[#FFF8DF] text-[#8B6810]'}`}>
+            {isRecording ? `RECORDING · ${liveTelemetry?.quality || 'Collecting telemetry'}` : liveTelemetry ? `LAST SAMPLE · ${liveTelemetry.quality}` : 'AWAITING RECORDING'}
           </span>
         </div>
+
         {mode === 'tremor' ? (
           <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
             <LiveMetric label="Movement amplitude (RMS)" value={liveTelemetry ? `${liveTelemetry.rms_amplitude} a.u.` : '—'} />
@@ -218,153 +410,23 @@ export default function LiveAssessment({
             <LiveMetric label="Effective sampling" value={liveTelemetry ? `${liveTelemetry.effective_fps} FPS` : '—'} />
           </div>
         )}
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#F5F1E6]" role="img" aria-label={liveTelemetry ? mode === 'tremor' ? `Measured 4 to 6 hertz band power ${Math.round(liveTelemetry.power_ratio_4_6hz * 100)} percent` : `Measured normalized tapping amplitude ${liveTelemetry.average_amplitude}` : 'No signal measurement yet'}>
-          <div className="h-full rounded-full bg-[#E9BD4B] transition-[width] duration-300" style={{ width: `${mode === 'tremor' ? Math.min(100, Math.max(0, (liveTelemetry?.power_ratio_4_6hz || 0) * 100)) : Math.min(100, Math.max(0, (liveTelemetry?.average_amplitude || 0) * 100))}%` }} />
-        </div>
-        <p className="mt-2 text-[10px] text-[#817D70]">{mode === 'tremor' ? 'Bar shows measured share of signal power in the 4–6 Hz band; it is not a risk score.' : 'Bar visualizes the measured normalized tapping amplitude.'} {liveTelemetry?.duration_seconds < 3 && mode === 'tremor' ? 'Frequency estimate is withheld until at least 3 seconds are available.' : ''}</p>
-      </section>
 
-      {/* Main Grid: Camera & Guidance */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Viewport */}
-        <div className="lg:col-span-8 bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-5 shadow-sm space-y-4">
-          <HandTrackerCanvas
-            onLandmarksUpdate={handleLandmarkSample}
-            isRecording={isRecording}
-            assessmentMode={mode}
-            sharedStream={sharedStream}
-            onStreamReady={onStreamReady}
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#FAF9F4] border border-[#EAE6D9]">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[#F4D66D] to-[#E9BD4B] transition-[width] duration-300"
+            style={{ width: `${mode === 'tremor' ? Math.min(100, Math.max(0, (liveTelemetry?.power_ratio_4_6hz || 0) * 100)) : Math.min(100, Math.max(0, (liveTelemetry?.average_amplitude || 0) * 100))}%` }}
           />
-
-          {/* Test Action Bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FAF9F4] border border-[#EAE6D9] px-4 py-3 rounded-xl">
-            <div className="flex items-center gap-3">
-              {!isRecording ? (
-                <button
-                  onClick={startTest}
-                  disabled={isProcessing}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] font-bold text-xs rounded-xl border border-[#E9BD4B] shadow-sm transition active:scale-95"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  {mode === 'tremor' && restingTremor ? 'Start 10s Cognitive Load Phase' : 'Start 10s Assessment'}
-                </button>
-              ) : (
-                <button
-                  onClick={stopTest}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-[#C66D5B] hover:bg-[#B55C4A] text-[#FFFFFF] font-bold text-xs rounded-xl shadow-sm transition animate-pulse"
-                >
-                  <Square className="w-4 h-4 fill-current" />
-                  Stop & Compute
-                </button>
-              )}
-
-              {mode === 'tapping' && !isRecording && (
-                <button
-                  onClick={startCalibration}
-                  disabled={isCalibrating}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#F5F1E6] text-[#292820] border border-[#EAE6D9] transition"
-                >
-                  <Sliders className="w-3.5 h-3.5 text-[#E9BD4B]" />
-                  {isCalibrating ? 'Calibrating (3s)...' : calibrationData ? 'Re-Calibrate' : 'Calibrate Range'}
-                </button>
-              )}
-
-              {isProcessing && (
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#817D70]">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#E9BD4B]" />
-                  Computing kinematics...
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3 font-mono text-xs">
-              {calibrationData && mode === 'tapping' && (
-                <span className="text-[11px] text-[#292820] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#EAE6D9]">
-                  Thresh: {calibrationData.threshold}
-                </span>
-              )}
-              <span className="text-[#817D70]">Duration:</span>
-              <span className={`font-bold px-2.5 py-1 rounded-md ${isRecording ? 'bg-[#F4D66D] text-[#292820] border border-[#E9BD4B]' : 'bg-[#FFFFFF] text-[#292820] border border-[#EAE6D9]'}`}>
-                {recordingSeconds}s / 10s
-              </span>
-            </div>
-          </div>
         </div>
-
-        {/* Right: Instructions & Positioning Protocol */}
-        <div className="lg:col-span-4 bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase font-mono tracking-wider text-[#817D70] flex items-center gap-2">
-              <Info className="w-4 h-4 text-[#E9BD4B]" />
-              Standardized Procedure
-            </h3>
-
-            {mode === 'tremor' ? (
-              <div className="space-y-3 text-xs text-[#817D70]">
-                <div className="p-3.5 bg-[#FAF9F4] rounded-xl border border-[#EAE6D9]">
-                  <p className="font-bold text-[#292820] mb-1">Resting Hand Observation</p>
-                  <p className="leading-relaxed">
-                    Rest your forearm fully supported on a desk with your hand relaxed and fingers gently separated.
-                  </p>
-                </div>
-
-                <ul className="space-y-2.5 pt-2">
-                  <li className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">1</span>
-                    <span>Ensure lighting is even and your hand is within the frame.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">2</span>
-                    <span>Click <strong>Start 10s Assessment</strong> and remain relaxed.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">3</span>
-                    <span>After rest, record a second phase while doing a simple mental task. The report compares both measured signals.</span>
-                  </li>
-                </ul>
-              </div>
-            ) : (
-              <div className="space-y-3 text-xs text-[#817D70]">
-                <div className="p-3.5 bg-[#FAF9F4] rounded-xl border border-[#EAE6D9]">
-                  <p className="font-bold text-[#292820] mb-1">MDS-UPDRS Finger Tapping</p>
-                  <p className="leading-relaxed">
-                    Tap the tip of your index finger against your thumb as rapidly and with as wide an amplitude as possible.
-                  </p>
-                </div>
-
-                <ul className="space-y-2.5 pt-2">
-                  <li className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">1</span>
-                    <span>Hold your hand upright with palm facing the webcam.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">2</span>
-                    <span>Open as wide as possible on every tap cycle.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="w-4 h-4 rounded-full bg-[#F5F1E6] text-[#292820] font-mono font-bold flex items-center justify-center shrink-0">3</span>
-                    <span>The engine detects opening peaks, cadence, and progressive amplitude decay.</span>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Quality Criteria Notice */}
-          <div className="pt-4 border-t border-[#EAE6D9] text-[11px] text-[#817D70] space-y-1">
-            <p className="font-bold text-[#292820]">Target Sampling Quality:</p>
-            <p>Uniform 30 Hz grid • Nyquist criterion &gt;24 FPS enforced.</p>
-          </div>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
 
 function LiveMetric({ label, value }) {
-  return <div className="min-w-0 rounded-xl border border-[#EAE6D9] bg-[#FAF9F4] p-3">
-    <div className="text-[10px] font-semibold text-[#817D70]">{label}</div>
-    <div className="mt-1 truncate font-mono text-lg font-bold text-[#292820]">{value}</div>
-  </div>;
+  return (
+    <div className="min-w-0 rounded-2xl border border-[#EAE6D9] bg-[#FAF9F4] p-3.5 space-y-1">
+      <div className="text-[10px] font-semibold text-[#817D70]">{label}</div>
+      <div className="truncate font-mono text-lg font-extrabold text-[#292820]">{value}</div>
+    </div>
+  );
 }
-

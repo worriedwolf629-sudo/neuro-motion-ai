@@ -38,14 +38,15 @@ export default function MotorReport({
   };
 
   return (
-    <div className="relative p-8 max-w-4xl mx-auto space-y-6 overflow-hidden">
-      {/* Subtle background ribbon accent */}
-      <FlowingRibbon variant="subtle" className="opacity-20" />
+    <div className="relative p-6 sm:p-8 max-w-4xl mx-auto space-y-6 overflow-hidden">
+      {/* Background Flowing Ribbon layer */}
+      <FlowingRibbon position="full" opacity={0.75} className="absolute inset-0 pointer-events-none" />
+
       {/* Top Action Bar */}
-      <div className="flex items-center justify-between border-b border-[#EAE6D9] pb-4">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE6D9] pb-4">
         <div>
           <span className="text-[10px] font-mono uppercase text-[#817D70] font-bold">Standardized Clinical Export</span>
-          <h2 className="text-xl font-bold font-heading text-[#292820]">
+          <h2 className="text-xl sm:text-2xl font-extrabold font-heading text-[#292820] tracking-tight">
             Motor Assessment Report
           </h2>
         </div>
@@ -53,13 +54,13 @@ export default function MotorReport({
         <div className="flex items-center gap-3">
           <button
             onClick={handleExportJSON}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-[#FFFFFF] hover:bg-[#F5F1E6] text-[#292820] text-xs font-semibold rounded-xl border border-[#EAE6D9] shadow-sm transition"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] hover:bg-[#F5F1E9] text-[#292820] text-xs font-semibold rounded-full border border-[#EAE6D9] shadow-xs transition active:scale-95"
           >
             <Download className="w-3.5 h-3.5" /> Export JSON
           </button>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#F4D66D] hover:bg-[#E9BD4B] text-[#292820] text-xs font-bold rounded-xl border border-[#E9BD4B] shadow-sm transition"
+            className="flex items-center gap-1.5 px-5 py-2 bg-gradient-to-r from-[#F4D66D] to-[#E9BD4B] hover:opacity-95 text-[#292820] text-xs font-bold rounded-full border border-[#E9BD4B] shadow-xs transition active:scale-95"
           >
             <Printer className="w-3.5 h-3.5" /> Print / PDF
           </button>
@@ -67,7 +68,7 @@ export default function MotorReport({
       </div>
 
       {/* Main Printable Document Card */}
-      <div className="bg-[#FFFFFF] border border-[#EAE6D9] rounded-2xl p-8 shadow-sm space-y-8 text-[#292820]">
+      <div className="relative z-10 card-flowing rounded-3xl p-8 bg-white/95 border border-[#EAE6D9] shadow-sm space-y-8 text-[#292820]">
         {/* Document Header */}
         <div className="flex items-start justify-between border-b border-[#EAE6D9] pb-6">
           <div>

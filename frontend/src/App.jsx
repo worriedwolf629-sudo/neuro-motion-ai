@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
+import FlowingRibbon from './components/FlowingRibbon';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import AssessmentSelection from './pages/AssessmentSelection';
@@ -245,14 +246,17 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#FAF9F4] text-[#292820] overflow-hidden font-sans">
+    <div className="flex h-screen w-screen bg-[#FAF9F4] text-[#292820] overflow-hidden font-sans relative">
+      {/* Signature Flowing Intelligence Ribbons across entire viewport */}
+      <FlowingRibbon position="full" opacity={0.7} className="fixed inset-0 pointer-events-none z-0" />
+
       {/* Shared Sidebar */}
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto bg-[#FAF9F4]">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto bg-transparent relative z-10">
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-[#EAE6D9] bg-[#FAF9F4]/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-10 shrink-0">
+        <header className="h-16 border-b border-[#EAE6D9] bg-[#FAF9F4]/80 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20 shrink-0">
           <div className="flex items-center gap-4">
             <span className="text-sm font-bold text-[#292820]">
               {activePage === 'dashboard' && 'Workspace Overview'}
@@ -265,7 +269,7 @@ export default function App() {
               {activePage === 'history' && 'Session-to-Session History'}
               {activePage === 'about' && 'Scientific Methodology'}
             </span>
-            <span className="text-[10px] font-mono font-bold bg-[#F5F1E6] text-[#817D70] px-2.5 py-0.5 rounded-full border border-[#EAE6D9]">
+            <span className="text-[10px] font-mono font-bold bg-[#F5F1E6] text-[#817D70] px-3 py-1 rounded-full border border-[#EAE6D9]">
               WebGL Engine
             </span>
           </div>
@@ -273,12 +277,20 @@ export default function App() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setActivePage('landing')}
-              className="text-xs font-semibold text-[#817D70] hover:text-[#292820] px-3 py-1.5 rounded-lg border border-[#EAE6D9] bg-[#FFFFFF] transition shadow-sm"
+              className="text-xs font-semibold text-[#292820] hover:bg-[#F5F1E9] px-4 py-1.5 rounded-full border border-[#EAE6D9] bg-[#FFFFFF] transition shadow-xs active:scale-95"
             >
               Product Landing
             </button>
-            {session?.user?.email && <span className="hidden max-w-48 truncate text-[10px] text-[#817D70] sm:inline">{session.user.email}</span>}
-            {session ? <button onClick={signOut} className="text-xs font-semibold text-[#817D70] hover:text-[#C66D5B] px-3 py-1.5 rounded-lg border border-[#EAE6D9] bg-white">Sign out</button> : <span className="rounded-lg border border-[#E9BD4B] bg-[#FFF9E5] px-2.5 py-1.5 text-[10px] font-semibold text-[#65521C]">Browser-only demo</span>}
+            {session?.user?.email && <span className="hidden max-w-48 truncate text-[11px] text-[#817D70] sm:inline">{session.user.email}</span>}
+            {session ? (
+              <button onClick={signOut} className="text-xs font-semibold text-[#817D70] hover:text-[#C66D5B] px-3.5 py-1.5 rounded-full border border-[#EAE6D9] bg-white transition shadow-xs">
+                Sign out
+              </button>
+            ) : (
+              <span className="rounded-full border border-[#E9BD4B] bg-[#FFF9E5] px-3 py-1 text-[10px] font-bold text-[#65521C]">
+                Browser-only demo
+              </span>
+            )}
           </div>
         </header>
 
