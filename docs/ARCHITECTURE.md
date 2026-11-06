@@ -76,10 +76,16 @@
   - Return typed JSON schemas with clear physical units.
 
 ### 2.3 Voice Signal Task (`frontend/src/features/voice/`)
-- Audio is captured only after a user gesture and processed in the browser using Web Audio decoding.
-- Pitch is estimated from 40 ms frames using normalized autocorrelation over a 70–400 Hz search range; RMS is calculated per frame. Summary values are pitch mean/range/SD/CV, RMS amplitude CV, and number of voiced frames.
-- The recording is held in memory for analysis only, then released. No audio upload, audio file download, browser storage, backend endpoint, diagnosis, or disease score is part of this task.
-- Values are experimental signal summaries and are sensitive to device, room, microphone processing, and task performance.
+- Five-second sustained-vowel audio is captured only after a user gesture with browser automatic gain, noise suppression, and echo cancellation requested off. Web Audio decodes it in memory.
+- `estimatePitch()` analyzes 40 ms frames using normalized autocorrelation over a 70–400 Hz search range. `analyzeVoiceSamples()` estimates pitch summary metrics, RMS variation, local jitter from adjacent estimated periods, local shimmer from successive cycle peak amplitudes, HNR from the clamped normalized autocorrelation peak, and voiced fraction.
+- After extraction, the captured channel and encoded buffer are overwritten in memory; the task does not upload raw audio or call the backend. Derived results can be saved in per-user history.
+- Jitter, shimmer, and HNR are experimental browser estimates and are not Praat-equivalent. They are sensitive to device, room, microphone behavior, pitch tracking, and task performance.
+
+### 2.4 Quality Gates and Provisional Triage (`frontend/src/features/analysis/`)
+- `qualityGate.js` returns `{ ok, reasons }` independently for tremor, tapping, and voice. Tremor checks successful output, at least 20 effective FPS, at least 3 seconds, Nyquist above the 12 Hz analysis band, and at least 90% tracked hand frames. Tapping checks successful output, at least 20 FPS, at least 10 seconds, at least 15 detected taps, and at least 90% tracked hand frames. Voice checks at least 4.5 seconds, more than 60% voiced windows, and all three voice features.
+- `screeningTriage.js` centralizes custom comparison bands as provisional and `to verify`. It aggregates modality-level flags only for quality-passing modalities and produces the requested four triage tiers. Fewer than two passing modalities produce `INCOMPLETE_SCREEN`. Thresholds have not been calibrated to consumer devices or clinical reference populations.
+- The triage result and explainable flags are nested within the existing Supabase `results` JSONB field. Fixed columns and existing records remain unchanged.
+- The result/report views show “Uncertain: re-test” and reasons for failed quality gates. Triage banners and CSV export include the tier, metric flags, range, severity, citation status, and a fixed non-diagnostic disclaimer.
 
 ---
 

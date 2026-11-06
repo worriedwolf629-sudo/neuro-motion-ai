@@ -191,3 +191,21 @@ The site can run in browser-only demo mode without cloud configuration. To enabl
 After sign-in, new tremor, tapping, and voice measurements are saved as separate records with completion date/time, assessment type, recording quality, and derived metrics. The dashboard shows recent records; **Session History** compares all saved records for one measurement at a time. Raw camera video, microphone audio, and hand landmarks are not uploaded or stored. Existing browser history can be displayed locally where enough measurements exist, but its old format did not retain exact times or full per-assessment data, so missing detail is labeled rather than guessed.
 
 Account comparison charts show measurement trends only. They do not estimate Parkinson's probability, diagnose a condition, or label a person safe or at risk.
+
+## What it screens for
+
+NeuroMotion records descriptive movement and voice measurements: hand displacement and frequency, finger-tap cadence/interval variability/amplitude change, and sustained-vowel pitch, local jitter, local shimmer, autocorrelation-based HNR, and voiced fraction. A provisional, explainable rules layer counts modality-level measurements outside custom bands and excludes modalities that fail recording-quality gates. Its labels are `WITHIN_TYPICAL_RANGE`, `BORDERLINE_RETEST`, `SUGGEST_NEUROLOGIST_FOLLOWUP`, or `INCOMPLETE_SCREEN`; they are exploratory triage prompts, not Parkinson's probabilities, a diagnosis, or a validated measure of disease risk. Every band is marked provisional and `to verify` in one configuration object.
+
+**Research screening aid; no diagnosis is made. Thresholds are provisional and have not been validated on consumer webcams or microphones.** If a result raises a concern, it cannot replace assessment by a qualified clinician.
+
+## Validation
+
+Run `cd frontend && npm test` for deterministic synthetic signal tests. Run `python -m venv .venv-validation`, install `scripts/requirements-validation.txt` in that environment, then run `python scripts/validate_uci_voice.py` to fetch UCI Parkinsons dataset 174 and regenerate [`docs/VALIDATION.md`](docs/VALIDATION.md). That report gives per-recording means ± SD, Mann–Whitney U p-values, and single-feature AUROCs for jitter, shimmer, and HNR. UCI contains repeated recordings from 31 people, so recording rows are not independent subjects. Its acoustic features do not validate our browser extraction or custom screening thresholds.
+
+## Limitations
+
+- Synthetic tests check expected calculations on generated inputs only. The browser voice estimator is a lightweight autocorrelation implementation, not a Praat-equivalent pipeline; jitter/shimmer/HNR can vary with pitch tracking, microphone, room, and browser processing.
+- UCI validation reports associations in that dataset only. It does not validate this app's microphone feature extraction, consumer webcam kinematics, or any clinical use.
+- The research references use different hardware, tasks, metrics, populations, and study protocols. No consumer-device prospective cohort validation or threshold calibration has been completed.
+- Camera samples can miss out-of-plane motion and tracking can drop. Quality gates can withhold a result but cannot guarantee a valid measurement.
+- Raw video, raw audio, and hand landmarks remain on the device. Derived results may be saved to the account history as described above.

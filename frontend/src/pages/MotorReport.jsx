@@ -10,22 +10,28 @@ import {
   Info
 } from 'lucide-react';
 import FlowingRibbon from '../components/FlowingRibbon';
+import ScreeningSummary from '../components/ScreeningSummary';
+import { evaluateScreeningTriage } from '../features/analysis/screeningTriage.js';
 
 export default function MotorReport({
   tremorData,
   tappingData,
+  voiceData,
   setActivePage
 }) {
   const [notes, setNotes] = useState('');
+  const screening = evaluateScreeningTriage({ tremor: tremorData, tapping: tappingData, voice: voiceData });
 
   const handleExportJSON = () => {
     const reportObj = {
       title: "NeuroMotion AI — Motor Assessment Report",
       date: new Date().toISOString(),
       disclaimer: "Experimental computer-vision motor assessment prototype. Non-diagnostic.",
+      screening,
       notes,
       tremor: tremorData || "Not recorded",
-      tapping: tappingData || "Not recorded"
+      tapping: tappingData || "Not recorded",
+      voice: voiceData || "Not recorded"
     };
 
     const blob = new Blob([JSON.stringify(reportObj, null, 2)], { type: 'application/json' });
@@ -34,6 +40,19 @@ export default function MotorReport({
     a.href = url;
     a.download = `neuromotion_report_${Date.now()}.json`;
     a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportCsv = () => {
+    const rows = [['tier', screening.tier, '', '', '', ''], ['modality', 'metric', 'observed_value', 'provisional_range', 'severity', 'citation']];
+    screening.flags.forEach((item) => rows.push([item.modality, item.metricName, item.observedValue, item.referenceRange, item.severity, item.citation]));
+    rows.push(['disclaimer', screening.disclaimer, '', '', '', '']);
+    const csv = rows.map((row) => row.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `neuromotion-screening-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
     URL.revokeObjectURL(url);
   };
 
@@ -53,6 +72,12 @@ export default function MotorReport({
 
         <div className="flex items-center gap-3">
           <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-[#FFFFFF] hover:bg-[#F5F1E6] text-[#292820] text-xs font-semibold rounded-xl border border-[#EAE6D9] shadow-sm transition"
+          >
+            <Download className="w-3.5 h-3.5" /> Export screening CSV
+          </button>
+          <button
             onClick={handleExportJSON}
             className="flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] hover:bg-[#F5F1E9] text-[#292820] text-xs font-semibold rounded-full border border-[#EAE6D9] shadow-xs transition active:scale-95"
           >
@@ -69,6 +94,7 @@ export default function MotorReport({
 
       {/* Main Printable Document Card */}
       <div className="relative z-10 card-flowing rounded-3xl p-8 bg-white/95 border border-[#EAE6D9] shadow-sm space-y-8 text-[#292820]">
+        <ScreeningSummary tremor={tremorData} tapping={tappingData} voice={voiceData} />
         {/* Document Header */}
         <div className="flex items-start justify-between border-b border-[#EAE6D9] pb-6">
           <div>

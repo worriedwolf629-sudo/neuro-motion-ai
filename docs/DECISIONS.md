@@ -154,3 +154,13 @@ This document tracks foundational architectural and technical decisions for Neur
 - **Comparison behavior**: Let users choose assessment type and measurement, graph all matching historical records, and compare latest to previous value. Labels and descriptions remain non-diagnostic.
 - **Alternatives considered**: Extending FastAPI with account and database features was deferred because that service currently has no auth/database layer; Vercel is a host and is not itself the database.
 - **Consequences**: Cloud account history requires a Supabase project, the SQL migration, email OTP configuration, allowed redirect URLs, and frontend build environment variables. Old local records lack exact timestamps and some per-test details; display available values as legacy data and do not infer missing fields.
+
+## ADR-011: Browser Voice Biomarkers, Quality Gates, and Provisional Triage
+
+- **Date**: 2026-11-06
+- **Status**: Accepted for exploratory prototype
+- **Context**: The requested voice module needs jitter, shimmer, HNR, voiced fraction, quality warnings, and modality-level summaries while retaining the browser-only raw-media boundary.
+- **Decision**: Keep five-second sustained-vowel capture and all feature extraction client-side. Add local jitter from adjacent estimated pitch periods, shimmer from successive cycle peak amplitudes, HNR from a clamped normalized-autocorrelation peak, and a voiced-frame fraction. Add modality-specific quality gates and an explainable deterministic triage aggregator that counts passing modalities rather than individual flags. Store the triage object within existing `results` JSONB so existing records/schema continue to work.
+- **Threshold policy**: Keep every custom comparison band in one object with `{ value, source, status: 'provisional' }`; custom values state `source: 'to verify'`. Quality failure excludes that modality; fewer than two passing modalities yields `INCOMPLETE_SCREEN`. These tiers are not a diagnosis or calibrated disease probability.
+- **Alternatives considered**: Uploading audio or using server-side classifiers was rejected to preserve the local raw-audio design and strict no-classifier policy. Directly copying MotorLens was rejected because its checked public repository has no listed license.
+- **Consequences**: Browser values are experimental and not equivalent to Praat or validated on consumer devices. Synthetic tests establish only generated-signal behavior. UCI recording-level statistics are documented separately and do not validate browser features or cutoffs. Results and CSV carry a fixed research disclaimer.

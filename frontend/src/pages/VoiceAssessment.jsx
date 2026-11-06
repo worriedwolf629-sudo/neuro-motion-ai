@@ -3,11 +3,13 @@ import { Activity, Download, Mic, MicOff, RotateCcw, ShieldCheck } from 'lucide-
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { analyzeVoiceSamples, toVoiceCsv } from '../features/voice/voiceFeatures';
 import FlowingRibbon from '../components/FlowingRibbon';
+import ScreeningSummary from '../components/ScreeningSummary';
+import { evaluateScreeningTriage } from '../features/analysis/screeningTriage.js';
 
 const CAPTURE_SECONDS = 5;
 const format = (value, digits = 2) => Number.isFinite(value) ? value.toFixed(digits) : '—';
 
-export default function VoiceAssessment({ onAssessmentCompleted }) {
+export default function VoiceAssessment({ onAssessmentCompleted, screeningContext = {} }) {
   const [status, setStatus] = useState('ready');
   const [remaining, setRemaining] = useState(CAPTURE_SECONDS);
   const [metrics, setMetrics] = useState(null);
@@ -34,7 +36,7 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
       if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
         throw new Error('This browser does not support microphone recording. Try a recent version of Chrome, Safari, or Firefox over HTTPS or localhost.');
       }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { autoGainControl: false, noiseSuppression: false, echoCancellation: false } });
       streamRef.current = stream;
       const recorder = new MediaRecorder(stream);
       recorderRef.current = recorder;
@@ -51,13 +53,31 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
         window.clearInterval(timerRef.current);
         setStatus('processing');
         let audioContext;
+        let decoded;
+        let encodedAudio;
         try {
-          const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-          const encodedAudio = await blob.arrayBuffer();
+          let blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+          encodedAudio = await blob.arrayBuffer();
+          blob = null;
           chunks.length = 0;
           audioContext = new AudioContext();
-          const decoded = await audioContext.decodeAudioData(encodedAudio);
-          const result = analyzeVoiceSamples(decoded.getChannelData(0), decoded.sampleRate);
+          decoded = await audioContext.decodeAudioData(encodedAudio);
+          const channel = decoded.getChannelData(0);
+          const analyzed = analyzeVoiceSamples(channel, decoded.sampleRate);
+          channel.fill(0);
+          new Uint8Array(encodedAudio).fill(0);
+          const screening = evaluateScreeningTriage({
+            tremor: screeningContext.tremorData,
+            tapping: screeningContext.tappingData,
+            voice: analyzed,
+          });
+          const voiceQuality = screening.modalities.find((modality) => modality.modality === 'voice').quality;
+          const result = {
+            ...analyzed,
+            quality: voiceQuality.ok ? 'Good' : 'Insufficient',
+            quality_reasons: voiceQuality.reasons,
+            screening,
+          };
           setMetrics(result);
           onAssessmentCompleted?.('voice', result);
           setStatus('complete');
@@ -66,6 +86,8 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
           setError(captureError.message || 'The audio could not be analyzed. Please try another recording.');
         } finally {
           chunks.length = 0;
+          if (decoded && decoded.numberOfChannels > 0) decoded.getChannelData(0).fill(0);
+          if (encodedAudio) new Uint8Array(encodedAudio).fill(0);
           recorder.ondataavailable = null;
           recorder.onstop = null;
           if (audioContext && audioContext.state !== 'closed') await audioContext.close();
@@ -152,16 +174,22 @@ export default function VoiceAssessment({ onAssessmentCompleted }) {
       </div>
 
       {metrics && <section className="bg-white border border-[#EAE6D9] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-start justify-between gap-4 mb-5"><div><h3 className="text-base font-bold text-[#292820]">Measured features</h3><p className="text-xs text-[#817D70]">Descriptive estimates from this recording only</p></div><span className="text-[10px] font-mono uppercase tracking-wider text-[#789879] bg-[#FAF9F4] border border-[#EAE6D9] rounded-full px-3 py-1">{metrics.voiced_analysis_windows} voiced windows</span></div>
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="flex items-start justify-between gap-4 mb-5"><div><h3 className="text-base font-bold text-[#292820]">Measured features</h3><p className="text-xs text-[#817D70]">Descriptive estimates from this recording only</p></div><div className="flex flex-wrap justify-end gap-2"><span className="text-[10px] font-mono uppercase tracking-wider text-[#817D70] bg-[#FAF9F4] border border-[#EAE6D9] rounded-full px-3 py-1">{metrics.voiced_analysis_windows} voiced windows</span><span className={`text-[10px] font-mono uppercase tracking-wider ${metrics.quality === 'Good' ? 'text-[#39734A]' : 'text-[#A64E3E]'} bg-[#FAF9F4] border border-[#EAE6D9] rounded-full px-3 py-1`}>Quality: {metrics.quality}</span></div></div>
+        {metrics.quality_reasons?.length > 0 && <p className="mb-4 rounded-lg border border-[#E9BD4B] bg-[#FFFDF5] p-3 text-xs text-[#817D70]">Uncertain: re-test. {metrics.quality_reasons.join(' ')}</p>}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             ['Estimated pitch mean', `${format(metrics.estimated_pitch_mean_hz)} Hz`],
             ['Estimated pitch range', `${format(metrics.estimated_pitch_range_hz)} Hz`],
             ['Pitch variation (SD)', `${format(metrics.pitch_variation_sd_hz)} Hz`],
             ['Pitch variation (CV)', `${format(metrics.pitch_variation_cv_percent)}%`],
             ['RMS amplitude variation (CV)', `${format(metrics.rms_amplitude_variation_cv_percent)}%`],
+            ['Jitter (local)', `${format(metrics.jitter_local_percent, 3)}%`],
+            ['Shimmer (local)', `${format(metrics.shimmer_local_percent, 3)}%`],
+            ['HNR (autocorrelation estimate)', `${format(metrics.hnr_db)} dB`],
+            ['Voiced fraction', `${format(metrics.voiced_fraction * 100, 1)}%`],
           ].map(([label, value]) => <div key={label} className="bg-[#FAF9F4] rounded-xl border border-[#EAE6D9] p-4"><p className="text-[11px] text-[#817D70]">{label}</p><p className="text-lg font-bold text-[#292820] mt-1">{value}</p></div>)}
         </div>
+        <ScreeningSummary voice={metrics} />
         <div className="mt-5 rounded-xl border border-[#D99A38] bg-[#FAF9F4] px-4 py-3 text-xs leading-relaxed text-[#817D70]"><strong className="text-[#292820]">Research prototype, not a diagnosis.</strong> These microphone measurements do not determine whether someone has Parkinson’s disease and should not be used to make medical decisions. Results depend on the microphone, room noise, speaking task, and recording quality.</div>
       </section>}
     </div>

@@ -12,6 +12,7 @@ import AboutMethodology from './pages/AboutMethodology';
 import VoiceAssessment from './pages/VoiceAssessment';
 import LoginPage from './pages/LoginPage';
 import { loadAssessmentRecords, saveAssessmentRecord } from './lib/assessmentRecords';
+import { evaluateScreeningTriage } from './features/analysis/screeningTriage.js';
 import { supabase, supabaseConfigured } from './lib/supabaseClient';
 
 const readLocal = (key, fallback) => {
@@ -51,6 +52,7 @@ export default function App() {
   const [authReady, setAuthReady] = useState(false);
   const [localDemo, setLocalDemo] = useState(() => !supabaseConfigured && localStorage.getItem('neuromotion_local_demo') === 'yes');
   const [records, setRecords] = useState(() => supabaseConfigured ? [] : loadLocalAssessmentRecords());
+  const latestVoiceData = records.find((record) => record.assessment_type === 'voice')?.results || null;
   const [recordsLoading, setRecordsLoading] = useState(false);
   const [recordError, setRecordError] = useState('');
   const [syncMessage, setSyncMessage] = useState('');
@@ -156,24 +158,31 @@ export default function App() {
   }, [sessionHistory, localDemo]);
 
   const handleAssessmentCompleted = async (type, results) => {
+    const completedAt = new Date().toISOString();
+    const screening = evaluateScreeningTriage({
+      tremor: type === 'tremor' ? results : tremorData,
+      tapping: type === 'tapping' ? results : tappingData,
+      voice: type === 'voice' ? results : latestVoiceData,
+    });
+    const savedResults = { ...results, completed_at: completedAt, screening };
     if (type === 'tremor') {
-      setTremorData(results);
+      setTremorData(savedResults);
     } else if (type === 'tapping') {
-      setTappingData(results);
+      setTappingData(savedResults);
     }
 
     const newRecord = {
       assessment_type: type,
-      completed_at: new Date().toISOString(),
-      quality: results.quality || null,
-      effective_fps: results.effective_fps != null && Number.isFinite(Number(results.effective_fps)) ? Number(results.effective_fps) : null,
-      results
+      completed_at: completedAt,
+      quality: savedResults.quality || null,
+      effective_fps: savedResults.effective_fps != null && Number.isFinite(Number(savedResults.effective_fps)) ? Number(savedResults.effective_fps) : null,
+      results: savedResults
     };
 
     if (session?.user?.id && supabaseConfigured) {
       setSyncMessage('Saving assessment to your account…');
       try {
-        const savedRecord = await saveAssessmentRecord(session.user.id, type, results);
+        const savedRecord = await saveAssessmentRecord(session.user.id, type, savedResults);
         setRecords((previous) => [savedRecord, ...previous]);
         setSyncMessage('Assessment saved to your account.');
       } catch (error) {
@@ -194,9 +203,9 @@ export default function App() {
     const newEntry = {
       id: Math.floor(1000 + Math.random() * 9000),
       date: new Date().toLocaleDateString(),
-      tremorFreq: type === 'tremor' ? results.dominant_frequency_hz : tremorData?.dominant_frequency_hz,
-      tapsCount: type === 'tapping' ? results.total_taps : tappingData?.total_taps,
-      cadence: type === 'tapping' ? results.taps_per_second : tappingData?.taps_per_second
+      tremorFreq: type === 'tremor' ? savedResults.dominant_frequency_hz : tremorData?.dominant_frequency_hz,
+      tapsCount: type === 'tapping' ? savedResults.total_taps : tappingData?.total_taps,
+      cadence: type === 'tapping' ? savedResults.taps_per_second : tappingData?.taps_per_second
     };
     setSessionHistory(prev => [newEntry, ...prev]);
   };
@@ -332,12 +341,13 @@ export default function App() {
             />
           )}
 
-          {activePage === 'voice' && <VoiceAssessment onAssessmentCompleted={handleAssessmentCompleted} />}
+          {activePage === 'voice' && <VoiceAssessment onAssessmentCompleted={handleAssessmentCompleted} screeningContext={{ tremorData, tappingData, voiceData: latestVoiceData }} />}
 
           {activePage === 'results' && (
             <AssessmentResults
               tremorData={tremorData}
               tappingData={tappingData}
+              voiceData={latestVoiceData}
               setActivePage={setActivePage}
             />
           )}
@@ -346,6 +356,7 @@ export default function App() {
             <MotorReport
               tremorData={tremorData}
               tappingData={tappingData}
+              voiceData={latestVoiceData}
               setActivePage={setActivePage}
             />
           )}

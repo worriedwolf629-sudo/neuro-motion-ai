@@ -10,6 +10,17 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 
 ## Log Entries
 
+### Entry 006: Voice Biomarkers, Quality Gates, Provisional Triage, and Validation
+- **Date and time**: 2026-11-06
+- **Agent**: OpenAI Codex
+- **Task**: Add browser-local voice jitter/shimmer/HNR and voiced fraction, per-modality recording gates, explainable provisional triage, and reproducible validation.
+- **Objective**: Extend the current analysis without uploading raw media, adding a classifier/probability, breaking the existing Supabase record schema, or changing the white theme.
+- **Audit before edits**: Reused `analyzeTremorKinematics`, `analyzeFingerTappingKinematics`, `analyzeVoiceSamples`, and `toVoiceCsv`; found only per-analyzer 15-frame/FPS quality checks, pitch/RMS voice metrics, and `assessment_records.results jsonb` persistence.
+- **Files modified/created**: `frontend/src/features/analysis/kinematicsEngine.js`, `qualityGate.js`, `screeningTriage.js`, `kinematicsEngine.test.js`, `frontend/src/features/voice/voiceFeatures.js`, `frontend/src/components/ScreeningSummary.jsx`, `frontend/src/pages/VoiceAssessment.jsx`, `AssessmentResults.jsx`, `MotorReport.jsx`, `frontend/src/App.jsx`, `frontend/package.json`, `scripts/validate_uci_voice.py`, `scripts/requirements-validation.txt`, `docs/VALIDATION.md`, `docs/REUSE_AND_ATTRIBUTION.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROJECT.md`, `docs/TASKS.md`, `README.md`, `PROMPT.md`, `docs/HANDOFF_LOG.md`.
+- **Research reuse**: Reviewed ROC-HCI finger tapping and `pd-voice-features` (both identify MIT licenses); adapted no classifier/code, retained existing tapping kinematics and independently implemented the supplied voice formulas. MotorLens listing lacked a license; no code copied, only its synthetic-stream testing idea informed new tests.
+- **Verification**: `npm test` 5/5 passed; `npm run build` passed with existing >500 kB chunk warning; isolated validation venv installed `scripts/requirements-validation.txt`; `scripts/validate_uci_voice.py` fetched UCI 174 and generated `docs/VALIDATION.md` with stats, Mann–Whitney U tests, and single-feature AUROCs.
+- **Limitations**: Browser estimates are not Praat-equivalent. UCI values are recording-level with repeated subjects and do not validate browser extraction, consumer devices, or triage bands. Bands remain `provisional` / `to verify`; no clinical cohort was tested.
+
 ### Entry 005: Browser-Local Voice Signal Task
 - **Date and time**: 2026-11-05
 - **Agent**: OpenAI Codex

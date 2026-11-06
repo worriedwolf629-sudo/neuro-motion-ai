@@ -42,6 +42,8 @@ NeuroMotion AI solves this by operating as an **objective, explainable kinematic
 - Unified healthcare dashboard with live video overlay and telemetry charts.
 - Printable / downloadable structured assessment report.
 - Signal quality guardrails (framerate detection, landmark loss warnings).
+- Optional browser-local sustained-vowel measurements (pitch, jitter, shimmer, HNR estimate, voiced fraction).
+- Explainable modality-level provisional triage with explicit quality exclusion and no disease probability score.
 
 ### What We Are NOT Building (Strict Non-Goals)
 - **NO Parkinson's Disease Prediction / Classification**: The system will not output phrases like "Parkinson's detected" or "85% probability of tremor disorder".
@@ -49,6 +51,7 @@ NeuroMotion AI solves this by operating as an **objective, explainable kinematic
 - **NO Clinical Diagnostic Certification**: This is an experimental engineering prototype, not an FDA/CE-cleared medical device.
 - **NO EHR/EMR Integration**: The prototype may store derived measurements in a user's own account for history, but does not integrate with clinical records or provider systems.
 - **NO Invasive Sensor Requisites**: Zero external hardware beyond a standard RGB webcam.
+- **NO Validated Clinical Thresholds**: Browser screening bands are provisional and marked `to verify`; the app does not claim that its webcam or microphone measures are clinically calibrated.
 
 ---
 

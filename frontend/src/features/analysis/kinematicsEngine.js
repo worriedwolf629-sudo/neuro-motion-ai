@@ -149,8 +149,18 @@ export function analyzeTremorKinematics(samples, targetFs = 30.0) {
   const durationSec = (timestamps[timestamps.length - 1] - timestamps[0]) / 1000.0;
   const effectiveFps = samples.length / Math.max(0.1, durationSec);
 
-  // Extract landmark 8 (Index fingertip)
-  const coords = samples.map(s => [s.landmarks[8]?.x || 0, s.landmarks[8]?.y || 0]);
+  // Track missing landmarks explicitly for the shared recording-quality gate.
+  const validLandmarkFrames = samples.filter((s) => Number.isFinite(s.landmarks?.[8]?.x) && Number.isFinite(s.landmarks?.[8]?.y)).length;
+  const handPresenceFraction = validLandmarkFrames / samples.length;
+  // Extract landmark 8 (Index fingertip); missing samples interpolate from neighbors below.
+  const coords = samples.map(s => [s.landmarks?.[8]?.x ?? NaN, s.landmarks?.[8]?.y ?? NaN]);
+  for (let axis = 0; axis < 2; axis += 1) {
+    let last = 0;
+    for (let i = 0; i < coords.length; i += 1) {
+      if (Number.isFinite(coords[i][axis])) last = coords[i][axis];
+      else coords[i][axis] = last;
+    }
+  }
   const meanX = coords.reduce((a, b) => a + b[0], 0) / coords.length;
   const meanY = coords.reduce((a, b) => a + b[1], 0) / coords.length;
   const centered = coords.map(c => [c[0] - meanX, c[1] - meanY]);
@@ -211,6 +221,8 @@ export function analyzeTremorKinematics(samples, targetFs = 30.0) {
     status: "success",
     quality,
     effective_fps: Number(effectiveFps.toFixed(1)),
+    sampling_rate_hz: Number(effectiveFps.toFixed(1)),
+    hand_presence_fraction: Number(handPresenceFraction.toFixed(3)),
     duration_seconds: Number(durationSec.toFixed(2)),
     dominant_frequency_hz: Number(domFreq.toFixed(2)),
     power_ratio_4_6hz: Number(powerRatio.toFixed(3)),
@@ -267,6 +279,9 @@ export function analyzeFingerTappingKinematics(samples, calibrationThreshold = n
     }
     return 0;
   });
+  const handPresenceFraction = samples.filter((s) => s.landmarks?.length >= 10
+    && Number.isFinite(s.landmarks[4]?.x) && Number.isFinite(s.landmarks[8]?.x)
+    && Number.isFinite(s.landmarks[0]?.x) && Number.isFinite(s.landmarks[9]?.x)).length / samples.length;
 
   const { tUniform, sigUniform } = resampleUniformGrid(timestamps, normDistances, targetFs);
   const smoothed = movingAverage(sigUniform, 3);
@@ -348,6 +363,7 @@ export function analyzeFingerTappingKinematics(samples, calibrationThreshold = n
     quality,
     total_taps: totalTaps,
     effective_fps: Number(effectiveFps.toFixed(1)),
+    hand_presence_fraction: Number(handPresenceFraction.toFixed(3)),
     duration_seconds: Number(durationSec.toFixed(2)),
     taps_per_second: Number(tapsPerSec.toFixed(2)),
     average_interval_sec: Number(avgInterval.toFixed(3)),

@@ -301,3 +301,27 @@ This document maintains a chronological record of handoffs between **OpenAI Code
   - Existing local rows are not transferred to cloud automatically; previous data is incomplete and some records only contain date-level summaries.
   - Vite reports the existing large JavaScript bundle advisory.
 - **Next Recommended Action for Incoming Agent**: Configure Supabase project URL/key, apply the migration, and deploy after the project owner sets hosting environment variables.
+
+### Handoff Entry: 2026-11-06 01:45 UTC
+- **Outgoing Agent**: OpenAI Codex
+- **Incoming Agent**: Any
+- **Current Development Phase**: Voice Signal / Screening Summary
+- **Work Completed in this Session**:
+  - Audited existing movement/voice functions and Supabase result persistence before edits.
+  - Added 5-second browser-local voice jitter, shimmer, autocorrelation HNR estimate, and voiced fraction; disabled browser audio processing constraints and zeroed captured channel/encoded bytes after feature extraction.
+  - Added tremor, tapping, and voice quality gates; created threshold-configured provisional triage tiers with per-metric flags and insufficient-data exclusions.
+  - Added result/report summaries, triage fields to existing JSONB records, and voice/report CSV/JSON exports.
+  - Added synthetic engine tests and a UCI dataset fetch/summary/AUROC script; generated `docs/VALIDATION.md`.
+  - Verified reference licenses. No MotorLens code copied because the checked public file listing had no license file.
+- **Files Modified / Created**:
+  - `frontend/src/features/analysis/kinematicsEngine.js`, `frontend/src/features/analysis/qualityGate.js`, `frontend/src/features/analysis/screeningTriage.js`, `frontend/src/features/analysis/kinematicsEngine.test.js`
+  - `frontend/src/features/voice/voiceFeatures.js`, `frontend/src/components/ScreeningSummary.jsx`, `frontend/src/pages/VoiceAssessment.jsx`, `frontend/src/pages/AssessmentResults.jsx`, `frontend/src/pages/MotorReport.jsx`, `frontend/src/App.jsx`, `frontend/package.json`
+  - `scripts/validate_uci_voice.py`, `scripts/requirements-validation.txt`, `docs/VALIDATION.md`, `docs/REUSE_AND_ATTRIBUTION.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROJECT.md`, `docs/TASKS.md`, `README.md`, `PROMPT.md`, `docs/HANDOFF_LOG.md`
+- **Verification Performed**:
+  - `cd frontend && npm test`: 6/6 passed (synthetic 5 Hz tremor, tapping count/cadence/CV/decrement, generated cycle jitter/shimmer/HNR/voicing, quality exclusions, modality-tier counting).
+  - `cd frontend && npm run build`: passed. Vite reports existing large chunk advisory (>500 kB).
+  - `.venv-validation/bin/python scripts/validate_uci_voice.py`: passed and generated UCI 174 table in `docs/VALIDATION.md`.
+  - `git diff --check`: passed.
+- **Current Operational State**: Local implementation complete; raw video/audio/hand landmarks are not uploaded. Derived metrics/triage remain saved through existing user records in JSONB.
+- **Known Quirks / Blockers**: HNR is an autocorrelation approximation, not Praat-equivalent. UCI uses repeated recording-level rows and does not validate consumer browser measurements. Triage limits are provisional and unvalidated. No live microphone/webcam cohort validation was performed.
+- **Next Recommended Action for Incoming Agent**: Re-run checks after any new changes; perform real-device technical reliability evaluation and prospective participant-level validation before promoting the thresholds.

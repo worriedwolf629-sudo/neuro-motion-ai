@@ -97,12 +97,19 @@
 ---
 
 ### ⏳ In Progress
-- [~] **Exploratory Browser Voice Signal Task**: Implementation is integrated locally and the production build passes; browser microphone validation and website deployment remain pending.
+- [x] **Exploratory Browser Voice Biomarkers & Triage**: Browser features, quality gates, provisional modality triage, CSV/report output, validation script, and synthetic tests are implemented. Real microphone/webcam cohort validation remains open.
 - [~] **Cloud Account Setup**: Frontend and migration are implemented; Supabase project migration, Auth redirect configuration, and deployment environment variables still need project-owner setup.
 
 ---
 
 ### ✅ Completed
+- [x] **TASK-013**: Browser voice biomarkers, quality gates, provisional triage, and reproducible validation
+  - **Owner**: OpenAI Codex
+  - **Completed On**: 2026-11-06
+  - **Summary**: Added local jitter/shimmer/HNR/voiced fraction estimates, explicit per-modality quality checks, explainable provisional triage labels and metric flags, results/report/CSV integration, UCI dataset statistics generator, and independent synthetic engine tests. Reused existing kinematics pipelines and JSONB result persistence; no media upload, ML classifier, or risk score was added.
+  - **Research / attribution**: Reviewed MIT-licensed ROC-HCI and `pd-voice-features` references. MotorLens has no license file in its checked public listing; no code was copied. See `docs/REUSE_AND_ATTRIBUTION.md`.
+  - **Verification**: `npm test` (6/6 passed), `npm run build` (passed; existing large bundle advisory), `.venv-validation/bin/python scripts/validate_uci_voice.py` (generated `docs/VALIDATION.md`), and `git diff --check` passed.
+  - **Remaining limitation**: Synthetic tests and UCI recording-level statistics do not constitute consumer-device or clinical validation; all triage bands remain provisional and `to verify`.
 - [x] **TASK-010**: Two-phase tremor report graphs
   - **Owner**: OpenAI Codex
   - **Completed On**: 2026-11-05
