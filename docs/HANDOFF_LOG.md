@@ -325,3 +325,22 @@ This document maintains a chronological record of handoffs between **OpenAI Code
 - **Current Operational State**: Local implementation complete; raw video/audio/hand landmarks are not uploaded. Derived metrics/triage remain saved through existing user records in JSONB.
 - **Known Quirks / Blockers**: HNR is an autocorrelation approximation, not Praat-equivalent. UCI uses repeated recording-level rows and does not validate consumer browser measurements. Triage limits are provisional and unvalidated. No live microphone/webcam cohort validation was performed.
 - **Next Recommended Action for Incoming Agent**: Re-run checks after any new changes; perform real-device technical reliability evaluation and prospective participant-level validation before promoting the thresholds.
+
+### Handoff Entry: 2026-11-06 03:44 UTC
+- **Outgoing Agent**: OpenAI Codex
+- **Incoming Agent**: Any
+- **Current Development Phase**: Voice Signal / Bug Fix
+- **Work Completed in this Session**:
+  - Fixed the voice-analysis cleanup path to avoid constructing a typed-array view over an ArrayBuffer detached by `decodeAudioData()`.
+- **Files Modified / Created**:
+  - `frontend/src/pages/VoiceAssessment.jsx`
+  - `PROMPT.md`
+  - `docs/HANDOFF_LOG.md`
+- **Verification Performed**:
+  - `npm ci` completed with 0 reported vulnerabilities; Node 20 emitted engine warnings because the locked Supabase packages declare Node 22+.
+  - `npm test`: 6/6 passed.
+  - `VERCEL=1 npm run build`: passed; Vite emitted its existing large-chunk advisory.
+  - `git diff --check`: passed.
+- **Current Operational State**: Fix is on branch `codex/fix-detached-audio-buffer`; it has not yet been deployed to Vercel.
+- **Known Quirks / Blockers**: Live microphone testing has not been performed.
+- **Next Recommended Action for Incoming Agent**: Merge/deploy this fix so it reaches the Vercel production URL, then verify voice capture on the user's device.

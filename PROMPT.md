@@ -156,3 +156,13 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 - **Files**: `.env.example`, `.github/workflows/deploy.yml`, `frontend/.env.example`, `frontend/package.json`, `frontend/package-lock.json`, `frontend/src/App.jsx`, `frontend/src/components/Sidebar.jsx`, `frontend/src/lib/assessmentRecords.js`, `frontend/src/lib/supabaseClient.js`, `frontend/src/pages/Dashboard.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/MyHistory.jsx`, `frontend/src/pages/VoiceAssessment.jsx`, `frontend/vite.config.js`, `supabase/migrations/202611060001_assessment_records.sql`, `README.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROJECT.md`, `docs/TASKS.md`, `PROMPT.md`, `docs/HANDOFF_LOG.md`.
 - **Verification**: `npm run build`, `VERCEL=1 npm run build`, and `git diff --check` passed. Vite emitted its existing chunk-size advisory. Supabase was not connected because project URL/key and database access were not available in this workspace.
 - **Remaining setup**: Apply the SQL migration in the user's Supabase project; configure email OTP and allowed callback URL; add GitHub Actions repository variable `VITE_SUPABASE_URL` and secret `VITE_SUPABASE_PUBLISHABLE_KEY` (or Vercel environment variables); redeploy. Existing local rows are not auto-transferred into cloud accounts.
+
+### Entry 006: Fix detached audio buffer during voice analysis
+- **Date**: 2026-11-06
+- **Agent**: OpenAI Codex
+- **Task**: Fix the reported `Cannot perform Construct on a detached ArrayBuffer` error in the deployed voice assessment.
+- **Cause**: `AudioContext.decodeAudioData()` may detach the ArrayBuffer passed to it, while the cleanup code later creates a `Uint8Array` view over that same buffer.
+- **Implementation**: Pass a `.slice(0)` copy to `decodeAudioData()` so the original encoded buffer remains available for explicit cleanup.
+- **Files**: `frontend/src/pages/VoiceAssessment.jsx`, `PROMPT.md`, `docs/HANDOFF_LOG.md`.
+- **Verification**: `npm ci` completed with 0 vulnerabilities (Node 20 reported engine warnings for Supabase packages requiring Node 22+); `npm test` passed (6/6); `VERCEL=1 npm run build` passed with the existing large-chunk advisory; `git diff --check` passed.
+- **Limit**: Browser microphone capture was not exercised; the browser's microphone permission was not requested.

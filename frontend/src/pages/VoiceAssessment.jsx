@@ -61,7 +61,10 @@ export default function VoiceAssessment({ onAssessmentCompleted, screeningContex
           blob = null;
           chunks.length = 0;
           audioContext = new AudioContext();
-          decoded = await audioContext.decodeAudioData(encodedAudio);
+          // decodeAudioData transfers/detaches the ArrayBuffer it receives in
+          // some browsers. Decode a copy so the original can still be cleared
+          // below without constructing a view over a detached buffer.
+          decoded = await audioContext.decodeAudioData(encodedAudio.slice(0));
           const channel = decoded.getChannelData(0);
           const analyzed = analyzeVoiceSamples(channel, decoded.sampleRate);
           channel.fill(0);
