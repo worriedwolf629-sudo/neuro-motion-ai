@@ -34,7 +34,7 @@ export default function ScreeningSummary({ tremor, tapping, voice }) {
           </div>
         ))}
       </div>
-      <p className="text-[10px] leading-relaxed text-[#817D70]">{screening.disclaimer} Outside-range flags use custom bands marked “to verify”; results cannot determine whether someone has Parkinson’s disease.</p>
+      <p className="text-xs leading-relaxed text-[#817D70]">{screening.disclaimer}</p>
     </section>
   );
 }

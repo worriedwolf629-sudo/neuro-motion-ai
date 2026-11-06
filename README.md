@@ -8,25 +8,17 @@
 
 **Understand movement beyond what the eye can see.**
 
-NeuroMotion AI is an explainable, browser-based assessment prototype that uses commodity webcam hand tracking and local signal processing to quantify resting-hand tremor, finger-tapping kinematics, and exploratory voice-signal measurements.
+NeuroMotion AI is an explainable, browser-based screening and triage prototype that uses commodity webcam hand tracking and local signal processing to quantify resting-hand tremor, finger-tapping kinematics, and exploratory voice-signal measurements.
 
 ---
 
-## ⚠️ Important Medical & Regulatory Disclaimer
-
-> **NEUROMOTION AI IS AN EXPERIMENTAL MOTOR-ASSESSMENT PROTOTYPE, NOT A DIAGNOSTIC DEVICE.**
+> **Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.**
 >
-> This platform is engineered exclusively for exploratory research, benchmark quantification, and tele-assessment demonstration during a 24-hour national healthcare hackathon.
->
-> - **We are NOT building a Parkinson's disease prediction model or diagnostic classifier.**
-> - **We DO NOT calculate disease probabilities, severity risk scores, or diagnostic labels.**
-> - **The software does NOT claim clinical validation.**
-> - All reported telemetry outputs are **descriptive signal measurements** (movement frequencies, tapping intervals, estimated voice pitch, and amplitude variation).
-> - These observations must never replace consultation with a qualified neurologist or formal in-person MDS-UPDRS examination.
+> NeuroMotion AI is a rule-based screening and triage aid that returns an explainable triage tier alongside the descriptive metrics behind it. It contains no disease probability, no 0–100 composite risk score, and no black-box machine-learning models. Comparison thresholds are provisional and have not been validated on consumer webcams or microphones; low-quality recordings yield "Uncertain: re-test" and are excluded from triage.
 
 ---
 
-## 1. Problem Statement & Motivation
+## 1. Problem Statement & Motivation: Movement Disorder Screening & Triage
 
 Observational motor assessments—such as items on the **Movement Disorder Society Unified Parkinson’s Disease Rating Scale (MDS-UPDRS Part III)**—remain the cornerstone of movement disorder evaluation. However, conventional examinations face inherent limitations:
 
@@ -190,13 +182,13 @@ The site can run in browser-only demo mode without cloud configuration. To enabl
 
 After sign-in, new tremor, tapping, and voice measurements are saved as separate records with completion date/time, assessment type, recording quality, and derived metrics. The dashboard shows recent records; **Session History** compares all saved records for one measurement at a time. Raw camera video, microphone audio, and hand landmarks are not uploaded or stored. Existing browser history can be displayed locally where enough measurements exist, but its old format did not retain exact times or full per-assessment data, so missing detail is labeled rather than guessed.
 
-Account comparison charts show measurement trends only. They do not estimate Parkinson's probability, diagnose a condition, or label a person safe or at risk.
+Account comparison charts show measurement trends across sessions only.
 
 ## What it screens for
 
-NeuroMotion records descriptive movement and voice measurements: hand displacement and frequency, finger-tap cadence/interval variability/amplitude change, and sustained-vowel pitch, local jitter, local shimmer, autocorrelation-based HNR, and voiced fraction. A provisional, explainable rules layer counts modality-level measurements outside custom bands and excludes modalities that fail recording-quality gates. Its labels are `WITHIN_TYPICAL_RANGE`, `BORDERLINE_RETEST`, `SUGGEST_NEUROLOGIST_FOLLOWUP`, or `INCOMPLETE_SCREEN`; they are exploratory triage prompts, not Parkinson's probabilities, a diagnosis, or a validated measure of disease risk. Every band is marked provisional and `to verify` in one configuration object.
+NeuroMotion records descriptive movement and voice measurements: rest tremor (hand displacement and dominant frequency), bradykinesia via finger tapping (cadence, interval variability, and fatigue decrement slope), and voice acoustic features (sustained-vowel pitch, local jitter, local shimmer, autocorrelation-based HNR, and voiced fraction). A provisional, explainable rules layer counts modality-level measurements outside custom bands and excludes modalities that fail recording-quality gates. Its labels are `WITHIN_TYPICAL_RANGE`, `BORDERLINE_RETEST`, `SUGGEST_NEUROLOGIST_FOLLOWUP`, or `INCOMPLETE_SCREEN`; they are exploratory triage prompts to guide professional clinical follow-up. Every band is marked provisional and `to verify` in one configuration object.
 
-**Research screening aid; no diagnosis is made. Thresholds are provisional and have not been validated on consumer webcams or microphones.** If a result raises a concern, it cannot replace assessment by a qualified clinician.
+**Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.**
 
 ## Validation
 
@@ -204,8 +196,9 @@ Run `cd frontend && npm test` for deterministic synthetic signal tests. Run `pyt
 
 ## Limitations
 
-- Synthetic tests check expected calculations on generated inputs only. The browser voice estimator is a lightweight autocorrelation implementation, not a Praat-equivalent pipeline; jitter/shimmer/HNR can vary with pitch tracking, microphone, room, and browser processing.
-- UCI validation reports associations in that dataset only. It does not validate this app's microphone feature extraction, consumer webcam kinematics, or any clinical use.
-- The research references use different hardware, tasks, metrics, populations, and study protocols. No consumer-device prospective cohort validation or threshold calibration has been completed.
-- Camera samples can miss out-of-plane motion and tracking can drop. Quality gates can withhold a result but cannot guarantee a valid measurement.
-- Raw video, raw audio, and hand landmarks remain on the device. Derived results may be saved to the account history as described above.
+- Provisional thresholds: custom comparison bands are experimental and require prospective clinical calibration.
+- Hardware variability: microphone frequency responses, webcam frame rates, lighting, room acoustics, and hand tracking dropouts introduce variability.
+- No clinical cohort: the system has not been validated on a prospective clinical cohort with consumer hardware.
+- Early or subtle disease signs: early PD can present without detectable resting tremor or vocal changes and may be missed by screening.
+- Synthetic tests verify math behavior on generated signals only; the browser voice estimator is an autocorrelation approximation, not a Praat-equivalent laboratory pipeline.
+- Raw video, raw audio, and hand landmarks remain on the device and are never uploaded. Derived results may be saved to the account history as described above.

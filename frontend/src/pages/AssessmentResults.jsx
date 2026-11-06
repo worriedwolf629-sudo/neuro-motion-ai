@@ -264,23 +264,6 @@ export default function AssessmentResults({
           </div>
         </div>
       </div>
-
-      {/* Disclaimer Card matching Reference Bottom */}
-      <div className="relative z-10 card-flowing rounded-2xl p-4 bg-white/90 border border-[#EAE6D9] flex items-center justify-between gap-4 text-xs text-[#817D70]">
-        <div className="flex items-center gap-2.5">
-          <FlaskConical className="w-4 h-4 text-[#E9BD4B] shrink-0" />
-          <span>
-            <strong>Observational Research Prototype:</strong> Measured kinematic characteristics only.
-            Not a medical diagnosis or risk classification.
-          </span>
-        </div>
-        <button
-          onClick={() => setActivePage('about')}
-          className="text-xs font-bold text-[#292820] hover:text-[#D99A38] shrink-0 transition"
-        >
-          Methodology Details →
-        </button>
-      </div>
     </div>
   );
 }

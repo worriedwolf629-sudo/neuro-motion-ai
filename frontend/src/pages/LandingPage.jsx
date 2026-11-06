@@ -267,13 +267,9 @@ export default function LandingPage({ setActivePage }) {
       </section>
 
       {/* Mandatory Disclaimer Footer */}
-      <footer className="mt-auto px-8 py-8 max-w-5xl mx-auto w-full text-center text-xs text-[#817D70] space-y-2 z-10">
-        <p className="font-semibold text-[#292820]">
-          NeuroMotion AI — Experimental Motor Assessment Platform
-        </p>
-        <p className="text-[11px] max-w-2xl mx-auto leading-relaxed">
-          This system is an observational prototype developed for hackathon demonstration and motor movement benchmarking.
-          It does not diagnose Parkinson's disease or any medical condition and contains zero machine-learning classification models.
+      <footer className="mt-auto px-8 py-8 max-w-5xl mx-auto w-full text-center text-xs text-[#817D70] z-10">
+        <p className="text-xs text-[#817D70]">
+          Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.
         </p>
       </footer>
     </div>

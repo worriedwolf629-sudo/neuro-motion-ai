@@ -190,7 +190,6 @@ export default function VoiceAssessment({ onAssessmentCompleted, screeningContex
           ].map(([label, value]) => <div key={label} className="bg-[#FAF9F4] rounded-xl border border-[#EAE6D9] p-4"><p className="text-[11px] text-[#817D70]">{label}</p><p className="text-lg font-bold text-[#292820] mt-1">{value}</p></div>)}
         </div>
         <ScreeningSummary voice={metrics} />
-        <div className="mt-5 rounded-xl border border-[#D99A38] bg-[#FAF9F4] px-4 py-3 text-xs leading-relaxed text-[#817D70]"><strong className="text-[#292820]">Research prototype, not a diagnosis.</strong> These microphone measurements do not determine whether someone has Parkinson’s disease and should not be used to make medical decisions. Results depend on the microphone, room noise, speaking task, and recording quality.</div>
       </section>}
     </div>
   );

@@ -66,7 +66,7 @@ export default function LoginPage({ configured, onContinueLocal }) {
             <p className="flex items-start gap-2 text-[11px] leading-relaxed text-[#817D70]"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#789879]" />Browser-only mode does not sync, authenticate, or back up assessments to a database.</p>
           </div>
         )}
-        <p className="mt-7 border-t border-[#EAE6D9] pt-4 text-[10px] leading-relaxed text-[#817D70]">Research prototype only. Assessment measurements are not a diagnosis. Video and audio are not stored by account history.</p>
+        <p className="mt-7 border-t border-[#EAE6D9] pt-4 text-[10px] leading-relaxed text-[#817D70]">Video and audio are analyzed in your browser and are not stored by account history.</p>
       </section>
     </main>
   );

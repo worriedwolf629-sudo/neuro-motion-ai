@@ -26,7 +26,7 @@ export default function MotorReport({
     const reportObj = {
       title: "NeuroMotion AI — Motor Assessment Report",
       date: new Date().toISOString(),
-      disclaimer: "Experimental computer-vision motor assessment prototype. Non-diagnostic.",
+      disclaimer: "Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.",
       screening,
       notes,
       tremor: tremorData || "Not recorded",
@@ -44,10 +44,17 @@ export default function MotorReport({
   };
 
   const handleExportCsv = () => {
-    const rows = [['tier', screening.tier, '', '', '', ''], ['modality', 'metric', 'observed_value', 'provisional_range', 'severity', 'citation']];
+    const headerLines = [
+      '# Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.',
+      `# Date: ${new Date().toISOString()}`,
+      `# Screening Tier: ${screening.tier}`,
+      `# Domains: ${screening.domainCount}`,
+      ''
+    ];
+    const rows = [['modality', 'metric', 'observed_value', 'provisional_range', 'severity', 'citation']];
     screening.flags.forEach((item) => rows.push([item.modality, item.metricName, item.observedValue, item.referenceRange, item.severity, item.citation]));
-    rows.push(['disclaimer', screening.disclaimer, '', '', '', '']);
-    const csv = rows.map((row) => row.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+    const dataCsv = rows.map((row) => row.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+    const csv = headerLines.join('\n') + dataCsv;
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a');
     link.href = url;
@@ -106,6 +113,9 @@ export default function MotorReport({
             </div>
             <p className="text-xs text-[#817D70]">
               Computer-Vision Motor Movement & Tremor Kinematics Report
+            </p>
+            <p className="text-xs font-medium text-[#817D70] mt-1.5">
+              Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.
             </p>
           </div>
 
