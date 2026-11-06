@@ -172,16 +172,3 @@ Open your browser at **`http://localhost:5173/`** (or the port specified in term
 
 For the voice task, open **Assessment Selection → Voice Signal Assessment**, allow microphone access, and sustain a comfortable “ah” sound during the five-second capture. The browser analyzes audio locally and discards it; the exported CSV contains derived signal measurements only. Microphone access requires HTTPS or localhost.
 
-### Account dashboard and assessment history
-
-The site can run in browser-only demo mode without cloud configuration. To enable email login and a private, cross-device record history:
-
-1. Create a Supabase project and run [`supabase/migrations/202611060001_assessment_records.sql`](supabase/migrations/202611060001_assessment_records.sql) in its SQL editor.
-2. Copy `frontend/.env.example` to `frontend/.env.local` and set `VITE_SUPABASE_URL` plus the project's **publishable** key (the legacy `anon` key is also accepted). Never put the `service_role` key in frontend variables.
-3. In Supabase Auth, enable email OTP and add the exact website callback URL to the allowed redirect URLs. For GitHub Pages use `https://<owner>.github.io/neuro-motion-ai/`; for Vercel use the deployed domain root.
-4. For GitHub Pages, add repository variable `VITE_SUPABASE_URL` and repository secret `VITE_SUPABASE_PUBLISHABLE_KEY` under **Settings → Secrets and variables → Actions**; the deployment workflow passes them to Vite. For Vercel, add both values under **Project → Settings → Environment Variables**. On Vercel, set the frontend project root to `frontend` with build command `npm run build` and output directory `dist`, then redeploy.
-
-After sign-in, new tremor, tapping, and voice measurements are saved as separate records with completion date/time, assessment type, recording quality, and derived metrics. The dashboard shows recent records; **Session History** compares all saved records for one measurement at a time. Raw camera video, microphone audio, and hand landmarks are not uploaded or stored. Existing browser history can be displayed locally where enough measurements exist, but its old format did not retain exact times or full per-assessment data, so missing detail is labeled rather than guessed.
-
-Account comparison charts show measurement trends across sessions only.
-
