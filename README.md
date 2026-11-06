@@ -1,6 +1,7 @@
 # NeuroMotion AI
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg)](https://worriedwolf629-sudo.github.io/neuro-motion-ai/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black.svg?logo=vercel)](https://neuro-motion-parkinson-ai.vercel.app/)
+[![GitHub Pages](https://img.shields.io/badge/Mirror-GitHub%20Pages-blue.svg)](https://worriedwolf629-sudo.github.io/neuro-motion-ai/)
 [![Status](https://img.shields.io/badge/status-functional%20prototype-brightgreen.svg)](#project-status)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#intellectual-property--ethics)
 [![Framework: React 19](https://img.shields.io/badge/React-19.0-61dafb.svg)](https://react.dev/)
