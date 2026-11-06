@@ -185,21 +185,3 @@ After sign-in, new tremor, tapping, and voice measurements are saved as separate
 
 Account comparison charts show measurement trends across sessions only.
 
-## What it screens for
-
-NeuroMotion records descriptive movement and voice measurements: rest tremor (hand displacement and dominant frequency), bradykinesia via finger tapping (cadence, interval variability, and fatigue decrement slope), and voice acoustic features (sustained-vowel pitch, local jitter, local shimmer, autocorrelation-based HNR, and voiced fraction). A provisional, explainable rules layer counts modality-level measurements outside custom bands and excludes modalities that fail recording-quality gates. Its labels are `WITHIN_TYPICAL_RANGE`, `BORDERLINE_RETEST`, `SUGGEST_NEUROLOGIST_FOLLOWUP`, or `INCOMPLETE_SCREEN`; they are exploratory triage prompts to guide professional clinical follow-up. Every band is marked provisional and `to verify` in one configuration object.
-
-**Research screening aid: compares measurements to provisional reference ranges. Not a diagnosis. Consult a neurologist.**
-
-## Validation
-
-Run `cd frontend && npm test` for deterministic synthetic signal tests. Run `python -m venv .venv-validation`, install `scripts/requirements-validation.txt` in that environment, then run `python scripts/validate_uci_voice.py` to fetch UCI Parkinsons dataset 174 and regenerate [`docs/VALIDATION.md`](docs/VALIDATION.md). That report gives per-recording means ± SD, Mann–Whitney U p-values, and single-feature AUROCs for jitter, shimmer, and HNR. UCI contains repeated recordings from 31 people, so recording rows are not independent subjects. Its acoustic features do not validate our browser extraction or custom screening thresholds.
-
-## Limitations
-
-- Provisional thresholds: custom comparison bands are experimental and require prospective clinical calibration.
-- Hardware variability: microphone frequency responses, webcam frame rates, lighting, room acoustics, and hand tracking dropouts introduce variability.
-- No clinical cohort: the system has not been validated on a prospective clinical cohort with consumer hardware.
-- Early or subtle disease signs: early PD can present without detectable resting tremor or vocal changes and may be missed by screening.
-- Synthetic tests verify math behavior on generated signals only; the browser voice estimator is an autocorrelation approximation, not a Praat-equivalent laboratory pipeline.
-- Raw video, raw audio, and hand landmarks remain on the device and are never uploaded. Derived results may be saved to the account history as described above.
