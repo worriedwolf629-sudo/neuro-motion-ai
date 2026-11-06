@@ -6,7 +6,6 @@ import {
   FileText,
   Clock,
   Info,
-  Footprints,
   Mic,
   ChevronRight,
   Sparkles,
@@ -91,22 +90,13 @@ export default function Sidebar({ activePage, setActivePage }) {
               <ChevronRight className="w-3 h-3 opacity-60" />
             </button>
 
-            {/* Upcoming Roadmap Items */}
-            <div className="px-3.5 py-2 rounded-xl text-xs font-medium text-[#817D70]/60 flex items-center justify-between cursor-not-allowed">
-              <span className="flex items-center gap-2">
-                <Footprints className="w-3.5 h-3.5 text-[#817D70]/50" />
-                Gait Analysis
-              </span>
-              <span className="text-[9px] font-mono uppercase bg-[#F5F1E9] px-1.5 py-0.5 rounded text-[#817D70]">Soon</span>
-            </div>
-
             <button
               onClick={() => setActivePage('voice')}
               className={getSubItemClass('voice')}
             >
               <span className="flex items-center gap-2">
                 <Mic className="w-3.5 h-3.5 text-current" />
-                Speech Analysis
+                Voice Assessment
               </span>
               <ChevronRight className="w-3 h-3 opacity-60" />
             </button>

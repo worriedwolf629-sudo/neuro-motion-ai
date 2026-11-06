@@ -7,7 +7,6 @@ import {
   Camera,
   CheckCircle2,
   Sparkles,
-  Footprints,
   Mic,
   Sliders
 } from 'lucide-react';
@@ -150,41 +149,6 @@ export default function AssessmentSelection({ setActivePage }) {
         >
           Start Voice Task <ArrowRight className="w-3.5 h-3.5" />
         </button>
-      </div>
-
-      {/* Future Roadmap Modules */}
-      <div className="relative z-10 pt-4 border-t border-[#EAE6D9]/70">
-        <h4 className="text-xs font-bold text-[#817D70] uppercase font-mono tracking-wider mb-4">
-          Upcoming Research Modules
-        </h4>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="card-flowing rounded-2xl p-4 flex items-center justify-between opacity-80 bg-white/70">
-            <div className="flex items-center gap-3">
-              <Footprints className="w-5 h-5 text-[#817D70]" />
-              <div>
-                <p className="text-xs font-bold text-[#292820]">Gait & Postural Balance Analysis</p>
-                <p className="text-[11px] text-[#817D70]">Full-body pose estimation for stride symmetry and cadence</p>
-              </div>
-            </div>
-            <span className="text-[9px] font-mono uppercase bg-[#F5F1E9] px-2.5 py-0.5 rounded-full text-[#817D70]">
-              In Development
-            </span>
-          </div>
-
-          <div className="card-flowing rounded-2xl p-4 flex items-center justify-between opacity-80 bg-white/70">
-            <div className="flex items-center gap-3">
-              <Mic className="w-5 h-5 text-[#817D70]" />
-              <div>
-                <p className="text-xs font-bold text-[#292820]">Acoustic Modulation & Jitter</p>
-                <p className="text-[11px] text-[#817D70]">Local sustained-vowel harmonic and jitter measurements</p>
-              </div>
-            </div>
-            <span className="text-[9px] font-mono uppercase bg-[#F4D66D]/30 px-2.5 py-0.5 rounded-full text-[#292820] font-semibold border border-[#E9BD4B]/40">
-              Active Beta
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

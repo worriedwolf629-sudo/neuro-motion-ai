@@ -10,7 +10,6 @@ import {
   Calendar,
   Layers,
   Sparkles,
-  Footprints,
   Mic,
   Search,
   Bell
@@ -89,7 +88,7 @@ export default function Dashboard({
           Assessment Overview
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Card 1: Resting Tremor */}
           <div
             onClick={() => setActivePage('live-tremor')}
@@ -128,26 +127,7 @@ export default function Dashboard({
             </div>
           </div>
 
-          {/* Card 3: Gait Analysis */}
-          <div className="card-flowing rounded-2xl p-5 flex flex-col justify-between space-y-3 opacity-80 group">
-            <div className="flex items-center justify-between">
-              <div className="w-9 h-9 rounded-xl bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#817D70]">
-                <Footprints className="w-4 h-4" />
-              </div>
-              <span className="text-[9px] font-mono uppercase bg-[#F5F1E9] px-2 py-0.5 rounded-full text-[#817D70]">Coming Soon</span>
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-[#292820]">Gait Analysis</h3>
-              <p className="text-[11px] text-[#817D70] mt-1 leading-snug">Coming Soon</p>
-            </div>
-            <div className="flex justify-end pt-1">
-              <div className="w-6 h-6 rounded-full bg-[#FAF9F4] border border-[#EAE6D9] flex items-center justify-center text-[#817D70]">
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: Speech Analysis */}
+          {/* Card 3: Voice Assessment */}
           <div
             onClick={() => setActivePage('voice')}
             className="card-flowing rounded-2xl p-5 flex flex-col justify-between space-y-3 cursor-pointer group hover:border-[#B8A8E8]"
@@ -159,7 +139,7 @@ export default function Dashboard({
               <span className="text-[9px] font-mono uppercase bg-[#F4D66D]/40 text-[#292820] font-bold px-2 py-0.5 rounded-full border border-[#E9BD4B]/50">Active Beta</span>
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#292820] group-hover:text-[#D99A38] transition">Speech Analysis</h3>
+              <h3 className="text-sm font-bold text-[#292820] group-hover:text-[#D99A38] transition">Voice Assessment</h3>
               <p className="text-[11px] text-[#817D70] mt-1 leading-snug">Vocal stability & acoustic pitch</p>
             </div>
             <div className="flex justify-end pt-1">
