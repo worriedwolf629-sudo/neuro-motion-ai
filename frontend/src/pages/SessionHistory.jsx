@@ -50,10 +50,11 @@ export default function SessionHistory({
                     {session.date}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-[#817D70] pt-1">
-                  <span>Tremor: <strong className="text-[#292820]">{session.tremorFreq ? `${session.tremorFreq} Hz` : '--'}</strong></span>
-                  <span>Tapping: <strong className="text-[#292820]">{session.tapsCount ? `${session.tapsCount} taps` : '--'}</strong></span>
-                  <span>Cadence: <strong className="text-[#292820]">{session.cadence ? `${session.cadence} taps/s` : '--'}</strong></span>
+                <div className="flex flex-wrap items-center gap-4 text-xs text-[#817D70] pt-1">
+                  {session.tremorFreq != null && <span>Tremor: <strong className="text-[#292820]">{session.tremorFreq} Hz</strong></span>}
+                  {session.tapsCount != null && <span>Tapping: <strong className="text-[#292820]">{session.tapsCount} taps</strong></span>}
+                  {session.cadence != null && <span>Cadence: <strong className="text-[#292820]">{session.cadence} taps/s</strong></span>}
+                  {session.voicePitch != null && <span>Voice Pitch: <strong className="text-[#292820]">{Number(session.voicePitch).toFixed(1)} Hz</strong></span>}
                 </div>
               </div>
 

@@ -52,7 +52,14 @@ export default function App() {
   const [authReady, setAuthReady] = useState(false);
   const [localDemo, setLocalDemo] = useState(() => !supabaseConfigured && localStorage.getItem('neuromotion_local_demo') === 'yes');
   const [records, setRecords] = useState(() => supabaseConfigured ? [] : loadLocalAssessmentRecords());
-  const latestVoiceData = records.find((record) => record.assessment_type === 'voice')?.results || null;
+  const [voiceData, setVoiceData] = useState(() => {
+    if (supabaseConfigured) return null;
+    try {
+      const s = localStorage.getItem('neuromotion_voice_session');
+      return s ? JSON.parse(s) : null;
+    } catch { return null; }
+  });
+  const activeVoiceData = voiceData || records.find((record) => record.assessment_type === 'voice')?.results || null;
   const [recordsLoading, setRecordsLoading] = useState(false);
   const [recordError, setRecordError] = useState('');
   const [syncMessage, setSyncMessage] = useState('');
@@ -124,12 +131,14 @@ export default function App() {
         setRecords(loaded);
         setTremorData(loaded.find((record) => record.assessment_type === 'tremor')?.results || null);
         setTappingData(loaded.find((record) => record.assessment_type === 'tapping')?.results || null);
+        setVoiceData(loaded.find((record) => record.assessment_type === 'voice')?.results || null);
         setSessionHistory(loaded.map((record) => ({
           id: record.id,
           date: record.completed_at ? new Date(record.completed_at).toLocaleString() : 'Date unavailable',
           tremorFreq: record.assessment_type === 'tremor' ? record.results?.dominant_frequency_hz : null,
           tapsCount: record.assessment_type === 'tapping' ? record.results?.total_taps : null,
-          cadence: record.assessment_type === 'tapping' ? record.results?.taps_per_second : null
+          cadence: record.assessment_type === 'tapping' ? record.results?.taps_per_second : null,
+          voicePitch: record.assessment_type === 'voice' ? record.results?.estimated_pitch_mean_hz : null
         })));
         setRecordError('');
       })
@@ -154,6 +163,13 @@ export default function App() {
   }, [tappingData, localDemo]);
 
   useEffect(() => {
+    if (!supabaseConfigured || localDemo) {
+      if (voiceData) localStorage.setItem('neuromotion_voice_session', JSON.stringify(voiceData));
+      else localStorage.removeItem('neuromotion_voice_session');
+    }
+  }, [voiceData, localDemo]);
+
+  useEffect(() => {
     if (!supabaseConfigured || localDemo) localStorage.setItem('neuromotion_history', JSON.stringify(sessionHistory));
   }, [sessionHistory, localDemo]);
 
@@ -162,13 +178,15 @@ export default function App() {
     const screening = evaluateScreeningTriage({
       tremor: type === 'tremor' ? results : tremorData,
       tapping: type === 'tapping' ? results : tappingData,
-      voice: type === 'voice' ? results : latestVoiceData,
+      voice: type === 'voice' ? results : activeVoiceData,
     });
     const savedResults = { ...results, completed_at: completedAt, screening };
     if (type === 'tremor') {
       setTremorData(savedResults);
     } else if (type === 'tapping') {
       setTappingData(savedResults);
+    } else if (type === 'voice') {
+      setVoiceData(savedResults);
     }
 
     const newRecord = {
@@ -197,15 +215,13 @@ export default function App() {
       setSyncMessage('Saved in this browser only. Sign in with cloud storage enabled to sync across devices.');
     }
 
-    // Local session summary remains available for the existing workspace cards.
-    if (type === 'voice') return;
-
     const newEntry = {
       id: Math.floor(1000 + Math.random() * 9000),
       date: new Date().toLocaleDateString(),
       tremorFreq: type === 'tremor' ? savedResults.dominant_frequency_hz : tremorData?.dominant_frequency_hz,
       tapsCount: type === 'tapping' ? savedResults.total_taps : tappingData?.total_taps,
-      cadence: type === 'tapping' ? savedResults.taps_per_second : tappingData?.taps_per_second
+      cadence: type === 'tapping' ? savedResults.taps_per_second : tappingData?.taps_per_second,
+      voicePitch: type === 'voice' ? savedResults.estimated_pitch_mean_hz : activeVoiceData?.estimated_pitch_mean_hz
     };
     setSessionHistory(prev => [newEntry, ...prev]);
   };
@@ -214,9 +230,11 @@ export default function App() {
     if (session) return;
     localStorage.removeItem('neuromotion_tremor_session');
     localStorage.removeItem('neuromotion_tapping_session');
+    localStorage.removeItem('neuromotion_voice_session');
     localStorage.removeItem('neuromotion_history');
     setTremorData(null);
     setTappingData(null);
+    setVoiceData(null);
     setSessionHistory([]);
     setRecords([]);
     localStorage.removeItem('neuromotion_assessment_records');
@@ -225,7 +243,8 @@ export default function App() {
   const openRecord = (record) => {
     if (record.assessment_type === 'tremor') setTremorData(record.results);
     if (record.assessment_type === 'tapping') setTappingData(record.results);
-    setActivePage(record.assessment_type === 'voice' ? 'history' : 'report');
+    if (record.assessment_type === 'voice') setVoiceData(record.results);
+    setActivePage('report');
   };
 
   const signOut = async () => {
@@ -240,6 +259,7 @@ export default function App() {
     setRecords(loadLocalAssessmentRecords());
     setTremorData(readLocal('neuromotion_tremor_session', null));
     setTappingData(readLocal('neuromotion_tapping_session', null));
+    setVoiceData(readLocal('neuromotion_voice_session', null));
     const history = readLocal('neuromotion_history', []);
     setSessionHistory(Array.isArray(history) ? history : []);
     setLocalDemo(true);
@@ -341,13 +361,13 @@ export default function App() {
             />
           )}
 
-          {activePage === 'voice' && <VoiceAssessment onAssessmentCompleted={handleAssessmentCompleted} screeningContext={{ tremorData, tappingData, voiceData: latestVoiceData }} />}
+          {activePage === 'voice' && <VoiceAssessment onAssessmentCompleted={handleAssessmentCompleted} screeningContext={{ tremorData, tappingData, voiceData: activeVoiceData }} />}
 
           {activePage === 'results' && (
             <AssessmentResults
               tremorData={tremorData}
               tappingData={tappingData}
-              voiceData={latestVoiceData}
+              voiceData={activeVoiceData}
               setActivePage={setActivePage}
             />
           )}
@@ -356,7 +376,7 @@ export default function App() {
             <MotorReport
               tremorData={tremorData}
               tappingData={tappingData}
-              voiceData={latestVoiceData}
+              voiceData={activeVoiceData}
               setActivePage={setActivePage}
             />
           )}

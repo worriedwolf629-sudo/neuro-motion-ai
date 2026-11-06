@@ -5,6 +5,7 @@ import {
   FileText,
   Radio,
   Activity,
+  Mic,
   Calendar,
   Clock,
   Info
@@ -132,7 +133,7 @@ export default function MotorReport({
             Part 1: Measured Physical Kinematics
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Tremor Measurements */}
             <div className="bg-[#FAF9F4] p-5 rounded-xl border border-[#EAE6D9] space-y-3">
               <div className="flex items-center justify-between">
@@ -202,6 +203,45 @@ export default function MotorReport({
                 <p className="text-xs text-[#817D70] italic">No finger-tapping data recorded in this session.</p>
               )}
             </div>
+
+            {/* Voice Signal Measurements */}
+            <div className="bg-[#FAF9F4] p-5 rounded-xl border border-[#EAE6D9] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold flex items-center gap-2 text-[#292820]">
+                  <Mic className="w-4 h-4 text-[#E9BD4B]" /> Voice Signal
+                </span>
+                <span className="text-[10px] font-mono text-[#817D70]">
+                  {voiceData ? `Quality: ${voiceData.quality || 'Good'}` : 'Not tested'}
+                </span>
+              </div>
+
+              {voiceData ? (
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between py-1 border-b border-[#EAE6D9]/80">
+                    <span className="text-[#817D70]">Estimated Pitch (F₀):</span>
+                    <span className="font-mono font-bold text-[#292820]">{voiceData.estimated_pitch_mean_hz ? `${Number(voiceData.estimated_pitch_mean_hz).toFixed(1)} Hz` : '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-[#EAE6D9]/80">
+                    <span className="text-[#817D70]">Local Jitter:</span>
+                    <span className="font-mono font-bold text-[#292820]">{voiceData.jitter_local_percent != null ? `${Number(voiceData.jitter_local_percent).toFixed(2)}%` : '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-[#EAE6D9]/80">
+                    <span className="text-[#817D70]">Local Shimmer:</span>
+                    <span className="font-mono font-bold text-[#292820]">{voiceData.shimmer_local_percent != null ? `${Number(voiceData.shimmer_local_percent).toFixed(2)}%` : '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-[#EAE6D9]/80">
+                    <span className="text-[#817D70]">HNR:</span>
+                    <span className="font-mono font-bold text-[#292820]">{voiceData.hnr_db != null ? `${Number(voiceData.hnr_db).toFixed(1)} dB` : '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-[#817D70]">Voiced Fraction:</span>
+                    <span className="font-mono text-[#292820]">{voiceData.voiced_fraction != null ? `${(Number(voiceData.voiced_fraction) * 100).toFixed(1)}%` : '—'}</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-[#817D70] italic">No voice assessment recorded in this session.</p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -222,6 +262,13 @@ export default function MotorReport({
                 ? "Observation: Finger-tapping kinematics demonstrated a negative amplitude regression slope across successive cycles, indicating progressive movement decrement."
                 : "Observation: Finger-tapping cycles maintained relatively stable movement amplitude throughout the observation window."}
             </p>
+            {voiceData && (
+              <p className="p-3 bg-[#FAF9F4] rounded-lg border border-[#EAE6D9] leading-relaxed">
+                {voiceData.jitter_local_percent > 1.0 || voiceData.shimmer_local_percent > 4.0
+                  ? "Observation: Voice analysis demonstrated elevated local perturbation (jitter/shimmer) outside provisional reference bounds during sustained vowel phonation."
+                  : "Observation: Voice analysis showed stable fundamental frequency and perturbation values within typical reference bounds."}
+              </p>
+            )}
           </div>
 
           <div className="pt-2">

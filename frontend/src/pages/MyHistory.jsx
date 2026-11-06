@@ -138,6 +138,6 @@ function RecordRow({ record, onOpenRecord }) {
     <td className="px-5 py-4 font-semibold text-[#292820]">{TYPE_LABELS[record.assessment_type] || record.assessment_type}</td>
     <td className="px-5 py-4 text-[#817D70]">{record.quality || 'Not reported'}{record.effective_fps ? <span className="block text-[10px]">{record.effective_fps} FPS</span> : null}</td>
     <td className="px-5 py-4 text-[#292820]">{primaryMetrics.map((metric) => <span key={metric.key} className="mr-3 inline-block whitespace-nowrap"><span className="text-[#817D70]">{metric.label}:</span> {showValue(valueOf(record, metric.key), metric)}</span>)}{record.assessment_type === 'voice' && results.voiced_analysis_windows != null ? <span className="block mt-1 text-[10px] text-[#817D70]">{results.voiced_analysis_windows} voiced windows</span> : null}</td>
-    <td className="px-5 py-4">{onOpenRecord && record.assessment_type !== 'voice' ? <button onClick={() => onOpenRecord(record)} className="rounded-lg border border-[#EAE6D9] bg-white px-3 py-1.5 font-semibold text-[#292820] hover:bg-[#FAF9F4]">Open</button> : <span className="text-[#817D70]">—</span>}</td>
+    <td className="px-5 py-4">{onOpenRecord ? <button onClick={() => onOpenRecord(record)} className="rounded-lg border border-[#EAE6D9] bg-white px-3 py-1.5 font-semibold text-[#292820] hover:bg-[#FAF9F4] transition">Open</button> : <span className="text-[#817D70]">—</span>}</td>
   </tr>;
 }
