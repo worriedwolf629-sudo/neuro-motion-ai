@@ -33,73 +33,140 @@ export default function VoiceAssessment({ onAssessmentCompleted, screeningContex
     setMetrics(null);
     setRemaining(CAPTURE_SECONDS);
     try {
-      if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-        throw new Error('This browser does not support microphone recording. Try a recent version of Chrome, Safari, or Firefox over HTTPS or localhost.');
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error('This browser does not support microphone recording. Try a recent version of Chrome, Safari, or Firefox over HTTPS.');
       }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: { autoGainControl: false, noiseSuppression: false, echoCancellation: false } });
+      if (typeof window.MediaRecorder === 'undefined') {
+        throw new Error('MediaRecorder is not supported in this browser. Try Chrome, Firefox, or Safari.');
+      }
+
+      // Try requesting pure audio without browser processing, fall back to default if unsupported
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: { autoGainControl: false, noiseSuppression: false, echoCancellation: false }
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
       streamRef.current = stream;
-      const recorder = new MediaRecorder(stream);
+
+      // Select supported MIME type across Chrome, Firefox, and Safari
+      const preferredTypes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/mp4',
+        'audio/aac'
+      ];
+      const mimeType = preferredTypes.find((type) => typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported(type));
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
       recorderRef.current = recorder;
       const chunks = [];
-      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) chunks.push(event.data);
+      };
+
       recorder.onerror = () => {
         releaseMicrophone();
         setStatus('ready');
         setError('The browser could not record from the selected microphone. Check its permission and try again.');
       };
+
       recorder.onstop = async () => {
+        window.clearInterval(timerRef.current);
         releaseMicrophone();
         recorderRef.current = null;
-        window.clearInterval(timerRef.current);
         setStatus('processing');
+
         let audioContext;
         let decoded;
-        let encodedAudio;
         try {
-          let blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-          encodedAudio = await blob.arrayBuffer();
-          blob = null;
-          chunks.length = 0;
-          audioContext = new AudioContext();
-          decoded = await audioContext.decodeAudioData(encodedAudio);
+          if (!chunks.length) {
+            throw new Error('No audio data was captured. Please check microphone permissions and speak clearly.');
+          }
+
+          const blob = new Blob(chunks, recorder.mimeType ? { type: recorder.mimeType } : undefined);
+          const encodedAudio = await blob.arrayBuffer();
+
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          audioContext = new AudioCtx();
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+          }
+
+          // Decode audio safely across all browsers
+          decoded = await new Promise((resolve, reject) => {
+            const res = audioContext.decodeAudioData(encodedAudio, resolve, reject);
+            if (res && typeof res.then === 'function') {
+              res.then(resolve).catch(reject);
+            }
+          });
+
+          if (!decoded || decoded.length === 0) {
+            throw new Error('Audio could not be decoded. Please try recording again.');
+          }
+
           const channel = decoded.getChannelData(0);
           const analyzed = analyzeVoiceSamples(channel, decoded.sampleRate);
-          channel.fill(0);
-          new Uint8Array(encodedAudio).fill(0);
+
+          // Zero out raw decoded PCM buffer to protect privacy
+          try {
+            if (channel && channel.buffer && !channel.buffer.detached) {
+              channel.fill(0);
+            }
+          } catch (_) {}
+
           const screening = evaluateScreeningTriage({
             tremor: screeningContext.tremorData,
             tapping: screeningContext.tappingData,
             voice: analyzed,
           });
-          const voiceQuality = screening.modalities.find((modality) => modality.modality === 'voice').quality;
+
+          const voiceQuality = screening?.modalities?.find((m) => m.modality === 'voice')?.quality || {
+            ok: true,
+            reasons: []
+          };
+
           const result = {
             ...analyzed,
             quality: voiceQuality.ok ? 'Good' : 'Insufficient',
-            quality_reasons: voiceQuality.reasons,
+            quality_reasons: voiceQuality.reasons || [],
             screening,
           };
+
           setMetrics(result);
           onAssessmentCompleted?.('voice', result);
           setStatus('complete');
         } catch (captureError) {
           setStatus('ready');
-          setError(captureError.message || 'The audio could not be analyzed. Please try another recording.');
+          setError(captureError.message || 'The audio could not be analyzed. Please sustain an “ah” sound and try again.');
         } finally {
           chunks.length = 0;
-          if (decoded && decoded.numberOfChannels > 0) decoded.getChannelData(0).fill(0);
-          if (encodedAudio) new Uint8Array(encodedAudio).fill(0);
-          recorder.ondataavailable = null;
-          recorder.onstop = null;
-          if (audioContext && audioContext.state !== 'closed') await audioContext.close();
+          try {
+            if (decoded && decoded.numberOfChannels > 0) {
+              const ch = decoded.getChannelData(0);
+              if (ch && ch.buffer && !ch.buffer.detached) ch.fill(0);
+            }
+          } catch (_) {}
+
+          if (audioContext && audioContext.state !== 'closed') {
+            try { await audioContext.close(); } catch (_) {}
+          }
         }
       };
-      recorder.start();
+
+      recorder.start(100);
       setStatus('recording');
       const startTime = performance.now();
       timerRef.current = window.setInterval(() => {
-        const secondsLeft = Math.max(0, CAPTURE_SECONDS - (performance.now() - startTime) / 1000);
+        const elapsed = (performance.now() - startTime) / 1000;
+        const secondsLeft = Math.max(0, CAPTURE_SECONDS - elapsed);
         setRemaining(secondsLeft);
-        if (secondsLeft <= 0 && recorder.state === 'recording') recorder.stop();
+        if (secondsLeft <= 0 && recorder.state === 'recording') {
+          recorder.stop();
+        }
       }, 50);
     } catch (captureError) {
       releaseMicrophone();
