@@ -103,6 +103,11 @@
 ---
 
 ### ✅ Completed
+- [x] **TASK-014**: Caution Cleanup, Single-Line Disclaimer Standardization, and Removal of Inactive/Roadmap Modules
+  - **Owner**: Google Antigravity
+  - **Completed On**: 2026-11-06
+  - **Summary**: Standardized disclaimer to the exact single line in exactly three UI locations (Landing footer, under Results tier banner, header of exported report/CSV). Cleaned up redundant disclaimer blocks and stale warning banners across UI and README.md. Removed Gait Analysis and all upcoming feature/roadmap placeholders from Sidebar, Dashboard, and Assessment Selection. Clarified that the FastAPI service is a standalone reference service, not part of the active pipeline.
+  - **Verification**: `npm test` (6/6 passed), `npm run build` (passed in ~790ms), `python scripts/validate_uci_voice.py` (updated `docs/VALIDATION.md`), and regex grep verification.
 - [x] **TASK-013**: Browser voice biomarkers, quality gates, provisional triage, and reproducible validation
   - **Owner**: OpenAI Codex
   - **Completed On**: 2026-11-06

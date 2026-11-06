@@ -16,33 +16,37 @@
 │   │   (HTML5 Video)    │            │  (21 3D Landmarks @ ~30 FPS) │   │
 │   └────────────────────┘            └──────────────┬───────────────┘   │
 │                                                    │                   │
-│                                         (raw coordinates & timestamps) │
-│                                                    ▼                   │
-│   ┌────────────────────┐            ┌──────────────────────────────┐   │
-│   │ Telemetry & Charts │◄─(metrics)─│ Session Buffer & Normalizer  │   │
-│   │  (Recharts Canvas) │            │ (Local coordinate scaling)   │   │
+│   ┌────────────────────┐            ┌──────────────▼───────────────┐   │
+│   │  Microphone Audio  │──(vowel)──►│ Audio Buffer (Float32Array)  │   │
+│   │  (Web Audio API)   │            │ (Discarded after extraction) │   │
 │   └────────────────────┘            └──────────────┬───────────────┘   │
-└────────────────────────────────────────────────────┼───────────────────┘
-                                                     │ HTTP POST
-                                                     │ (/api/v1/analyze/...)
-                                                     ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                     BACKEND SERVICE (Python / FastAPI)                 │
-│                                                                        │
-│   ┌────────────────────────────────────────────────────────────────┐   │
-│   │                      FastAPI Routing Layer                     │   │
-│   └───────────────┬────────────────────────────────┬───────────────┘   │
-│                   │                                │                   │
-│                   ▼                                ▼                   │
-│   ┌──────────────────────────────┐  ┌──────────────────────────────┐   │
-│   │ Tremor Analysis Pipeline     │  │ Tapping Kinematics Pipeline  │   │
-│   │ - Signal Detrending          │  │ - Thumb-Index Distance (Eucl)│   │
-│   │ - SciPy Bandpass (0.5-12 Hz) │  │ - Normalization (Hand Scale) │   │
-│   │ - FFT & Power Spectral Dens. │  │ - Peak/Valley Extrema Detect │   │
-│   │ - Dominant Frequency & Power │  │ - Tap Rate, Mean Interval    │   │
-│   └──────────────────────────────┘  │ - Amplitude Decay / Slope    │   │
-│                                     └──────────────────────────────┘   │
+│                                                    │                   │
+│                                         (raw coordinates & audio)      │
+│                                                    ▼                   │
+│                                     ┌──────────────────────────────┐   │
+│                                     │ Client Kinematics Engine     │   │
+│                                     │ (kinematicsEngine.js / voice)│   │
+│                                     │ - 30 Hz uniform resampling   │   │
+│                                     │ - Butterworth bandpass & FFT │   │
+│                                     │ - Anatomical scale norm      │   │
+│                                     │ - Pitch, Jitter, Shimmer, HNR│   │
+│                                     └──────────────┬───────────────┘   │
+│                                                    │                   │
+│                                                    ▼                   │
+│                                     ┌──────────────────────────────┐   │
+│                                     │ Quality Gates & Triage Rules │   │
+│                                     │ (qualityGate / screening)    │   │
+│                                     │ - Nyquist & frame criteria   │   │
+│                                     │ - 4-tier explainable triage  │   │
+│                                     └──────────────┬───────────────┘   │
+│                                                    │                   │
+│   ┌────────────────────┐                           ▼                   │
+│   │ Telemetry & Charts │◄──────────────────────────┘                   │
+│   │ (Recharts Canvas)  │                                               │
+│   └────────────────────┘                                               │
 └────────────────────────────────────────────────────────────────────────┘
+
+*Note: The active screening and assessment pipeline is 100% browser-local. The FastAPI service in `backend/` is not part of the production pipeline; all signal processing, quality gates, and triage evaluations execute client-side.*
 ```
 
 ---
@@ -65,7 +69,8 @@
     - Summary metrics cards (Dominant Tremor Hz, Tap Count, Taps/Sec, Amplitude Fatigue).
   - Display user positioning guidance (distance, framing, FPS stability).
 
-### 2.2 Backend Analysis Service (`backend/`)
+### 2.2 Standalone Backend Reference Service (`backend/`)
+*Note: The FastAPI service is maintained as an independent offline reference service and is not part of the active browser screening pipeline.*
 - **Technology**: Python 3.10+, FastAPI, Uvicorn, NumPy, SciPy, Pydantic.
 - **Responsibilities**:
   - Expose validated REST endpoints for offline or windowed batch analysis.

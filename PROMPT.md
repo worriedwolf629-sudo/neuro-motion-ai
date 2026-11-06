@@ -10,6 +10,25 @@ This file tracks significant AI-assisted engineering sessions, architecture shif
 
 ## Log Entries
 
+### Entry 007: Caution Cleanup, Single-Line Disclaimer Standardization, and Removal of Inactive/Roadmap Features
+- **Date and time**: 2026-11-06
+- **Agent**: Google Antigravity
+- **Task**: Standardize the medical disclaimer to a single exact line in three designated UI locations, clean up redundant/stale disclaimers across the site, and completely remove Gait Analysis and upcoming/roadmap placeholders.
+- **Files modified**:
+  - `frontend/src/components/Sidebar.jsx` (removed Gait Analysis and unused Footprints icon; renamed voice navigation item)
+  - `frontend/src/pages/Dashboard.jsx` (converted 4-card overview to 3 active cards, removed Gait Analysis card)
+  - `frontend/src/pages/AssessmentSelection.jsx` (removed upcoming research modules section)
+  - `frontend/src/pages/LandingPage.jsx` (replaced multi-sentence disclaimer footer with single standard line)
+  - `frontend/src/components/ScreeningSummary.jsx` (standardized tier disclaimer line)
+  - `frontend/src/pages/AssessmentResults.jsx` (removed redundant bottom disclaimer card)
+  - `frontend/src/pages/MotorReport.jsx` (standardized document header, JSON export, and screening CSV header)
+  - `frontend/src/pages/VoiceAssessment.jsx` (removed redundant bottom disclaimer block)
+  - `frontend/src/pages/LoginPage.jsx` (removed extraneous disclaimer from auth screen)
+  - `README.md` (replaced warning banner with one short block; single "no probability" statement; added early PD limitation; updated to screening/triage)
+  - `docs/ARCHITECTURE.md` (updated diagram and clarified standalone offline role of FastAPI)
+  - `docs/TASKS.md`, `docs/HANDOFF_LOG.md`, `PROMPT.md`
+- **Verification**: `npm test` 6/6 passed; `npm run build` passed in 790ms; verified 0 occurrences of gait/upcoming/coming soon/roadmap across codebase and docs.
+
 ### Entry 006: Voice Biomarkers, Quality Gates, Provisional Triage, and Validation
 - **Date and time**: 2026-11-06
 - **Agent**: OpenAI Codex

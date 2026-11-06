@@ -325,3 +325,25 @@ This document maintains a chronological record of handoffs between **OpenAI Code
 - **Current Operational State**: Local implementation complete; raw video/audio/hand landmarks are not uploaded. Derived metrics/triage remain saved through existing user records in JSONB.
 - **Known Quirks / Blockers**: HNR is an autocorrelation approximation, not Praat-equivalent. UCI uses repeated recording-level rows and does not validate consumer browser measurements. Triage limits are provisional and unvalidated. No live microphone/webcam cohort validation was performed.
 - **Next Recommended Action for Incoming Agent**: Re-run checks after any new changes; perform real-device technical reliability evaluation and prospective participant-level validation before promoting the thresholds.
+
+### Handoff Entry: 2026-11-06 02:40 UTC
+- **Outgoing Agent**: Google Antigravity
+- **Incoming Agent**: Any / User
+- **Current Development Phase**: Caution Cleanup & Scope Hardening
+- **Work Completed in this Session**:
+  - Completely removed Gait Analysis and upcoming/future roadmap modules from the UI:
+    - `frontend/src/components/Sidebar.jsx`: Removed Gait Analysis upcoming item and unused `Footprints` icon; aligned voice navigation label.
+    - `frontend/src/pages/Dashboard.jsx`: Replaced 4-card overview with a 3-card grid (Resting Tremor, Finger Tapping, Voice Assessment), eliminating the "Coming Soon" Gait Analysis card.
+    - `frontend/src/pages/AssessmentSelection.jsx`: Removed the entire "Upcoming Research Modules" section.
+  - Standardized caution / medical disclaimers to the exact single line across exactly three UI places:
+    1. `frontend/src/pages/LandingPage.jsx`: Footer disclaimer updated to single line.
+    2. `frontend/src/components/ScreeningSummary.jsx`: Results tier banner displays `{screening.disclaimer}` without superfluous text.
+    3. `frontend/src/pages/MotorReport.jsx`: Document header, JSON export, and exported screening CSV all carry the single line.
+  - Removed redundant disclaimer blocks from `AssessmentResults.jsx`, `VoiceAssessment.jsx`, and `LoginPage.jsx`.
+  - Updated `README.md`: replaced long multi-bullet warning block with a concise block; stated "no disease probability" once at top; added "early PD can be missed" to limitations; updated problem statement to screening and triage.
+  - Updated `docs/ARCHITECTURE.md` to reflect pure client-side pipeline and clarify that the FastAPI service is an independent offline reference.
+- **Verification Performed**:
+  - `cd frontend && npm test`: 6/6 tests passed.
+  - `cd frontend && npm run build`: Vite build passed in 790ms.
+  - `grep -rniE "gait|coming soon|upcoming|roadmap"`: Verified 0 occurrences across frontend and documentation.
+- **Current Operational State**: Production build clean, all active features fully functional, zero dead-end/upcoming placeholders.
